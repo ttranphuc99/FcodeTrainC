@@ -14,20 +14,19 @@ class LoginComponent extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
           if (!err) {
-            console.log('Received values of form: ', values);
             if (values.remember) {
               localStorage.setItem('username', values.username);
             }
             LoginService.login(values)
                 .then((response) => {
 					if (response.status === 200) {
-						console.log("success");
+						sessionStorage.setItem('loggedIn', true);
+						this.props.history.push(`/home`);
 					} else if (response.status === 401) {
 						this.setState({
 							errorMess: "Incorrect username or password!"
 						});
 					}
-                    
                 }).catch((e) => {
                     console.log(e);
                 });
