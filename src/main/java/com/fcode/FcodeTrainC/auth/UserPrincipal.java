@@ -14,8 +14,6 @@ public class UserPrincipal implements UserDetails {
 
     public UserPrincipal(Account account) {
         this.account = account;
-        System.out.println("username " + getUsername());
-        System.out.println("password " + getPassword());
     }
 
     @Override

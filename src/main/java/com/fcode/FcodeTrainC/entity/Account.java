@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "fc_account")
 public class Account {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ac_id", nullable = false)
