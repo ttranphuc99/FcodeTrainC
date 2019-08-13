@@ -58,6 +58,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         c.setMaxAge(864000);
         c.setHttpOnly(true);
         response.addCookie(c);
+
+        Cookie role = new Cookie("role", user.getRole());
+        role.setMaxAge(864000);
+        response.addCookie(role);
     }
 
     @Override
