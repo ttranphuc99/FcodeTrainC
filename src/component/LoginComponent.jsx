@@ -20,7 +20,7 @@ class LoginComponent extends React.Component {
             LoginService.login(values)
                 .then((response) => {
 					if (response.status === 200) {
-						sessionStorage.setItem('loggedIn', true);
+						localStorage.setItem('loggedIn', true);
 						this.props.history.push(`/home`);
 					} else if (response.status === 401) {
 						this.setState({

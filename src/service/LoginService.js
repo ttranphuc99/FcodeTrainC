@@ -21,7 +21,7 @@ class LoginService {
     }
 
     isLoggedIn() {
-        return sessionStorage.getItem('loggedIn') || false;
+        return localStorage.getItem('loggedIn') === 'true' || false;
     }
 }
 
