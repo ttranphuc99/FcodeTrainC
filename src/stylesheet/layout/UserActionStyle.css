@@ -1,7 +1,13 @@
 .wrap-user-action {
     min-width: 160px;
+    align-items: center;
+    display: flex;
 }
 
 .dropdown-menu {
     position: absolute !important;
+}
+
+.fullname {
+    font-size: 18px;
 }

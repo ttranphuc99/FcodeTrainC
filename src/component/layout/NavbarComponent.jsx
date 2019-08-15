@@ -11,7 +11,7 @@ class NavbarComponent extends React.Component {
                 <div className="p-0">
                     <Navbar type="light" className="align-items-stretch flex-md-nowrap p-0 justify-content-end">
                         <Nav navbar className="flex-row">
-                            <UserAction/>
+                            <UserAction fullname={this.props.fullname} />
                             <NavbarToggle/>
                         </Nav> 
                     </Navbar>
