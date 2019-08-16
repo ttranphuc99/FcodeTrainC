@@ -1,5 +1,8 @@
 package com.fcode.FcodeTrainC.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -18,6 +21,7 @@ public class Account {
     private String username;
 
     @Column(name = "ac_password")
+    @JsonIgnore
     private String password;
 
     @Column(name = "ac_fullname")
@@ -37,7 +41,13 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "ac_creator_id")
+    @JsonIgnore
     private Account creator;
+
+    @Transient
+    private String creatorName;
+    @Transient
+    private String creatorUsername;
 
     @ManyToOne
     @JoinColumn(name = "ro_id")
@@ -72,6 +82,14 @@ public class Account {
         this.creator = creator;
         this.role = role;
         this.universityCourse = universityCourse;
+    }
+
+    public String getCreatorName() {
+        return creator.getFullname();
+    }
+
+    public String getCreatorUsername() {
+        return creator.getUsername();
     }
 
     public Integer getId() {

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -26,7 +27,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        super.doFilterInternal(request, response, chain);
+        UsernamePasswordAuthenticationToken authentication = this.getAuthentication(request);
+        if (authentication == null) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        chain.doFilter(request, response);
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
@@ -35,15 +43,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         if (requestCookie != null) {
             for (Cookie cookie : requestCookie) {
-                if (!cookie.isHttpOnly()) {
-                    if (cookie.getName().equals(SecurityConstants.TOKEN_HEADER)) {
-                        token = cookie.getValue();
-                        break;
-                    }
+                if (cookie.getName().equals(SecurityConstants.TOKEN_HEADER)) {
+                    token = cookie.getValue();
+                    break;
                 }
             }
         }
-
         if (!token.isEmpty() && token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             try {
                 String signingKey = SecurityConstants.JWT_SECRECT;
