@@ -26,7 +26,7 @@ class Layout extends React.Component {
             tag="main"
           >
             <NavbarComponent fullname={fullname} />
-            {this.props.children}
+            <div className="wrap-content-layout">{this.props.children}</div>
             <FooterComponent />
           </Col>
         </Row>
