@@ -10,6 +10,24 @@ class ProfileService {
             credentials: 'include'
         });
     }
+
+    updateProfile(data) {
+        let url = API_BASE + '/profile';
+        let body = {
+            fullname: data.fullname,
+            description: data.description
+        };
+
+        return fetch(url, {
+            method: 'PUT',
+            withCredentials: true,
+            credentials: 'include',
+            body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
 }
 
 export default new ProfileService();
