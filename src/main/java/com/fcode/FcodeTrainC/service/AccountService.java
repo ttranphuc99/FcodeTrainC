@@ -18,4 +18,6 @@ public interface AccountService {
     void disable(Integer id);
 
     void delete(Integer id);
+
+    Account updateProfile(String username, Account newAcc);
 }
