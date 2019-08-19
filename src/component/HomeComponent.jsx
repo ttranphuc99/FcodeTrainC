@@ -1,6 +1,6 @@
 import React from 'react';
 import {Card, CardBody, Row, Col} from 'shards-react';
-import {Form, Input, Button, notification} from 'antd';
+import {Form, Input, Button, notification, Spin} from 'antd';
 import ProfileService from '../service/ProfileService';
 
 class UpdateProfile extends React.Component {
@@ -44,7 +44,8 @@ class UpdateProfile extends React.Component {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', JSON.stringify(values));
+                // console.log('Received values of form: ', JSON.stringify(values));
+                this.setState({isLoading: true})
                 ProfileService.updateProfile(values)
                 .then(response => {
                     if (response.status === 200) {
@@ -99,7 +100,7 @@ class UpdateProfile extends React.Component {
                             "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\\s]+$";
 
         return (
-            <div>
+            <Spin spinning={this.state.isLoading}>
                 <Card style={{padding: '0 1.5%'}}>
                     <CardBody>
                         <Form onSubmit={this.handleSubmit}>  
@@ -184,16 +185,20 @@ class UpdateProfile extends React.Component {
                                     </Form.Item>
                                 </Col>
                             </Row>
-
-                            <Form.Item style={{display: 'flex', justifyContent: 'center'}}>
-                                <Button type="primary" htmlType="submit">
-                                    Update
-                                </Button>
-                            </Form.Item>
+                            
+                            <Row>
+                                <Col style={{display: 'flex', justifyContent: 'center'}}>
+                                    <Form.Item>
+                                        <Button type="primary" htmlType="submit">
+                                            Update
+                                        </Button>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
                         </Form>
                     </CardBody>
                 </Card>
-            </div>
+            </Spin>
         )
     }
 }

@@ -3,7 +3,7 @@
 }
 
 .wrap-content-layout {
-    padding: 3% 5%;
+    padding: 3% 5% 80px;
 }
 
 .main-content {
@@ -11,7 +11,39 @@
 }
 
 .main-footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
+}
+
+.layout-icon {
+    font-size: 25px !important;
+    margin-bottom: 4px;
+    margin-right: 16px !important;
+}
+
+.wrap-content-navbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.navbar-user-action {
+    justify-content: flex-end !important;
+}
+
+.navbar-toggle {
+    display: none !important;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+@media (max-width: 991px) {
+    .navbar-user-action {
+        justify-content: flex-start !important;
+    }
+    .navbar-toggle {
+        display: flex !important;
+    }
 }

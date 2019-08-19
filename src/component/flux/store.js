@@ -2,57 +2,90 @@ import { EventEmitter } from "events";
 
 import Dispatcher from "./dispatcher";
 import Constants from "./constants";
+import LoginService from '../../service/LoginService';
 
-let _store = {
+let adminMenu = {
   menuVisible: false,
   navItems: [
     {
-      title: "Blog Dashboard",
-      to: "/blog-overview",
-      htmlBefore: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-      htmlAfter: ""
+      title: "Home",
+      to: "/",
+      htmlBefore: '<i class="layout-icon fa fa-home" aria-hidden="true"></i>'
     },
     {
-      title: "Blog Posts",
-      htmlBefore: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-      to: "/blog-posts",
+      title: "Manage Course",
+      to: "/a",
+      htmlBefore: '<i class="layout-icon fa fa-address-book" aria-hidden="true"></i>',
     },
     {
-      title: "Add New Post",
-      htmlBefore: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-      to: "/add-new-post",
+      title: "Manage Mentor",
+      to: "/b",
+      htmlBefore: '<i class="layout-icon fa fa-user-circle-o" aria-hidden="true"></i>'
     },
     {
-      title: "Forms & Components",
-      htmlBefore: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-      to: "/components-overview",
+      title: "Manage Member",
+      to: "/c",
+      htmlBefore: '<i class="layout-icon fa fa-users" aria-hidden="true"></i>'
     },
+  ]
+};
+
+let memMenu = {
+  menuVisible: false,
+  navItems: [
     {
-      title: "Tables",
-      htmlBefore: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-      to: "/tables",
-    },
-    {
-      title: "User Profile",
-      htmlBefore: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-      to: "/user-profile-lite",
-    },
-    {
-      title: "Errors",
-      htmlBefore: '<i class="fa fa-pencil" aria-hidden="true"></i>',
-      to: "/errors",
+      title: "Home",
+      to: "/",
+      htmlBefore: '<i class="fa fa-home" aria-hidden="true"></i>'
     }
   ]
 };
 
+let mentorMenu = {
+  menuVisible: false,
+  navItems: [
+    {
+      title: "Home",
+      to: "/",
+      htmlBefore: '<i class="fa fa-home" aria-hidden="true"></i>'
+    }
+  ]
+};
+
+let _store = {};
+
 class Store extends EventEmitter {
   constructor() {
     super();
+    this.initMenu();
 
     this.registerToActions = this.registerToActions.bind(this);
     this.toggleSidebar = this.toggleSidebar.bind(this);
 
     Dispatcher.register(this.registerToActions.bind(this));
+    
+  }
+
+  initMenu() {
+    let role = LoginService.getRole();
+    
+    switch (role) {
+      case 'admin' : {
+        _store = adminMenu;
+        break;
+      }
+      case 'menber' : {
+        _store = memMenu;
+        break;
+      }
+      case 'mentor' : {
+        _store = mentorMenu;
+        break;
+      }
+      default: {
+
+      }
+    }
   }
 
   registerToActions({ actionType, payload }) {

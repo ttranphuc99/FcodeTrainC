@@ -1,8 +1,6 @@
 import React from "react";
-
-import { Dispatcher } from "flux";
-
-const Dispatchers = new Dispatcher();
+import { Icon } from 'antd';
+import { Dispatcher, Constants } from "../../flux";
 
 class NavbarToggle extends React.Component {
   constructor(props) {
@@ -12,17 +10,17 @@ class NavbarToggle extends React.Component {
   }
 
   handleClick() {
-    Dispatchers.dispatch({
-      actionType: "TOGGLE_SIDEBAR" 
+    Dispatcher.dispatch({
+      actionType: Constants.TOGGLE_SIDEBAR
     });
   }
 
   render() {
     return (
-      <nav className="nav">
+      <nav className="nav navbar-toggle">
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <a href="#" onClick={this.handleClick} className="nav-link nav-link-icon toggle-sidebar d-sm-inline d-md-inline d-lg-none text-center">
-          <i className="material-icons">&#xE5D2;</i>
+        <Icon type="menu" />
         </a>
       </nav>
     )

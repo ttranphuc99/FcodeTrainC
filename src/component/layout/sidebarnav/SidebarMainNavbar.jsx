@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navbar, NavbarBrand } from "shards-react";
+import { Icon } from 'antd'
 import Dispatcher from '../../flux/dispatcher';
 import Constants from '../../flux/constants';
 
@@ -37,7 +38,7 @@ class SidebarMainNavbar extends React.Component {
                         className="toggle-sidebar d-sm-inline d-md-none d-lg-none"
                         onClick={this.handleToggleSidebar}
                     >
-                        <i className="material-icons">&#xE5C4;</i>
+                        <Icon type="close" />
                     </a>
                 </Navbar>
             </div>

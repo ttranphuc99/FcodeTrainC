@@ -19,7 +19,7 @@ class Layout extends React.Component {
         <Row>
           <SidebarComponent username={username} role={role} />
           <Col
-            className="main-content p-0"
+            className="main-content px-0"
             lg={{ size: 10, offset: 2 }}
             md={{ size: 9, offset: 3 }}
             sm="12"

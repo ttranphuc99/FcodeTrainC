@@ -32,7 +32,7 @@ class UserAction extends React.Component {
     return (
         <NavItem tag={Dropdown} caret toggle={this.toggleUserActions} className="wrap-user-action">
             <DropdownToggle caret tag={NavLink} className="text-nowrap px-3">
-                <span className="d-none d-md-inline-block fullname">{this.props.fullname || ''}</span>
+                <span className="d-md-inline-block fullname">{this.props.fullname || ''}</span>
             </DropdownToggle>
             <Collapse tag={DropdownMenu} right small open={this.state.visible}>
                 <DropdownItem tag={Link} to="user-profile">
