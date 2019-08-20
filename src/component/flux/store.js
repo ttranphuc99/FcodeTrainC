@@ -9,12 +9,12 @@ let adminMenu = {
   navItems: [
     {
       title: "Home",
-      to: "/",
+      to: "/home",
       htmlBefore: '<i class="layout-icon fa fa-home" aria-hidden="true"></i>'
     },
     {
       title: "Manage Course",
-      to: "/a",
+      to: "/universityCourse",
       htmlBefore: '<i class="layout-icon fa fa-address-book" aria-hidden="true"></i>',
     },
     {

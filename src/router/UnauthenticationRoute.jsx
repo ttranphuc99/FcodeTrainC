@@ -7,8 +7,8 @@ import LoginService from '../service/LoginService';
 
 class UnauthenticationRoute extends React.Component {
     render() {
-        if (LoginService.isLoggedIn() === 'true') {
-            return <Redirect to='/' />;
+        if (LoginService.isLoggedIn()) {
+            return <Redirect to='/home' />;
         }
 
         return <Route {...this.props} />;
