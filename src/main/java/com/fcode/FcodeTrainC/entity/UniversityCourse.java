@@ -1,5 +1,7 @@
 package com.fcode.FcodeTrainC.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -22,7 +24,23 @@ public class UniversityCourse {
 
     @ManyToOne
     @JoinColumn(name = "ac_creator_id")
+    @JsonIgnore
     private Account creator;
+
+    @ManyToOne
+    @JoinColumn(name = "ac_modified_id")
+    @JsonIgnore
+    private Account modifier;
+
+    @Transient
+    private String creatorName;
+    @Transient
+    private String creatorUsername;
+
+    @Transient
+    private String modifierName;
+    @Transient
+    private String modifierUsername;
 
     public UniversityCourse() {
     }
@@ -38,6 +56,28 @@ public class UniversityCourse {
         this.dateCreated = dateCreated;
         this.lastModified = lastModified;
         this.creator = creator;
+    }
+
+    public String getCreatorName() {
+        return this.getCreator().getFullname();
+    }
+
+    public String getCreatorUsername() {
+        return this.getCreator().getUsername();
+    }
+
+    public String getModifierName() {
+        if (this.getModifier() != null) {
+            return this.getModifier().getFullname();
+        }
+        return "";
+    }
+
+    public String getModifierUsername() {
+        if (this.getModifier() != null) {
+            return this.getModifier().getUsername();
+        }
+        return "";
     }
 
     public Integer getId() {
@@ -78,5 +118,13 @@ public class UniversityCourse {
 
     public void setCreator(Account creator) {
         this.creator = creator;
+    }
+
+    public Account getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(Account modifier) {
+        this.modifier = modifier;
     }
 }

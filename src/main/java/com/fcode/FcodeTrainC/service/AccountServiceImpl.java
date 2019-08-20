@@ -5,7 +5,9 @@ import com.fcode.FcodeTrainC.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -29,7 +31,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account findById(Integer id) {
-        return accountRepository.findById(id).get();
+        Optional<Account> opt = accountRepository.findById(id);
+        return opt.isPresent() ? opt.get() : null;
     }
 
     @Override
