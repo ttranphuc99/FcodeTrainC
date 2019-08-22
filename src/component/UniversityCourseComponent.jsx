@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spin, Icon, Button, Modal, Table } from 'antd';
+import { Spin, Icon, Button, Modal, Table, Form, Input } from 'antd';
 import { Card } from 'shards-react';
 import UniversityCourseService from '../service/UniversityCourseService';
 
@@ -65,9 +65,8 @@ class UniversityCourseComponent extends React.Component {
 
         this.showModal = this.showModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
-        this.handleOk = this.handleOk.bind(this);
+        this.addNewCourse = this.addNewCourse.bind(this);
         this.fetchData = this.fetchData.bind(this);
-        // this.deleteCourse = this.deleteCourse.bind(this);
     }
 
     deleteCourse(id) {
@@ -98,8 +97,9 @@ class UniversityCourseComponent extends React.Component {
         })
     }
 
-    handleOk(){
-        console.log("OK");
+    addNewCourse(e){
+        e.preventDefault();
+        if (this.state.validator.validateStatus === 'success') window.alert('submit');
     }
 
     fetchData() {
@@ -137,6 +137,14 @@ class UniversityCourseComponent extends React.Component {
         );
     }
 
+    isCourseNameExisted(rule, value, callback) {
+        if (!value) {
+            callback();
+        } else {
+            
+        }
+    }
+
     async asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
           await callback(array[index], index, array);
@@ -144,6 +152,7 @@ class UniversityCourseComponent extends React.Component {
     }
 
     render() {
+        const { getFieldDecorator } = this.props.form;
         return (
             <Spin spinning={this.state.isLoading}>
                 <Button type="primary" onClick={this.showModal}>
@@ -153,11 +162,29 @@ class UniversityCourseComponent extends React.Component {
                 <Modal 
                     title="Insert university course"
                     visible={this.state.modalVisible}
-                    onOk={this.handleOk}
                     confirmLoading={this.state.confirmLoading}
                     onCancel={this.closeModal}
+                    footer={null}
                 >
-                    <p>Content</p>
+                    <Form layout="inline" onSubmit={this.addNewCourse}>
+                        <Form.Item 
+                            label="Name" 
+                            hasFeedback
+                        >
+                            {getFieldDecorator('name', {
+                                rules: [
+                                    {
+                                        required: true,
+                                        message: 'Please input name!'
+                                    }
+                                ]
+                            })(<Input/>)}
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">Add</Button>
+                        </Form.Item>
+                    </Form>
                 </Modal>
 
                 <Card>
@@ -168,4 +195,4 @@ class UniversityCourseComponent extends React.Component {
     }
 }
 
-export default UniversityCourseComponent;
+export default Form.create({name: 'universityCourse'})(UniversityCourseComponent);
