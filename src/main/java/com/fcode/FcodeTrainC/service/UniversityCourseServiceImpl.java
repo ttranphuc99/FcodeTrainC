@@ -4,7 +4,6 @@ import com.fcode.FcodeTrainC.entity.UniversityCourse;
 import com.fcode.FcodeTrainC.repository.UniversityCourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -31,5 +30,10 @@ public class UniversityCourseServiceImpl implements UniversityCourseService {
     public UniversityCourse findById(Integer id) {
         Optional<UniversityCourse> opt = this.repository.findById(id);
         return opt.isPresent() ? opt.get() : null;
+    }
+
+    @Override
+    public UniversityCourse findByName(String name) {
+        return repository.findByName(name);
     }
 }

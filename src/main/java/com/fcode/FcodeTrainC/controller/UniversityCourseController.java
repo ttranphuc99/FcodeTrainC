@@ -18,6 +18,7 @@ public class UniversityCourseController {
 
     @PostMapping(value = "/universityCourse")
     public ResponseEntity<UniversityCourse> insert(@RequestBody UniversityCourse universityCourse, Authentication auth) {
+        universityCourse.setName(universityCourse.getName().toUpperCase());
         boolean isValid = true;
         String regex = "^[a-zA-Z0-9]+$";
 
@@ -75,5 +76,17 @@ public class UniversityCourseController {
         }
 
         return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/universityCourseName/{name}")
+    public ResponseEntity<UniversityCourse> findByName(@PathVariable String name) {
+        name = name.toUpperCase();
+        UniversityCourse course = service.findByName(name);
+
+        if (course == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return new ResponseEntity<>(course, HttpStatus.OK);
     }
 }

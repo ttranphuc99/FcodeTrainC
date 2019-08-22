@@ -1,6 +1,7 @@
 package com.fcode.FcodeTrainC.service;
 
 import com.fcode.FcodeTrainC.entity.Account;
+import com.fcode.FcodeTrainC.entity.UniversityCourse;
 import com.fcode.FcodeTrainC.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,4 +61,5 @@ public class AccountServiceImpl implements AccountService {
     public Integer countAccByUniCourse(Integer id) {
         return accountRepository.countAccByUniCourse(id).size();
     }
+
 }

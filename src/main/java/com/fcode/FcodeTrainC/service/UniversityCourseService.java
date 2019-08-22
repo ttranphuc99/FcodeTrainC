@@ -10,4 +10,6 @@ public interface UniversityCourseService {
     void delete(Integer id);
 
     UniversityCourse findById(Integer id);
+
+    UniversityCourse findByName(String name);
 }
