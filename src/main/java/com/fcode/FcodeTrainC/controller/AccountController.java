@@ -44,4 +44,9 @@ public class AccountController {
 
         return new ResponseEntity<>(accountService.findByUsername(authentication.getName()), HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping(value = "/account_universityCourse_quantity/{id}")
+    public Integer countAccByUniCourse(@PathVariable Integer id) {
+        return accountService.countAccByUniCourse(id);
+    }
 }

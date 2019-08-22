@@ -20,4 +20,6 @@ public interface AccountService {
     void delete(Integer id);
 
     Account updateProfile(String username, Account newAcc);
+
+    Integer countAccByUniCourse(Integer id);
 }

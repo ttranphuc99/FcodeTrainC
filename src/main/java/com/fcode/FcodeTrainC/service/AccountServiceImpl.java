@@ -4,8 +4,6 @@ import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,5 +54,10 @@ public class AccountServiceImpl implements AccountService {
     public Account updateProfile(String username, Account newAcc) {
         accountRepository.updateAccountProfile(newAcc.getFullname(), newAcc.getDescription(), username);
         return accountRepository.findFirstByUsername(username);
+    }
+
+    @Override
+    public Integer countAccByUniCourse(Integer id) {
+        return accountRepository.countAccByUniCourse(id).size();
     }
 }
