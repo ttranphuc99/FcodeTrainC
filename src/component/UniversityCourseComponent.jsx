@@ -40,8 +40,17 @@ class UniversityCourseComponent extends React.Component {
             key: 'lastModified'
         },
         {
+            title: 'Quantity',
+            key: 'quantity',
+            dataIndex: 'quantity'
+        },
+        {
             title: 'Action',
-            key: 'action'
+            key: 'action',
+            render: record => {
+                if (record.quantity > 0) return ''
+                return <Button type="primary" onClick={() => this.deleteCourse(record.id)}>Delete</Button>
+            }
         }
     ];
     
@@ -58,6 +67,19 @@ class UniversityCourseComponent extends React.Component {
         this.closeModal = this.closeModal.bind(this);
         this.handleOk = this.handleOk.bind(this);
         this.fetchData = this.fetchData.bind(this);
+        // this.deleteCourse = this.deleteCourse.bind(this);
+    }
+
+    deleteCourse(id) {
+        UniversityCourseService.deleteCourse(id)
+        .then(response => {
+            if (response.status === 200) {
+                this.fetchData();
+            } else {
+                console.log('error');
+            }
+        })
+        // console.log('del ', id);
     }
 
     componentWillMount() {
@@ -81,6 +103,7 @@ class UniversityCourseComponent extends React.Component {
     }
 
     fetchData() {
+        this.setState({isLoading: true});
         UniversityCourseService.getListCourse()
         .then(response => {
             if (response.status === 200) {
@@ -91,15 +114,33 @@ class UniversityCourseComponent extends React.Component {
                 this.props.history.push('/error');
             }
         }).then(json => {
-            json.forEach(row => {
-                row["key"] = row.id;
-            });
-            this.setState(
-                {
-                    isLoading: false,
-                    dataSrc: json
-                });
-        });
+            const start = async(data) => {
+                await this.asyncForEach(data, async(row) => {
+                    row["key"] = row.id;
+                    let response = await UniversityCourseService.countAccFromCourse(row.id);
+                    
+                    if (response.status === 200) {
+                        let text = await response.text();
+                        row["quantity"] = text
+                    }
+                })
+                return data;
+            }
+            
+            return start(json);
+
+        }).then(json => 
+            this.setState({
+                isLoading: false,
+                dataSrc: json
+            })
+        );
+    }
+
+    async asyncForEach(array, callback) {
+        for (let index = 0; index < array.length; index++) {
+          await callback(array[index], index, array);
+        }
     }
 
     render() {
