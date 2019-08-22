@@ -29,6 +29,30 @@ class UniversityCourseService {
             credentials: 'include'
         })
     }
+
+    getCourseByName(name) {
+        let url = API_BASE + '/universityCourseName/' + name;
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
+
+    addNewCourse(data) {
+        let url = API_BASE + '/universityCourse/';
+
+        return fetch(url, {
+            method: 'POST',
+            withCredentials: true,
+            credentials: 'include',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
 }
 
 export default new UniversityCourseService();

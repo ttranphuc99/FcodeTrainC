@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spin, Icon, Button, Modal, Table, Form, Input } from 'antd';
+import { Spin, Icon, Button, Modal, Table, Form, Input, notification } from 'antd';
 import { Card } from 'shards-react';
 import UniversityCourseService from '../service/UniversityCourseService';
 
@@ -99,7 +99,34 @@ class UniversityCourseComponent extends React.Component {
 
     addNewCourse(e){
         e.preventDefault();
-        if (this.state.validator.validateStatus === 'success') window.alert('submit');
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                this.setState({confirmLoading: true});
+                UniversityCourseService.addNewCourse(values)
+                .then((response => {
+
+                    console.log(response);
+                    if (response.status === 201) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Add successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        });
+                        this.closeModal();
+                        this.fetchData();
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: response.message,
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                    this.setState({confirmLoading: false});
+                }));
+            }
+        });
     }
 
     fetchData() {
@@ -141,7 +168,16 @@ class UniversityCourseComponent extends React.Component {
         if (!value) {
             callback();
         } else {
-            
+            UniversityCourseService.getCourseByName(value)
+            .then((response) => {
+                if (response.status === 200) {
+                    callback([new Error(value + " is existed!")]);
+                } else if (response.status === 404) {
+                    callback();
+                } else {
+                    callback([new Error("Error")]);
+                }
+            })
         }
     }
 
@@ -176,6 +212,9 @@ class UniversityCourseComponent extends React.Component {
                                     {
                                         required: true,
                                         message: 'Please input name!'
+                                    },
+                                    {
+                                        validator: this.isCourseNameExisted
                                     }
                                 ]
                             })(<Input/>)}
