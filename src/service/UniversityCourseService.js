@@ -40,6 +40,16 @@ class UniversityCourseService {
         })
     }
 
+    getCourseById(id) {
+        let url = API_BASE + '/universityCourse/' + id;
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
+
     addNewCourse(data) {
         let url = API_BASE + '/universityCourse/';
 

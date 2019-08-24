@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Nav } from "shards-react";
+import { Navbar } from "shards-react";
 import UserAction from './navbarnav/UserAction';
 import NavbarToggle from './navbarnav/NavbarToggle';
 
