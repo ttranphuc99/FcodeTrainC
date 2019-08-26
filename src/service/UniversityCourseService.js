@@ -63,6 +63,20 @@ class UniversityCourseService {
             }
         })
     }
+
+    updateCourse(data, id) {
+        let url = API_BASE + '/universityCourse/' + id;
+
+        return fetch(url, {
+            method: 'PUT',
+            withCredentials: true,
+            credentials: 'include',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
 }
 
 export default new UniversityCourseService();

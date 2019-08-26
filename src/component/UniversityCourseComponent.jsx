@@ -20,11 +20,38 @@ class UniversityCourseDetailComponent extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.id !== prevProps.id) this.fetchData(this.props.id);
+        if (this.props.id !== prevProps.id) {
+            this.forceUpdate();
+            this.fetchData(this.props.id);
+        }
     }
 
-    handleSubmit() {
-        console.log('submit');
+    handleSubmit(e) {
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                UniversityCourseService.updateCourse(values, this.props.id)
+                .then((response) => {
+                    if (response.status === 200) {
+                        this.props.updateData();
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Update course ID ' +this.props.id+ ' successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        });
+                    } else {
+                        
+                        notification.error({
+                            message: 'Error',
+                            description: response.message,
+                            top: 70,
+                            placement: 'topRight',
+                        });
+                    }
+                })
+            }
+        })
     }
 
     fetchData(id) {
@@ -36,20 +63,25 @@ class UniversityCourseDetailComponent extends React.Component {
             } else {
                 notification.error({
                     message: 'Error',
-                    description: 'Delete course ID ' +id+ ' failed!',
+                    description: response.message,
                     top: 70,
                     placement: 'topRight',
                 });
                 this.setState({ isLoading: false });
+                this.props.updateData();
             }
         }).then(data => {
-            this.setState({
-                course: data,
-                isLoading: false
-            });
-            this.props.form.setFieldsValue({
-                id: data.id
-            })
+            if (data != null) {
+                this.setState({
+                    course: data,
+                    isLoading: false
+                });
+                this.props.form.setFieldsValue({
+                    name: data.name
+                })
+            } else {
+
+            }
         })
     }
 
@@ -67,13 +99,27 @@ class UniversityCourseDetailComponent extends React.Component {
                     callback([new Error("Error")]);
                 }
             }).then(data => {
-                if (data.id === this.props.id) {
-                    callback();
+                if (data != null) {
+                    if (data.id === this.props.id) {
+                        callback();
+                    } else {
+                        callback([new Error(value + " is existed!")]);
+                    }
                 } else {
-                    callback([new Error(value + " is existed!")]);
+                    return;
                 }
             })
         }
+    }
+
+    getModifier() {
+        if (this.state.course != null) {
+            if (this.state.course.modifierName) {
+                return this.state.course.modifierName + ' - @' + this.state.course.modifierUsername
+            }
+        }
+        
+        return '';
     }
 
     render() {
@@ -89,18 +135,21 @@ class UniversityCourseDetailComponent extends React.Component {
             },
         };
 
+        const modifier = this.getModifier();
+
         return (
             <Spin spinning={this.state.isLoading}>
                 <Form {...formItemLayout} onSubmit={this.handleSubmit}>
                     <Form.Item label="ID">
                         {getFieldDecorator('id', {
                             rules: [],
-                            initialValue: this.state.course.id
+                            initialValue: this.state.course.id || ''
                         })(<Input disabled />)}
                     </Form.Item>
 
                     <Form.Item label="Name" hasFeedback>
                         {getFieldDecorator('name', {
+                            validateTrigger: 'onBlur',
                             rules: [
                                 {
                                     required: true,
@@ -110,48 +159,39 @@ class UniversityCourseDetailComponent extends React.Component {
                                     validator: this.isCourseNameExisted
                                 },
                             ],
-                            initialValue: this.state.course.name
+                            initialValue: this.state.course.name || ''
                         })(<Input/>)}
                     </Form.Item>
 
                     <Form.Item label="Creator">
                         {getFieldDecorator('creator', {
                             rules: [],
-                            initialValue: () => {
-                                return (
-                                    <span>{this.state.course.creatorName} - @{this.state.course.creatorUsername}</span>
-                                )
-                            }
+                            initialValue: this.state.course.creatorName + ' - @' + this.state.course.creatorUsername || ''
                         })(<Input disabled />)}
                     </Form.Item>
 
                     <Form.Item label="Created Date">
                         {getFieldDecorator('createdDate', {
                             rules: [],
-                            initialValue: this.state.course.dateCreated
+                            initialValue: this.state.course.dateCreated || ''
                         })(<Input disabled />)}
                     </Form.Item>
 
                     <Form.Item label="Last Editor">
                         {getFieldDecorator('modifierName', {
                             rules: [],
-                            initialValue: () => {
-                                if (this.state.course.modifierName) {
-                                    return <span>{this.state.course.modifierName} - @{this.state.course.modifierUsername}</span>
-                                }
-                                return '';
-                            }
+                            initialValue: modifier
                         })(<Input disabled />)}
                     </Form.Item>
 
                     <Form.Item label="Modified Date">
                         {getFieldDecorator('modifierName', {
                             rules: [],
-                            initialValue: this.state.course.lastModified
+                            initialValue: this.state.course.lastModified || ''
                         })(<Input disabled />)}
                     </Form.Item>
 
-                    <Form.Item>
+                    <Form.Item style={{display: 'flex', justifyContent: 'center', textAlign: 'center'}}>
                         <Button type="primary" htmlType="submit">Update</Button>
                     </Form.Item>
                 </Form>
@@ -161,6 +201,94 @@ class UniversityCourseDetailComponent extends React.Component {
 }
 
 const UniversityCourseDetail = Form.create({})(UniversityCourseDetailComponent);
+
+class NewUniversityCourseComponent extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.addNewCourse = this.addNewCourse.bind(this);
+    }
+
+    addNewCourse(e){
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                this.setState({confirmLoading: true});
+                UniversityCourseService.addNewCourse(values)
+                .then((response => {
+
+                    console.log(response);
+                    if (response.status === 201) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Add successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        });
+                        this.props.closeModal();
+                        this.props.updateData();
+                        this.props.form.resetFields();
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: response.message,
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                    this.setState({confirmLoading: false});
+                }));
+            }
+        });
+    }
+
+    isCourseNameExisted(rule, value, callback) {
+        if (!value) {
+            callback();
+        } else {
+            UniversityCourseService.getCourseByName(value)
+            .then((response) => {
+                if (response.status === 200) {
+                    callback([new Error(value + " is existed!")]);
+                } else if (response.status === 404) {
+                    callback();
+                } else {
+                    callback([new Error("Error")]);
+                }
+            })
+        }
+    }
+
+    render() {
+        const { getFieldDecorator } = this.props.form;
+        return (
+            <Form layout="inline" onSubmit={this.addNewCourse}>
+                <Form.Item 
+                    label="Name" 
+                    hasFeedback
+                >
+                    {getFieldDecorator('name', {
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input name!'
+                            },
+                            {
+                                validator: this.isCourseNameExisted
+                            }
+                        ]
+                    })(<Input/>)}
+                </Form.Item>
+
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">Add</Button>
+                </Form.Item>
+            </Form>
+        )
+    }
+}
+
+const NewUniversityCourse = Form.create({})(NewUniversityCourseComponent);
 
 class UniversityCourseComponent extends React.Component {
     columns = [
@@ -228,7 +356,6 @@ class UniversityCourseComponent extends React.Component {
 
         this.showModal = this.showModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
-        this.addNewCourse = this.addNewCourse.bind(this);
         this.fetchData = this.fetchData.bind(this);
         this.deleteCourse = this.deleteCourse.bind(this);
         this.showUpdateModal = this.showUpdateModal.bind(this);
@@ -299,39 +426,6 @@ class UniversityCourseComponent extends React.Component {
         this.setState({ updateModalVisible: false })
     }
 
-    addNewCourse(e){
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                this.setState({confirmLoading: true});
-                UniversityCourseService.addNewCourse(values)
-                .then((response => {
-
-                    console.log(response);
-                    if (response.status === 201) {
-                        notification.success({
-                            message: 'Notification',
-                            description: 'Add successfully!',
-                            top: 70,
-                            placement: 'topRight',
-                        });
-                        this.closeModal();
-                        this.fetchData();
-                        this.props.form.resetFields();
-                    } else {
-                        notification.error({
-                            message: 'Error',
-                            description: response.message,
-                            top: 70,
-                            placement: 'topRight',
-                        })
-                    }
-                    this.setState({confirmLoading: false});
-                }));
-            }
-        });
-    }
-
     fetchData() {
         this.setState({isLoading: true});
         UniversityCourseService.getListCourse()
@@ -367,23 +461,6 @@ class UniversityCourseComponent extends React.Component {
         );
     }
 
-    isCourseNameExisted(rule, value, callback) {
-        if (!value) {
-            callback();
-        } else {
-            UniversityCourseService.getCourseByName(value)
-            .then((response) => {
-                if (response.status === 200) {
-                    callback([new Error(value + " is existed!")]);
-                } else if (response.status === 404) {
-                    callback();
-                } else {
-                    callback([new Error("Error")]);
-                }
-            })
-        }
-    }
-
     async asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
           await callback(array[index], index, array);
@@ -391,7 +468,6 @@ class UniversityCourseComponent extends React.Component {
     }
 
     render() {
-        const { getFieldDecorator } = this.props.form;
         return (
             <Spin spinning={this.state.isLoading}>
                 <Button type="primary" onClick={this.showModal}>
@@ -405,28 +481,7 @@ class UniversityCourseComponent extends React.Component {
                     onCancel={this.closeModal}
                     footer={null}
                 >
-                    <Form layout="inline" onSubmit={this.addNewCourse}>
-                        <Form.Item 
-                            label="Name" 
-                            hasFeedback
-                        >
-                            {getFieldDecorator('name', {
-                                rules: [
-                                    {
-                                        required: true,
-                                        message: 'Please input name!'
-                                    },
-                                    {
-                                        validator: this.isCourseNameExisted
-                                    }
-                                ]
-                            })(<Input/>)}
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit">Add</Button>
-                        </Form.Item>
-                    </Form>
+                    <NewUniversityCourse closeModal={this.closeModal} updateData={this.fetchData} />
                 </Modal>
 
                 <Modal 
@@ -436,15 +491,15 @@ class UniversityCourseComponent extends React.Component {
                     onCancel={this.closeUpdateModal}
                     footer={null}
                 >
-                    <UniversityCourseDetail id={this.state.detailID || 0}/>
+                    <UniversityCourseDetail updateData={this.fetchData} id={this.state.detailID || 0}/>
                 </Modal>
 
-                <Card>
-                    <Table columns={this.columns} dataSource={this.state.dataSrc} />
+                <Card style={{overflow: 'auto'}}>
+                    <Table columns={this.columns} dataSource={this.state.dataSrc} style={{minWidth: '700px'}} />
                 </Card>
             </Spin>
         )
     }
 }
 
-export default Form.create({name: 'universityCourse'})(UniversityCourseComponent);
+export default UniversityCourseComponent;
