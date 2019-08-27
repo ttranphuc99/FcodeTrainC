@@ -9,6 +9,8 @@ public interface AccountService {
 
     List<Account> searchLikeFullname(String term);
 
+    List<Account> getAllByRole(int roleId);
+
     Account findById(Integer id);
 
     Account findByUsername(String username);
@@ -22,4 +24,8 @@ public interface AccountService {
     Account updateProfile(String username, Account newAcc);
 
     Integer countAccByUniCourse(Integer id);
+
+    void register(Account account);
+
+    boolean banAccount(String username);
 }

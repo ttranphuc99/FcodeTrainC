@@ -14,12 +14,19 @@ import java.util.List;
 public interface AccountRepository extends CrudRepository<Account, Integer> {
     List<Account> findByFullnameContaining(String term);
 
-    Account findFirstByUsername(String term);
+    List<Account> findByRoleId(int id);
+
+    Account findFirstByUsername(String username);
 
     @Modifying
     @Transactional
     @Query("UPDATE Account a SET a.fullname = ?1, a.description = ?2 WHERE (a.username = ?3)")
     int updateAccountProfile(String fullname, String description, String username);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Account a SET a.status = 0 WHERE (a.username = ?1)")
+    int banAccount(String username);
 
     @Query("SELECT a FROM Account a WHERE a.universityCourse.id = ?1")
     List<Account> countAccByUniCourse(Integer id);

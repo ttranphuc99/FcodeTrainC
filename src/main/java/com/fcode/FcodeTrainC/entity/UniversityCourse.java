@@ -45,6 +45,10 @@ public class UniversityCourse {
     public UniversityCourse() {
     }
 
+    public UniversityCourse(Integer id) {
+        this.id = id;
+    }
+
     public UniversityCourse(Integer id, String name) {
         this.id = id;
         this.name = name;
@@ -59,11 +63,11 @@ public class UniversityCourse {
     }
 
     public String getCreatorName() {
-        return this.getCreator().getFullname();
+        return (creator != null) ? this.getCreator().getFullname() : null;
     }
 
     public String getCreatorUsername() {
-        return this.getCreator().getUsername();
+        return (creator != null) ? this.getCreator().getUsername() : null;
     }
 
     public String getModifierName() {

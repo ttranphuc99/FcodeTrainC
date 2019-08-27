@@ -4,6 +4,7 @@ import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.entity.UniversityCourse;
 import com.fcode.FcodeTrainC.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Iterable<Account> findAll() {
@@ -62,4 +65,19 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.countAccByUniCourse(id).size();
     }
 
+    @Override
+    public List<Account> getAllByRole(int roleId) {
+        return accountRepository.findByRoleId(roleId);
+    }
+
+    @Override
+    public void register(Account account) {
+        account.setPassword(passwordEncoder.encode(account.getUsername()));
+        accountRepository.save(account);
+    }
+
+    @Override
+    public boolean banAccount(String username) {
+        return accountRepository.banAccount(username) > 0;
+    }
 }

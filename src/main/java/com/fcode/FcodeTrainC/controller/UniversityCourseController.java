@@ -16,7 +16,7 @@ public class UniversityCourseController {
     @Autowired
     private AccountServiceImpl account;
 
-    @PostMapping(value = "/universityCourse")
+    @PostMapping(value = "/auth/universityCourse")
     public ResponseEntity<UniversityCourse> insert(@RequestBody UniversityCourse universityCourse, Authentication auth) {
         universityCourse.setName(universityCourse.getName().toUpperCase());
         boolean isValid = true;
@@ -35,12 +35,12 @@ public class UniversityCourseController {
         return new ResponseEntity<>(universityCourse, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(value = "/universityCourse")
+    @GetMapping(value = "/auth/universityCourse")
     public Iterable<UniversityCourse> getAll() {
         return service.findAll();
     }
 
-    @PutMapping(value = "/universityCourse/{id}")
+    @PutMapping(value = "/auth/universityCourse/{id}")
     public ResponseEntity<UniversityCourse> update(@RequestBody UniversityCourse universityCourse, @PathVariable Integer id, Authentication auth) {
         boolean isValid = true;
         String regex = "^[a-zA-Z0-9]+$";
@@ -62,12 +62,12 @@ public class UniversityCourseController {
         return new ResponseEntity<>(universityCourse, HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping(value = "/universityCourse/{id}")
+    @DeleteMapping(value = "/admin/universityCourse/{id}")
     public void delete(@PathVariable Integer id) {
         service.delete(id);
     }
 
-    @GetMapping(value = "/universityCourse/{id}")
+    @GetMapping(value = "/auth/universityCourse/{id}")
     public ResponseEntity<UniversityCourse> findById(@PathVariable Integer id) {
         UniversityCourse result = this.service.findById(id);
 
@@ -78,7 +78,7 @@ public class UniversityCourseController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/universityCourseName/{name}")
+    @GetMapping(value = "/auth/universityCourseName/{name}")
     public ResponseEntity<UniversityCourse> findByName(@PathVariable String name) {
         name = name.toUpperCase();
         UniversityCourse course = service.findByName(name);

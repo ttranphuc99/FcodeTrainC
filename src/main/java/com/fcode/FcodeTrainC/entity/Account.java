@@ -85,11 +85,11 @@ public class Account {
     }
 
     public String getCreatorName() {
-        return creator.getFullname();
+        return (creator != null) ? creator.getFullname() : null;
     }
 
     public String getCreatorUsername() {
-        return creator.getUsername();
+        return (creator != null) ? creator.getUsername() : null;
     }
 
     public Integer getId() {
