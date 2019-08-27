@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch} from 'react-router-dom';
 import LoginComponent from '../component/LoginComponent';
 import HomeComponent from '../component/HomeComponent';
 import LogoutComponent from '../component/LogoutComponent';
-import UniversityCourseComponent from '../component/UniversityCourseComponent';
+import ManageAccountComponent from '../component/authComponent/manageAccount/ManageAccountComponent';
 
 import Layout from '../component/layout/DefaultLayout';
 
@@ -24,7 +24,7 @@ class RouterComponent extends React.Component {
                             <Layout>
                                 <AuthenticationRoute path="/home" exact component={HomeComponent} />
                                 <AuthenticationRoute path="/logout" exact component={LogoutComponent}/>
-                                <AuthenticationRoute path="/universityCourse" exact component={UniversityCourseComponent}/>
+                                <AuthenticationRoute path="/manageAccount" exact component={ManageAccountComponent}/>    
                             </Layout>
                         </Switch>
                     </>

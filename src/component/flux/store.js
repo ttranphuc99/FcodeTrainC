@@ -13,20 +13,10 @@ let adminMenu = {
       htmlBefore: '<i class="layout-icon fa fa-home" aria-hidden="true"></i>'
     },
     {
-      title: "Manage Course",
-      to: "/universityCourse",
-      htmlBefore: '<i class="layout-icon fa fa-address-book" aria-hidden="true"></i>',
-    },
-    {
-      title: "Manage Mentor",
-      to: "/b",
-      htmlBefore: '<i class="layout-icon fa fa-user-circle-o" aria-hidden="true"></i>'
-    },
-    {
-      title: "Manage Member",
-      to: "/c",
-      htmlBefore: '<i class="layout-icon fa fa-users" aria-hidden="true"></i>'
-    },
+      title: "Manage Account",
+      to: "/manageAccount",
+      htmlBefore: '<i class="layout-icon fa fa-user-circle-o" aria-hidden="true"></i>',
+    }
   ]
 };
 

@@ -7,6 +7,7 @@ import LoginService from '../service/LoginService';
 
 class AuthenticationRoute extends React.Component {
     render() {
+        console.log('path: ', this.props.path);
         let isAllow = false;
 
         if (LoginService.isLoggedIn()) {
@@ -17,7 +18,7 @@ class AuthenticationRoute extends React.Component {
                 '/logout'
             ];
             let adminPage = [
-                '/universityCourse'
+                '/manageAccount'
             ];
             let memberPage = [
 

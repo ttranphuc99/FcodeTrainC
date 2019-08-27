@@ -1,7 +1,7 @@
 import React from 'react';
 import { Spin, Icon, Button, Modal, Table, Form, Input, notification } from 'antd';
 import { Card } from 'shards-react';
-import UniversityCourseService from '../service/UniversityCourseService';
+import UniversityCourseService from '../../../service/UniversityCourseService';
 
 class UniversityCourseDetailComponent extends React.Component {
     constructor(props) {
@@ -276,7 +276,8 @@ class NewUniversityCourseComponent extends React.Component {
                             {
                                 validator: this.isCourseNameExisted
                             }
-                        ]
+                        ],
+                        validateTrigger: 'onBlur'
                     })(<Input/>)}
                 </Form.Item>
 

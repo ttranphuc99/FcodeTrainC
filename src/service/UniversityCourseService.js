@@ -2,7 +2,7 @@ const API_BASE = "http://localhost:8080";
 
 class UniversityCourseService {
     getListCourse() {
-        let url = API_BASE + '/universityCourse';
+        let url = API_BASE + '/auth/universityCourse';
 
         return fetch(url, {
             method: 'GET',
@@ -12,7 +12,7 @@ class UniversityCourseService {
     }
 
     countAccFromCourse(id) {
-        let url = API_BASE + '/account_universityCourse_quantity/' + id;
+        let url = API_BASE + '/auth/account_universityCourse_quantity/' + id;
         return fetch(url, {
             method: 'GET',
             withCredentials: true,
@@ -21,7 +21,7 @@ class UniversityCourseService {
     }
 
     deleteCourse(id) {
-        let url = API_BASE + '/universityCourse/' + id;
+        let url = API_BASE + '/admin/universityCourse/' + id;
 
         return fetch(url, {
             method: 'DELETE',
@@ -31,7 +31,7 @@ class UniversityCourseService {
     }
 
     getCourseByName(name) {
-        let url = API_BASE + '/universityCourseName/' + name;
+        let url = API_BASE + '/auth/universityCourseName/' + name;
 
         return fetch(url, {
             method: 'GET',
@@ -41,7 +41,7 @@ class UniversityCourseService {
     }
 
     getCourseById(id) {
-        let url = API_BASE + '/universityCourse/' + id;
+        let url = API_BASE + '/auth/universityCourse/' + id;
 
         return fetch(url, {
             method: 'GET',
@@ -51,7 +51,7 @@ class UniversityCourseService {
     }
 
     addNewCourse(data) {
-        let url = API_BASE + '/universityCourse/';
+        let url = API_BASE + '/auth/universityCourse/';
 
         return fetch(url, {
             method: 'POST',
@@ -65,7 +65,7 @@ class UniversityCourseService {
     }
 
     updateCourse(data, id) {
-        let url = API_BASE + '/universityCourse/' + id;
+        let url = API_BASE + '/auth/universityCourse/' + id;
 
         return fetch(url, {
             method: 'PUT',
