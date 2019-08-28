@@ -57,9 +57,9 @@ public class AccountController {
         return accountService.countAccByUniCourse(id);
     }
 
-    @GetMapping(value = "/auth/mentor")
-    public Iterable<Account> findAllByRole() {
-        return accountService.getAllByRole(3);
+    @GetMapping(value = "/auth/account/{roleId}")
+    public Iterable<Account> findAllByRole(@PathVariable Integer roleId) {
+        return accountService.getAllByRole(roleId);
     }
 
     @PostMapping(value = "/auth/account/{roleId}")
