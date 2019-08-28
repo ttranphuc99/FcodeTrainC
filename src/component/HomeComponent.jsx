@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import {Card, CardBody, Row, Col} from 'shards-react';
 import {Form, Input, Button, notification, Spin} from 'antd';
 import ProfileService from '../service/ProfileService';
@@ -205,4 +206,4 @@ class UpdateProfile extends React.Component {
 
 const HomeComponent = Form.create({ name: 'profile' })(UpdateProfile);
 
-export default HomeComponent;
+export default withRouter(HomeComponent);

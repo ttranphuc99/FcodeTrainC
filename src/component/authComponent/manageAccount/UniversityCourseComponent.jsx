@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { Spin, Icon, Button, Modal, Table, Form, Input, notification } from 'antd';
 import { Card } from 'shards-react';
 import UniversityCourseService from '../../../service/UniversityCourseService';
@@ -30,6 +31,7 @@ class UniversityCourseDetailComponent extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                this.props.load();
                 UniversityCourseService.updateCourse(values, this.props.id)
                 .then((response) => {
                     if (response.status === 200) {
@@ -49,6 +51,7 @@ class UniversityCourseDetailComponent extends React.Component {
                             placement: 'topRight',
                         });
                     }
+                    this.props.finish();
                 })
             }
         })
@@ -158,6 +161,14 @@ class UniversityCourseDetailComponent extends React.Component {
                                 {
                                     validator: this.isCourseNameExisted
                                 },
+                                {
+                                    pattern: new RegExp("^[a-zA-Z0-9]+$"),
+                                    message: 'Not contain special character'
+                                },
+                                {
+                                    max: 10,
+                                    message: 'Maximum 10 characters'
+                                }
                             ],
                             initialValue: this.state.course.name || ''
                         })(<Input/>)}
@@ -213,11 +224,9 @@ class NewUniversityCourseComponent extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                this.setState({confirmLoading: true});
+                this.props.load();
                 UniversityCourseService.addNewCourse(values)
                 .then((response => {
-
-                    console.log(response);
                     if (response.status === 201) {
                         notification.success({
                             message: 'Notification',
@@ -236,7 +245,7 @@ class NewUniversityCourseComponent extends React.Component {
                             placement: 'topRight',
                         })
                     }
-                    this.setState({confirmLoading: false});
+                    this.props.finish();
                 }));
             }
         });
@@ -361,6 +370,8 @@ class UniversityCourseComponent extends React.Component {
         this.deleteCourse = this.deleteCourse.bind(this);
         this.showUpdateModal = this.showUpdateModal.bind(this);
         this.closeUpdateModal = this.closeUpdateModal.bind(this);
+        this.loadModal = this.loadModal.bind(this);
+        this.finishModal = this.finishModal.bind(this);
     }
 
     showConfirm(id, name) {
@@ -427,6 +438,14 @@ class UniversityCourseComponent extends React.Component {
         this.setState({ updateModalVisible: false })
     }
 
+    loadModal() {
+        this.setState({ confirmLoading: false });
+    }
+
+    finishModal() {
+        this.setState({ confirmLoading: true });
+    }
+
     fetchData() {
         this.setState({isLoading: true});
         UniversityCourseService.getListCourse()
@@ -434,32 +453,36 @@ class UniversityCourseComponent extends React.Component {
             if (response.status === 200) {
                 return response.json();
             } else if (response.status === 401) {
-                this.props.history.push('/login');
+                localStorage.setItem('loggedIn', false);
+                return <Redirect to='/login'/>
             } else {
-                this.props.history.push('/error');
+                return <Redirect to='/error' />
             }
         }).then(json => {
-            const start = async(data) => {
-                await this.asyncForEach(data, async(row) => {
-                    row["key"] = row.id;
-                    let response = await UniversityCourseService.countAccFromCourse(row.id);
-                    
-                    if (response.status === 200) {
-                        let text = await response.text();
-                        row["quantity"] = text
-                    }
-                })
-                return data;
+            if (json != null) {
+                const start = async(data) => {
+                    await this.asyncForEach(data, async(row) => {
+                        row["key"] = row.id;
+                        let response = await UniversityCourseService.countAccFromCourse(row.id);
+                        
+                        if (response.status === 200) {
+                            let text = await response.text();
+                            row["quantity"] = text
+                        }
+                    })
+                    return data;
+                }
+                
+                return start(json);
             }
-            
-            return start(json);
-
-        }).then(json => 
-            this.setState({
-                isLoading: false,
-                dataSrc: json
-            })
-        );
+        }).then(json => {
+            if (json != null) {
+                this.setState({
+                    isLoading: false,
+                    dataSrc: json
+                })
+            }   
+        });
     }
 
     async asyncForEach(array, callback) {
@@ -482,7 +505,11 @@ class UniversityCourseComponent extends React.Component {
                     onCancel={this.closeModal}
                     footer={null}
                 >
-                    <NewUniversityCourse closeModal={this.closeModal} updateData={this.fetchData} />
+                    <NewUniversityCourse 
+                        closeModal={this.closeModal} 
+                        updateData={this.fetchData} 
+                        load={this.loadModal}
+                        finish={this.finishModal}/>
                 </Modal>
 
                 <Modal 
@@ -492,7 +519,11 @@ class UniversityCourseComponent extends React.Component {
                     onCancel={this.closeUpdateModal}
                     footer={null}
                 >
-                    <UniversityCourseDetail updateData={this.fetchData} id={this.state.detailID || 0}/>
+                    <UniversityCourseDetail 
+                        updateData={this.fetchData} 
+                        id={this.state.detailID || 0}
+                        load={this.loadModal}
+                        finish={this.finishModal}/>
                 </Modal>
 
                 <Card style={{overflow: 'auto'}}>
