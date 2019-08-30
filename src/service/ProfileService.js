@@ -13,6 +13,16 @@ class ProfileService {
         });
     }
 
+    loadProfiles(username) {
+        let url = API_BASE + '/member/account/' + username;
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        });
+    }
+
     updateProfile(data) {
         let url = API_BASE + '/member/account';
         let body = {

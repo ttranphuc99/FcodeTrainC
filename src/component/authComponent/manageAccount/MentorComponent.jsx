@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import AccountService from '../../../service/AccountService';
 import LoginService from '../../../service/LoginService';
 import UniversityCourseService from '../../../service/UniversityCourseService';
+import ProfileDetailComponent from './ProfileDetailComponent';
 
 class AddNewMentorComponent extends React.Component {
     constructor(props) {
@@ -182,7 +183,7 @@ class MentorComponent extends React.Component {
                 return <Button 
                     style={{padding: '0'}}
                     type="link" 
-                    onClick={() => this.showDetail(record.id)}
+                    onClick={() => this.showDetailModal(record.username)}
                 >{record.id}</Button>
             }
         },
@@ -224,6 +225,8 @@ class MentorComponent extends React.Component {
         super(props);
 
         this.state = {
+            redirecting: false,
+            isError: false,
             isLoading: false,
             newModalVisible: false,
             firstRenderNewModal: true,
@@ -239,9 +242,10 @@ class MentorComponent extends React.Component {
         this.showNewModal = this.showNewModal.bind(this);
         this.closeDetailModal = this.closeDetailModal.bind(this);
         this.closeNewModal = this.closeNewModal.bind(this);
+        this.showNotFound = this.showNotFound.bind(this);
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.getListAccount();
     }
 
@@ -253,9 +257,9 @@ class MentorComponent extends React.Component {
                 return response.json();
             } else if (response.status === 401) {
                 localStorage.setItem('loggedIn', false);
-                return <Redirect to='/login' />
+                this.setState({ redirecting: true });
             } else {
-                return <Redirect to='/error' />
+                this.setState({ isError: true, error: response });
             }
         }).then(json => {
             if (json != null) {
@@ -267,7 +271,9 @@ class MentorComponent extends React.Component {
                     data: json
                 })
             }
-        })
+        }).catch((err) => {
+            this.setState({ isError: true, error: err });
+        });
     }
 
     showNewModal() {
@@ -279,8 +285,8 @@ class MentorComponent extends React.Component {
         }
     }
 
-    showDetailModal() {
-        this.setState({ detailModalVisible: true })
+    showDetailModal(username) {
+        this.setState({ detailModalVisible: true, detailUsername: username });
     }
 
     closeNewModal() {
@@ -303,7 +309,18 @@ class MentorComponent extends React.Component {
         this.getListAccount()
     }
 
+    showNotFound() {
+        notification.error({
+            message: 'Error',
+            description: "Not found user " + this.state.detailUsername,
+            top: 70,
+            placement: 'topRight',
+        })
+    }
+
     render() {
+        if (this.state.redirecting) return <Redirect to="/login"/>
+        if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
         return (
             <Spin spinning={this.state.isLoading}>
                 <Button type="primary" onClick={this.showNewModal}>
@@ -326,13 +343,16 @@ class MentorComponent extends React.Component {
                 </Modal>
 
                 <Modal 
-                    title="University Course Detail"
-                    visible={this.state.updateModalVisible}
-                    confirmLoading={this.state.confirmLoading}
-                    onCancel={this.closeUpdateModal}
+                    title="Mentor Detail"
+                    visible={this.state.detailModalVisible}
+                    onCancel={this.closeDetailModal}
                     footer={null}
                 >
-                    {/* <UniversityCourseDetail updateData={this.fetchData} id={this.state.detailID || 0}/> */}
+                    <ProfileDetailComponent 
+                        ref="profileDetail"
+                        username={this.state.detailUsername} 
+                        isAuth={true}
+                        notFound={this.showNotFound}/>
                 </Modal>
 
                 <Card style={{overflow: 'auto'}}>

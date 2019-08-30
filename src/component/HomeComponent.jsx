@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import {Card, CardBody, Row, Col} from 'shards-react';
 import {Form, Input, Button, notification, Spin} from 'antd';
 import ProfileService from '../service/ProfileService';
@@ -8,6 +8,8 @@ class UpdateProfile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            redirecting: false,
+            isError: false,
             account : [],
             message: '',
             isLoading: true
@@ -26,19 +28,19 @@ class UpdateProfile extends React.Component {
             if (response.status === 200) {
                 return response.json();
             } else if (response.status === 401) {
-                this.props.history.push('/login');
+                localStorage.setItem('loggedIn', false);
+                this.setState({ redirecting: true });
             } else {
-                this.props.history.push('/error');
+                this.setState({ isError: true, error: response });
             }
         }).then(data => {
             this.setState({
                 account: data,
                 isLoading: false
             });
-        }).catch(error => this.setState({
-            message: error,
-            isLoading: false
-        }))
+        }).catch((err) => {
+            this.setState({ isError: true, error: err });
+        });
     }
 
     handleSubmit = e => {
@@ -94,6 +96,9 @@ class UpdateProfile extends React.Component {
     };
 
     render() {
+        if (this.state.redirecting) return <Redirect to="/login"/>
+        if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
+
         const { getFieldDecorator } = this.props.form;
         const creator = this.state.account.creatorName + " - @" + this.state.account.creatorUsername;
         const regexName = "^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
@@ -206,4 +211,4 @@ class UpdateProfile extends React.Component {
 
 const HomeComponent = Form.create({ name: 'profile' })(UpdateProfile);
 
-export default withRouter(HomeComponent);
+export default HomeComponent;

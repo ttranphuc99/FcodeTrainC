@@ -15,7 +15,8 @@ class AuthenticationRoute extends React.Component {
             let role = LoginService.getRole();
             let authPage = [
                 '/home',
-                '/logout'
+                '/logout',
+                '/error'
             ];
             let adminPage = [
                 '/manageAccount'

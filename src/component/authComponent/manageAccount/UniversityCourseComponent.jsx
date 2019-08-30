@@ -357,6 +357,8 @@ class UniversityCourseComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            isError: false,
+            redirecting: false,
             isLoading: true,
             modalVisible: false,
             confirmLoading: false,
@@ -411,7 +413,6 @@ class UniversityCourseComponent extends React.Component {
                 });
             }
         })
-        // console.log('del ', id);
     }
 
     componentWillMount() {
@@ -454,12 +455,12 @@ class UniversityCourseComponent extends React.Component {
                 return response.json();
             } else if (response.status === 401) {
                 localStorage.setItem('loggedIn', false);
-                return <Redirect to='/login'/>
+                this.setState({ redirecting: true });
             } else {
-                return <Redirect to='/error' />
+                this.setState({ isError: true, error: response });
             }
         }).then(json => {
-            if (json != null) {
+            if (Array.isArray(json)) {
                 const start = async(data) => {
                     await this.asyncForEach(data, async(row) => {
                         row["key"] = row.id;
@@ -482,6 +483,8 @@ class UniversityCourseComponent extends React.Component {
                     dataSrc: json
                 })
             }   
+        }).catch((err) => {
+            this.setState({ isError: true, error: err });
         });
     }
 
@@ -492,6 +495,8 @@ class UniversityCourseComponent extends React.Component {
     }
 
     render() {
+        if (this.state.redirecting) return <Redirect to="/login"/>
+        if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
         return (
             <Spin spinning={this.state.isLoading}>
                 <Button type="primary" onClick={this.showModal}>

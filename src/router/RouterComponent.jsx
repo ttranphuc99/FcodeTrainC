@@ -5,6 +5,7 @@ import LoginComponent from '../component/LoginComponent';
 import HomeComponent from '../component/HomeComponent';
 import LogoutComponent from '../component/LogoutComponent';
 import ManageAccountComponent from '../component/authComponent/manageAccount/ManageAccountComponent';
+import ErrorComponent from '../component/ErrorComponent';
 
 import Layout from '../component/layout/DefaultLayout';
 
@@ -22,6 +23,7 @@ class RouterComponent extends React.Component {
                             <UnauthenticationRoute path="/login" exact component={LoginComponent} />
                             <UnauthenticationRoute path="/" exact component={LoginComponent} />
                             <Layout>
+                                <AuthenticationRoute path="/error" exact component={ErrorComponent}/>
                                 <AuthenticationRoute path="/home" exact component={HomeComponent} />
                                 <AuthenticationRoute path="/logout" exact component={LogoutComponent}/>
                                 <AuthenticationRoute path="/manageAccount" exact component={ManageAccountComponent}/>    
