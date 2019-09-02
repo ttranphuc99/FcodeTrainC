@@ -179,6 +179,7 @@ class MentorComponent extends React.Component {
         {
             title: 'ID',
             key: 'id',
+            sorter: true,
             render: record => {
                 return <Button 
                     style={{padding: '0'}}
@@ -190,16 +191,19 @@ class MentorComponent extends React.Component {
         {
             title: 'Username',
             dataIndex: 'username',
-            key: 'username'
+            key: 'username',
+            sorter: true
         },
         {
             title: 'Fullname',
             key: 'fullname',
-            dataIndex: 'fullname'
+            dataIndex: 'fullname',
+            sorter: true
         },
         {
             title: 'Course',
             key: 'course',
+            sorter: true,
             render: record => {
                 if (record.universityCourse) {
                     return <span>{record.universityCourse.name}</span>
@@ -263,9 +267,6 @@ class MentorComponent extends React.Component {
             }
         }).then(json => {
             if (json != null) {
-                json.forEach((record, index) => {
-                    record["key"] = index;
-                });
                 this.setState({
                     isLoading: false,
                     data: json
@@ -285,8 +286,9 @@ class MentorComponent extends React.Component {
         }
     }
 
-    showDetailModal(username) {
-        this.setState({ detailModalVisible: true, detailUsername: username });
+    async showDetailModal(username) {
+        await this.setState({ detailModalVisible: true, detailUsername: username });
+        this.refs.profileDetail.fetchData();
     }
 
     closeNewModal() {
@@ -356,7 +358,11 @@ class MentorComponent extends React.Component {
                 </Modal>
 
                 <Card style={{overflow: 'auto'}}>
-                    <Table columns={this.columns} dataSource={this.state.data} style={{minWidth: '700px'}} />
+                    <Table 
+                        rowKey={record => record.id} 
+                        columns={this.columns} 
+                        dataSource={this.state.data} 
+                        style={{minWidth: '700px'}} />
                 </Card>
             </Spin>
         )

@@ -460,23 +460,6 @@ class UniversityCourseComponent extends React.Component {
                 this.setState({ isError: true, error: response });
             }
         }).then(json => {
-            if (Array.isArray(json)) {
-                const start = async(data) => {
-                    await this.asyncForEach(data, async(row) => {
-                        row["key"] = row.id;
-                        let response = await UniversityCourseService.countAccFromCourse(row.id);
-                        
-                        if (response.status === 200) {
-                            let text = await response.text();
-                            row["quantity"] = text
-                        }
-                    })
-                    return data;
-                }
-                
-                return start(json);
-            }
-        }).then(json => {
             if (json != null) {
                 this.setState({
                     isLoading: false,
@@ -486,12 +469,6 @@ class UniversityCourseComponent extends React.Component {
         }).catch((err) => {
             this.setState({ isError: true, error: err });
         });
-    }
-
-    async asyncForEach(array, callback) {
-        for (let index = 0; index < array.length; index++) {
-          await callback(array[index], index, array);
-        }
     }
 
     render() {
@@ -532,7 +509,12 @@ class UniversityCourseComponent extends React.Component {
                 </Modal>
 
                 <Card style={{overflow: 'auto'}}>
-                    <Table columns={this.columns} dataSource={this.state.dataSrc} style={{minWidth: '700px'}} />
+                    <Table 
+                        pagination={false}
+                        rowKey={record => record.id} 
+                        columns={this.columns} 
+                        dataSource={this.state.dataSrc} 
+                        style={{minWidth: '700px'}} />
                 </Card>
             </Spin>
         )

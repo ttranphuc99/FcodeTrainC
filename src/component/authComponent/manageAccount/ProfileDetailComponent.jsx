@@ -18,12 +18,12 @@ class ProfileDetailComponent extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchData();
+        // this.fetchData();
     }
 
     fetchData() {
         this.setState({ isLoading: true });
-
+               
         ProfileService.loadProfiles(this.props.username)
         .then(response => {
             if (response.status === 200) {
@@ -45,9 +45,7 @@ class ProfileDetailComponent extends React.Component {
             } else {
                 this.setState({ isError: true, error: response });
             }
-        }).then(data => {
-            console.log("dataaaaaaa", data);
-            
+        }).then(data => {            
             if (data != null) {
                 this.setState({ profile: data, isLoading: false });
             } else {
