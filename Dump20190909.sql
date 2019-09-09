@@ -187,7 +187,13 @@ CREATE TABLE `fc_assignment` (
   `as_last_modified` timestamp NULL DEFAULT NULL,
   `ac_creator_id` int(11) DEFAULT NULL,
   `ac_modifier_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`as_id`)
+  PRIMARY KEY (`as_id`),
+  KEY `fk_fc_assignment_1_idx` (`co_id`),
+  KEY `fk_fc_assignment_2_idx` (`ac_creator_id`),
+  KEY `fk_fc_assignment_3_idx` (`ac_modifier_id`),
+  CONSTRAINT `fk_fc_assignment_1` FOREIGN KEY (`co_id`) REFERENCES `fc_course` (`co_id`),
+  CONSTRAINT `fk_fc_assignment_2` FOREIGN KEY (`ac_creator_id`) REFERENCES `fc_account` (`ac_id`),
+  CONSTRAINT `fk_fc_assignment_3` FOREIGN KEY (`ac_modifier_id`) REFERENCES `fc_account` (`ac_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -199,6 +205,42 @@ LOCK TABLES `fc_assignment` WRITE;
 /*!40000 ALTER TABLE `fc_assignment` DISABLE KEYS */;
 /*!40000 ALTER TABLE `fc_assignment` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `fcodetrainc`.`fc_assignment_BEFORE_INSERT` BEFORE INSERT ON `fc_assignment` FOR EACH ROW
+BEGIN
+SET NEW.as_created_time := NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `fcodetrainc`.`fc_assignment_BEFORE_UPDATE` BEFORE UPDATE ON `fc_assignment` FOR EACH ROW
+BEGIN
+SET new.as_last_modified := NOW();
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `fc_course`
@@ -380,4 +422,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-09 20:17:11
+-- Dump completed on 2019-09-09 20:23:54
