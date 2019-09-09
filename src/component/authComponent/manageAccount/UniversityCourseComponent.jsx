@@ -301,59 +301,6 @@ class NewUniversityCourseComponent extends React.Component {
 const NewUniversityCourse = Form.create({})(NewUniversityCourseComponent);
 
 class UniversityCourseComponent extends React.Component {
-    columns = [
-        {
-            title: 'ID',
-            key: 'id',
-            render: record => {
-                return <Button 
-                    style={{padding: '0'}}
-                    type="link" 
-                    onClick={() => this.showDetail(record.id)}
-                >{record.id}</Button>
-            }
-        },
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name'
-        },
-        {
-            title: 'Creator',
-            key: 'creator',
-            render: record => {
-                return <span>{record.creatorName} - @{record.creatorUsername}</span>
-            }
-        },
-        {
-            title: 'Last Editor',
-            key: 'lastEditor',
-            render: record => {
-                if (record.modifierName) {
-                    return <span>{record.modifierName} - @{record.modifierUsername}</span>
-                }
-                return '';
-            }
-        },
-        {
-            title: 'Quantity',
-            key: 'quantity',
-            dataIndex: 'quantity'
-        },
-        {
-            title: 'Action',
-            key: 'action',
-            render: record => {
-                if (record.quantity > 0) return ''
-                return (
-                    <div>
-                        <Button type="danger" onClick={() => this.showConfirm(record.id, record.name)}>Delete</Button>
-                    </div>
-                )
-            }
-        }
-    ];
-    
     constructor(props) {
         super(props);
         this.state = {
@@ -460,6 +407,21 @@ class UniversityCourseComponent extends React.Component {
                 this.setState({ isError: true, error: response });
             }
         }).then(json => {
+            if (Array.isArray(json)) {
+                const start = async(data) => {
+                    await this.asyncForEach(data, async(row) => {		
+                        let response = await UniversityCourseService.countAccFromCourse(row.id);	
+
+                        if (response.status === 200) {	
+                            let text = await response.text();	
+                            row["quantity"] = text	
+                        }	
+                    })	
+                    return data;
+                }
+                return start(json);
+            }
+        }).then(json => {
             if (json != null) {
                 this.setState({
                     isLoading: false,
@@ -471,9 +433,123 @@ class UniversityCourseComponent extends React.Component {
         });
     }
 
+    async asyncForEach(array, callback) {	
+        for (let index = 0; index < array.length; index++) {	
+          await callback(array[index], index, array);	
+        }	
+    }
+
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Input
+              ref={node => {this.searchInput = node;}}
+              placeholder={`Search ${dataIndex}`}
+              value={selectedKeys[0]}
+              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+              style={{ width: 188, marginBottom: 8, display: 'block' }}
+            />
+            <Button
+              type="primary"
+              onClick={() => this.handleSearch(selectedKeys, confirm)}
+              icon="search"
+              size="small"
+              style={{ width: 90, marginRight: 8 }}
+            >
+              Search
+            </Button>
+            <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+              Reset
+            </Button>
+          </div>
+        ),
+        filterIcon: filtered => (
+          <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        onFilter: (value, record) =>
+          record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+          if (visible) {
+            setTimeout(() => this.searchInput.select());
+          }
+        },
+    });
+
+    handleSearch = (selectedKeys, confirm) => {
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    };
+    
+    handleReset = clearFilters => {
+        clearFilters();
+        this.setState({ searchText: '' });
+    };
+
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
+
+        const columns = [
+            {
+                title: 'ID',
+                key: 'id',
+                render: record => {
+                    return <Button 
+                        style={{padding: '0'}}
+                        type="link" 
+                        onClick={() => this.showDetail(record.id)}
+                    >{record.id}</Button>
+                },
+                sorter: (a,b) => a.id - b.id
+            },
+            {
+                title: 'Name',
+                dataIndex: 'name',
+                key: 'name',
+                sorter: (a,b) => a.name.localeCompare(b.name),
+                ...this.getColumnSearchProps('name')
+            },
+            {
+                title: 'Creator',
+                key: 'creator',
+                render: record => {
+                    return <span>{record.creatorName} - @{record.creatorUsername}</span>
+                },
+            },
+            {
+                title: 'Last Editor',
+                key: 'lastEditor',
+                render: record => {
+                    if (record.modifierName) {
+                        return <span>{record.modifierName} - @{record.modifierUsername}</span>
+                    }
+                    return '';
+                }
+            },
+            {
+                title: 'Quantity',
+                key: 'quantity',
+                dataIndex: 'quantity',
+                sorter: (a,b) => a.quantity - b.quantity
+            },
+            {
+                title: 'Action',
+                key: 'action',
+                render: record => {
+                    if (record.quantity > 0) return ''
+                    return (
+                        <div>
+                            <Button type="danger" onClick={() => this.showConfirm(record.id, record.name)}>Delete</Button>
+                        </div>
+                    )
+                }
+            }
+        ];
+
         return (
             <Spin spinning={this.state.isLoading}>
                 <Button type="primary" onClick={this.showModal}>
@@ -512,7 +588,7 @@ class UniversityCourseComponent extends React.Component {
                     <Table 
                         pagination={false}
                         rowKey={record => record.id} 
-                        columns={this.columns} 
+                        columns={columns} 
                         dataSource={this.state.dataSrc} 
                         style={{minWidth: '700px'}} />
                 </Card>
