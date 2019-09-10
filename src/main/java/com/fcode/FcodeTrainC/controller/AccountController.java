@@ -2,8 +2,8 @@ package com.fcode.FcodeTrainC.controller;
 
 import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.entity.Role;
-import com.fcode.FcodeTrainC.service.AccountServiceImpl;
-import com.fcode.FcodeTrainC.service.RoleServiceImpl;
+import com.fcode.FcodeTrainC.service.AccountService;
+import com.fcode.FcodeTrainC.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class AccountController {
     @Autowired
-    AccountServiceImpl accountService;
+    AccountService accountService;
     @Autowired
-    RoleServiceImpl roleService;
+    RoleService roleService;
 
     @GetMapping(value = "/member/account/{username}")
     public ResponseEntity getAccount(@PathVariable String username) {

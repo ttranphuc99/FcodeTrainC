@@ -1,15 +1,34 @@
 package com.fcode.FcodeTrainC.service;
 
 import com.fcode.FcodeTrainC.entity.UniversityCourse;
+import com.fcode.FcodeTrainC.repository.UniversityCourseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.Optional;
 
-public interface UniversityCourseService {
-    void save(UniversityCourse course);
+@Service
+public class UniversityCourseService {
+    @Autowired
+    private UniversityCourseRepository repository;
 
-    Iterable<UniversityCourse> findAll();
+    public void save(UniversityCourse course) {
+        this.repository.save(course);
+    }
 
-    void delete(Integer id);
+    public Iterable<UniversityCourse> findAll() {
+        return this.repository.findAll();
+    }
 
-    UniversityCourse findById(Integer id);
+    public void delete(Integer id) {
+        this.repository.deleteById(id);
+    }
 
-    UniversityCourse findByName(String name);
+    public UniversityCourse findById(Integer id) {
+        Optional<UniversityCourse> opt = this.repository.findById(id);
+        return opt.isPresent() ? opt.get() : null;
+    }
+
+    public UniversityCourse findByName(String name) {
+        return repository.findByName(name);
+    }
 }

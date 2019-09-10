@@ -1,8 +1,8 @@
 package com.fcode.FcodeTrainC.controller;
 
 import com.fcode.FcodeTrainC.entity.UniversityCourse;
-import com.fcode.FcodeTrainC.service.AccountServiceImpl;
-import com.fcode.FcodeTrainC.service.UniversityCourseServiceImpl;
+import com.fcode.FcodeTrainC.service.AccountService;
+import com.fcode.FcodeTrainC.service.UniversityCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UniversityCourseController {
     @Autowired
-    private UniversityCourseServiceImpl service;
+    private UniversityCourseService service;
     @Autowired
-    private AccountServiceImpl account;
+    private AccountService account;
 
     @PostMapping(value = "/auth/universityCourse")
     public ResponseEntity<UniversityCourse> insert(@RequestBody UniversityCourse universityCourse, Authentication auth) {
