@@ -106,19 +106,19 @@ DROP TABLE IF EXISTS `fc_account_course`;
 CREATE TABLE `fc_account_course` (
   `ac_id` int(11) NOT NULL,
   `co_id` int(11) NOT NULL,
-  `ac_creator` int(11) DEFAULT NULL,
-  `ac_modifier` int(11) DEFAULT NULL,
+  `ac_creator_id` int(11) DEFAULT NULL,
+  `ac_modifier_id` int(11) DEFAULT NULL,
   `ac_co_created_time` timestamp(6) NULL DEFAULT NULL,
   `ac_co_last_modified` timestamp(6) NULL DEFAULT NULL,
   `ac_co_status` int(11) DEFAULT NULL,
   PRIMARY KEY (`ac_id`,`co_id`),
   KEY `fk_fc_account_course_2_idx` (`co_id`),
-  KEY `fk_fc_account_course_3_idx` (`ac_creator`),
-  KEY `fk_fc_account_course_4_idx` (`ac_modifier`),
+  KEY `fk_fc_account_course_3_idx` (`ac_creator_id`),
+  KEY `fk_fc_account_course_4_idx` (`ac_modifier_id`),
   CONSTRAINT `fk_fc_account_course_1` FOREIGN KEY (`ac_id`) REFERENCES `fc_account` (`ac_id`),
   CONSTRAINT `fk_fc_account_course_2` FOREIGN KEY (`co_id`) REFERENCES `fc_course` (`co_id`),
-  CONSTRAINT `fk_fc_account_course_3` FOREIGN KEY (`ac_creator`) REFERENCES `fc_account` (`ac_id`),
-  CONSTRAINT `fk_fc_account_course_4` FOREIGN KEY (`ac_modifier`) REFERENCES `fc_account` (`ac_id`)
+  CONSTRAINT `fk_fc_account_course_3` FOREIGN KEY (`ac_creator_id`) REFERENCES `fc_account` (`ac_id`),
+  CONSTRAINT `fk_fc_account_course_4` FOREIGN KEY (`ac_modifier_id`) REFERENCES `fc_account` (`ac_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -176,13 +176,11 @@ DROP TABLE IF EXISTS `fc_assignment`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fc_assignment` (
   `co_id` int(11) DEFAULT NULL,
-  `as_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `as_id` varchar(255) NOT NULL,
   `as_title` varchar(255) DEFAULT NULL,
   `as_content` text,
   `as_mark` int(11) DEFAULT NULL,
-  `as_submit_time` int(11) DEFAULT NULL,
-  `as_time_start` timestamp NULL DEFAULT NULL,
-  `as_deadline` timestamp NULL DEFAULT NULL,
+  `as_submit_quantity` int(11) DEFAULT NULL,
   `as_created_time` timestamp NULL DEFAULT NULL,
   `as_last_modified` timestamp NULL DEFAULT NULL,
   `ac_creator_id` int(11) DEFAULT NULL,
@@ -413,12 +411,12 @@ DROP TABLE IF EXISTS `fc_work`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fc_work` (
-  `as_id` int(11) DEFAULT NULL,
+  `as_id` varchar(255) DEFAULT NULL,
   `wo_id` varchar(45) NOT NULL,
   `ac_worker` int(11) DEFAULT NULL,
   `ac_judger` int(11) DEFAULT NULL,
   `wo_submit_quantity` int(11) DEFAULT NULL,
-  `wo_comment` int(11) DEFAULT NULL,
+  `wo_comment` text,
   `wo_status` int(11) DEFAULT NULL,
   `wo_submit_time` timestamp NULL DEFAULT NULL,
   `wo_judge_time` timestamp NULL DEFAULT NULL,
@@ -428,7 +426,7 @@ CREATE TABLE `fc_work` (
   KEY `fk_fc_work_3_idx` (`as_id`),
   CONSTRAINT `fk_fc_work_1` FOREIGN KEY (`ac_worker`) REFERENCES `fc_account` (`ac_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_fc_work_2` FOREIGN KEY (`ac_judger`) REFERENCES `fc_account` (`ac_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_fc_work_3` FOREIGN KEY (`as_id`) REFERENCES `fc_assignment` (`co_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_fc_work_3` FOREIGN KEY (`as_id`) REFERENCES `fc_assignment` (`as_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -476,4 +474,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-10  9:29:51
+-- Dump completed on 2019-09-10 15:36:43
