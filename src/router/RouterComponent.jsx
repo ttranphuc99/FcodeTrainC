@@ -5,12 +5,14 @@ import LoginComponent from '../component/LoginComponent';
 import HomeComponent from '../component/HomeComponent';
 import LogoutComponent from '../component/LogoutComponent';
 import ManageAccountComponent from '../component/authComponent/manageAccount/ManageAccountComponent';
+import ManagaCourseComponent from '../component/authComponent/manageCourse/ManageCourseComponent';
 import ErrorComponent from '../component/ErrorComponent';
 
 import Layout from '../component/layout/DefaultLayout';
 
 import AuthenticationRoute from './AuthenticationRoute';
 import UnauthenticationRoute from './UnauthenticationRoute';
+
 
 
 class RouterComponent extends React.Component {
@@ -26,7 +28,8 @@ class RouterComponent extends React.Component {
                                 <AuthenticationRoute path="/error" exact component={ErrorComponent}/>
                                 <AuthenticationRoute path="/home" exact component={HomeComponent} />
                                 <AuthenticationRoute path="/logout" exact component={LogoutComponent}/>
-                                <AuthenticationRoute path="/manageAccount" exact component={ManageAccountComponent}/>    
+                                <AuthenticationRoute path="/manageAccount" exact component={ManageAccountComponent}/> 
+                                <AuthenticationRoute path="/manageCourse" exact component={ManagaCourseComponent}/>   
                             </Layout>
                         </Switch>
                     </>

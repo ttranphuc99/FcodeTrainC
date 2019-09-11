@@ -124,7 +124,7 @@ class AddNewAccountComponent extends React.Component {
                                 }, 
                                 {
                                     max: 45,
-                                    message: 'Maximum 50 characters'
+                                    message: 'Maximum 45 characters'
                                 }
                             ]
                         })(<Input/>)}

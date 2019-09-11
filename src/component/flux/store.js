@@ -16,6 +16,11 @@ let adminMenu = {
       title: "Manage Account",
       to: "/manageAccount",
       htmlBefore: '<i class="layout-icon fa fa-user-circle-o" aria-hidden="true"></i>',
+    },
+    {
+      title: "Manage Course",
+      to: "/manageCourse",
+      htmlBefore: '<i class="layout-icon fa fa-graduation-cap" aria-hidden="true"></i>'
     }
   ]
 };
