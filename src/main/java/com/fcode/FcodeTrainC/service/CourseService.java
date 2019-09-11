@@ -21,6 +21,10 @@ public class CourseService {
         return opt.isPresent() ? opt.get() : null;
     }
 
+    public Course findByName(String name) {
+        return repository.findFirstByName(name);
+    }
+
     public void save(Course course) {
         repository.save(course);
     }
