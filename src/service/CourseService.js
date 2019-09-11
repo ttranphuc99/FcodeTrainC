@@ -40,6 +40,16 @@ class CourseService {
             credentials: 'include'
         });
     }
+
+    getCourseDetail(id) {
+        let url = API_BASE + "/auth/course/" + id;
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
 }
 
 export default new CourseService();

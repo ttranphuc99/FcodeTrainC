@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect, Link } from 'react-router-dom';
 import { Spin, Button, Icon, Card, Table, Input, Tag, Form, Modal, notification } from 'antd';
 import CourseService from '../../../service/CourseService';
 
@@ -217,11 +218,16 @@ class ListCourseComponent extends React.Component {
     }
 
     render() {
+        if (this.state.redirecting) return <Redirect to="/login"/>
+        if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
+
         const column = [
             {
                 title: 'ID',
                 key: 'id',
-                dataIndex: 'id',
+                render: record => {
+                    return <Link to={'/manageCourse/course/' + record.id}>{record.id}</Link>
+                },
                 sorter: (a,b) => a.id - b.id,
                 width: '10%'
             },
