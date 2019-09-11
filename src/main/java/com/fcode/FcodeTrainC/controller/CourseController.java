@@ -21,8 +21,20 @@ public class CourseController {
         return service.findAll();
     }
 
+    @GetMapping(value = "/auth/course/{id}")
+    public ResponseEntity<Course> getCourseById(@PathVariable Integer id) {
+        Course c = service.findById(id);
+        ResponseEntity<Course> result;
+        if (c != null) {
+            result = new ResponseEntity(c, HttpStatus.OK);
+        } else {
+            result = ResponseEntity.notFound().build();
+        }
+        return result;
+    }
+
     @GetMapping(value = "/member/course/name/{name}")
-    public ResponseEntity<Course> getCourseById(@PathVariable String name) {
+    public ResponseEntity<Course> getCourseByName(@PathVariable String name) {
         Course c = service.findByName(name);
         ResponseEntity<Course> result;
         if (c != null) {
