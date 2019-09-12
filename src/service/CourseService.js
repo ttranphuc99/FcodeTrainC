@@ -1,20 +1,49 @@
 const API_BASE = 'http://localhost:8080';
 
 class CourseService {
-    async isCourseNameExisted(name) {
+    async isCourseNameExisted(name, id = -1) {
         let url = API_BASE + "/member/course/name/" + name;
-
-        let result = await fetch(url, {
+        let response = await fetch(url, {
             method: 'GET',
             withCredentials: true,
             credentials: 'include'
-        }).then(response => {
+        });
+        console.log('iddd ', id);
+        if (id === -1) {
             if (response.status === 404) {
                 return false;
             }
             return true;
+        } else {
+            if (response.status === 200) {
+                let result = await response.json()
+                .then(data => {
+                    console.log('dataaa ' , data);
+                    if (data.id === id) {
+                        return false;
+                    }
+                    return true;
+                })
+
+                return result;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    updateCourse(data, id) {
+        let url = API_BASE + '/auth/course/' + id;
+
+        return fetch(url, {
+            method: 'PUT',
+            withCredentials: true,
+            credentials: 'include',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
-        return result;
     }
 
     addNewCourse(data) {
@@ -49,6 +78,10 @@ class CourseService {
             withCredentials: true,
             credentials: 'include'
         })
+    }
+
+    getListAccountInCourse(courseId) {
+        let url = API_BASE + "/auth"
     }
 }
 
