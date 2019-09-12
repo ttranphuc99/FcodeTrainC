@@ -68,4 +68,43 @@ public class CourseController {
 
         return new ResponseEntity<>(course, HttpStatus.BAD_REQUEST);
     }
+
+    @PutMapping(value = "/auth/course/{id}")
+    public ResponseEntity<Course> update(@PathVariable Integer id, @RequestBody Course course, Authentication authentication) {
+        ResponseEntity result = null;
+        if (course ==  null) {
+            result = ResponseEntity.notFound().build();
+        } else {
+            if (course.getId() != id) {
+                result = ResponseEntity.badRequest().build();
+            } else {
+                Course oldCourse = service.findById(id);
+
+                boolean isValid = true;
+                String nameRegex = "^[a-zA-Z0-9._\\s]+$";
+
+                if (course.getName().length() > 45 || course.getName().length() == 0) {
+                    isValid = false;
+                } else if (!course.getName().matches(nameRegex)) {
+                    isValid = false;
+                }
+
+                if (course.getDescription().length() > 255 || course.getDescription().isEmpty()) {
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    oldCourse.setName(course.getName());
+                    oldCourse.setStatus(course.getStatus());
+                    oldCourse.setModifier(accountService.findByUsername(authentication.getName()));
+                    service.save(oldCourse);
+
+                    result = new ResponseEntity(oldCourse, HttpStatus.OK);
+                } else {
+                    result = ResponseEntity.badRequest().build();
+                }
+            }
+        }
+        return result;
+    }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fcode.FcodeTrainC.embeddable.AccountCourseIdentity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "fc_account_course")
@@ -13,7 +14,7 @@ public class AccountCourse {
     @EmbeddedId
     private AccountCourseIdentity id;
 
-    @Column(name = "co_status")
+    @Column(name = "ac_co_status")
     private Integer status;
 
     @ManyToOne
@@ -34,14 +35,38 @@ public class AccountCourse {
     @Transient
     private String modifierFullname;
 
+    @Column(name = "ac_co_created_time")
+    private Timestamp createdTime;
+
+    @Column(name = "ac_co_last_modified")
+    private Timestamp lastModified;
+
     public AccountCourse() {
     }
 
-    public AccountCourse(AccountCourseIdentity id, Integer status, Account creator, Account modifier) {
+    public AccountCourse(AccountCourseIdentity id, Integer status, Account creator, Account modifier, Timestamp createdTime, Timestamp lastModified) {
         this.id = id;
         this.status = status;
         this.creator = creator;
         this.modifier = modifier;
+        this.createdTime = createdTime;
+        this.lastModified = lastModified;
+    }
+
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Timestamp createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Timestamp getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Timestamp lastModified) {
+        this.lastModified = lastModified;
     }
 
     public String getCreatorUsername() {

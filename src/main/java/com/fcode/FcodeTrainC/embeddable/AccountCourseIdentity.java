@@ -1,56 +1,45 @@
 package com.fcode.FcodeTrainC.embeddable;
 
+import com.fcode.FcodeTrainC.entity.Account;
+import com.fcode.FcodeTrainC.entity.Course;
+
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 @Embeddable
 public class AccountCourseIdentity implements Serializable {
-    @NotNull
-    private Integer accountId;
+    @ManyToOne
+    @JoinColumn(name = "ac_id", nullable = false)
+    private Account account;
 
-    @NotNull
-    private Integer courseId;
+    @ManyToOne
+    @JoinColumn(name = "co_id", nullable = false)
+    private Course course;
 
     public AccountCourseIdentity() {
     }
 
-    public AccountCourseIdentity(@NotNull Integer accountId, @NotNull Integer courseId) {
-        this.accountId = accountId;
-        this.courseId = courseId;
+    public AccountCourseIdentity(Account account, Course course) {
+        this.account = account;
+        this.course = course;
     }
 
-    public Integer getAccountId() {
-        return accountId;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
-    public Integer getCourseId() {
-        return courseId;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = accountId.hashCode();
-        result = 31 * result + courseId.hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-
-        AccountCourseIdentity that = (AccountCourseIdentity) obj;
-        if (this.accountId != that.accountId) return false;
-        return this.courseId == that.courseId;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 }
