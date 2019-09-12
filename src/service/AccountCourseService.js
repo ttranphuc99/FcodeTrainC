@@ -1,0 +1,25 @@
+const API_BASE = "http://localhost:8080";
+
+class AccountCourseService {
+    getListAccFromCourse(courseId) {
+        let url = API_BASE + "/auth/account_course/" + courseId;
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        });
+    }
+
+    getAvaiAcc4Course(username, courseId) {
+        let url = API_BASE + "/auth/account_course/availableAccount4Course/" + courseId + "/" + username;
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
+}
+
+export default new AccountCourseService();

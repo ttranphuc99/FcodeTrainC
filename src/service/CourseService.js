@@ -79,10 +79,6 @@ class CourseService {
             credentials: 'include'
         })
     }
-
-    getListAccountInCourse(courseId) {
-        let url = API_BASE + "/auth"
-    }
 }
 
 export default new CourseService();

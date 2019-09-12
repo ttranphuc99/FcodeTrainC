@@ -198,6 +198,7 @@ class ListCourseComponent extends React.Component {
     }
 
     fetchData() {
+        this.setState({isLoading: true});
         CourseService.getListCourse()
         .then(response => {
             if (response.status === 200) {
@@ -212,8 +213,10 @@ class ListCourseComponent extends React.Component {
             if (data != null) {
                 this.setState({listCourse: data});
             }
+            this.setState({isLoading: false});
         }).catch((err) => {
             this.setState({ isError: true, error: err });
+            this.setState({isLoading: false});
         })
     }
 
