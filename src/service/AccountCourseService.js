@@ -20,6 +20,16 @@ class AccountCourseService {
             credentials: 'include'
         })
     }
+
+    addNew(username, courseId) {
+        let url = API_BASE + "/auth/account_course/" +courseId+ "/" +username;
+
+        return fetch(url, {
+            method: 'POST',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
 }
 
 export default new AccountCourseService();

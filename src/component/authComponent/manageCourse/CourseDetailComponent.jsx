@@ -1,6 +1,6 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom';
-import { Form, Row, Col, Input, Select, Button, notification, Spin, Icon, Card, Table, Tag, Modal, AutoComplete } from 'antd';
+import { Form, Row, Col, Input, Select, Button, notification, Spin, Icon, Card, Table, Tag, Modal, AutoComplete, Descriptions } from 'antd';
 import CourseService from '../../../service/CourseService';
 import AccountCourseService from '../../../service/AccountCourseService';
 
@@ -230,12 +230,18 @@ class AccountInCourseComponent extends React.Component {
 
         this.state = {
             isLoading: false,
+            listAccFull: [],
             listAcc: [],
             listAccAvai: [],
             redirecting: false,
             isError: false,
             visibleAddModal: false,
-            isSubmitting: false
+            isSubmitting: false,
+            currentAcc: {
+                id: -1,
+                fullname: 'Example',
+                universityCourse: {name: 'Test'}
+            }
         }
 
         this.fetchData = this.fetchData.bind(this);
@@ -244,6 +250,7 @@ class AccountInCourseComponent extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.getSuggestion = this.getSuggestion.bind(this);
         this.checkUsername = this.checkUsername.bind(this);
+        this.selectSuggest = this.selectSuggest.bind(this);
     }
 
     componentWillMount() {
@@ -286,7 +293,25 @@ class AccountInCourseComponent extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-
+                AccountCourseService.addNew(values.username, this.props.id)
+                .then(response => {
+                    if (response.status === 201) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Add successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        });
+                        this.fetchData();
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: response.message,
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
             }
         })
     }
@@ -306,29 +331,35 @@ class AccountInCourseComponent extends React.Component {
                     data.forEach((record, index, data) => {
                         value.push(record.username);
                     })
-                    this.setState({listAccAvai: value});
+                    this.setState({listAccAvai: value, listAccFull: data});
                 }
             })
         }
     }
 
     async checkUsername(rule, value, callback) {
-        if (value && value !== "") {            
-            let dataCheck = this.state.listAccAvai;
-            let result = false;
-            dataCheck.forEach((record, index, data) => {
-                if (value === record) {
-                    result = true;
-                }
-            })
-            if (result) {
+        if (value && value !== "") {      
+            if (this.state.listAccAvai.length === 1) {
+                this.props.form.setFieldsValue({
+                    username: this.state.currentAcc.username
+                });
                 callback();
+                
             } else {
-                callback(new Error('Not found username'));
+                callback(new Error('Not found username ' + value));
             }
         } else {
             callback();
         }
+    }
+
+    selectSuggest(value) {
+        this.setState({listAccAvai: [value]});
+        this.state.listAccFull.forEach((record) => {
+            if (record.username === value) {
+                this.setState({currentAcc: record});
+            }
+        })
     }
 
     render() {
@@ -340,21 +371,21 @@ class AccountInCourseComponent extends React.Component {
                 title: 'Username',
                 key: 'username',
                 render: record => {
-                    return record.account.username;
+                    return record.id.account.username;
                 }
             },
             {
                 title: 'Fullname',
                 key: 'fullname',
                 render: record => {
-                    return record.account.fullname;
+                    return record.id.account.fullname;
                 }
             }, 
             {
                 title: 'Course',
                 key: 'course',
                 render: record => {
-                    return record.account.universityCourse.name;
+                    return record.id.account.universityCourse.name;
                 }
             },
             {
@@ -426,17 +457,24 @@ class AccountInCourseComponent extends React.Component {
                             })(
                                 <AutoComplete
                                     dataSource={this.state.listAccAvai}
-                                    onSelect={null}
+                                    onSelect={this.selectSuggest}
                                     onSearch={this.getSuggestion}
                                     placeholder="Input username"
                                 />
                             )}
                         </Form.Item>
                     </Form>
+                    {this.state.currentAcc.id !== -1 &&
+                        <Descriptions title={"Profile ID:" + this.state.currentAcc.id}>
+                            <Descriptions.Item label="Fullname">{this.state.currentAcc.fullname}</Descriptions.Item>
+                            <Descriptions.Item label="Course">{this.state.currentAcc.universityCourse.name}</Descriptions.Item>
+                        </Descriptions>
+                    }
                 </Modal>
 
                 <Card style={{overflow: 'auto'}}>
                     <Table
+                        rowKey={record => record.id.account.id + record.id.course.id}
                         pagination={{pageSize: 50}}
                         columns={column}
                         dataSource={this.state.listAcc}
