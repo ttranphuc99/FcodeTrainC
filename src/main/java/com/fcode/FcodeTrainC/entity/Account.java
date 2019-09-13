@@ -60,6 +60,10 @@ public class Account {
     public Account() {
     }
 
+    public Account(Integer id) {
+        this.id = id;
+    }
+
     public Account(String username, String password, String fullname, String description, Integer status, Role role, UniversityCourse universityCourse) {
         this.username = username;
         this.password = password;

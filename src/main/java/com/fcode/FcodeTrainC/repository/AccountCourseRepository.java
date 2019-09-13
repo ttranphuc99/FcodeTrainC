@@ -19,7 +19,7 @@ public interface AccountCourseRepository extends CrudRepository<AccountCourse, A
             "AND a NOT IN (" +
                 "SELECT a.id.account " +
                 "FROM AccountCourse a " +
-                "WHERE a.id.course.id != ?2" +
+                "WHERE a.id.course.id = ?2" +
             ")"
     )
     List<Account> availableAccountToCourse(String username, Integer courseId);

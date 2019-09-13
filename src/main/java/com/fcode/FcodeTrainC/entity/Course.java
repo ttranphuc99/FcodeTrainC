@@ -53,6 +53,10 @@ public class Course {
     public Course() {
     }
 
+    public Course(Integer id) {
+        this.id = id;
+    }
+
     public Course(Integer id, String name, String description, Integer status, Timestamp createdTime, Timestamp lastModified, Account creator, Account modifier) {
         this.id = id;
         this.name = name;
