@@ -1,6 +1,6 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom';
-import { Form, Row, Col, Input, Select, Button, notification, Spin, Icon, Card, Table, Tag, Modal, AutoComplete, Descriptions } from 'antd';
+import { Form, Row, Col, Input, Select, Button, notification, Spin, Icon, Card, Table, Tag, Modal, AutoComplete, Descriptions, Divider } from 'antd';
 import CourseService from '../../../service/CourseService';
 import AccountCourseService from '../../../service/AccountCourseService';
 
@@ -464,11 +464,14 @@ class AccountInCourseComponent extends React.Component {
                             )}
                         </Form.Item>
                     </Form>
-                    {this.state.currentAcc.id !== -1 &&
-                        <Descriptions title={"Profile ID:" + this.state.currentAcc.id}>
-                            <Descriptions.Item label="Fullname">{this.state.currentAcc.fullname}</Descriptions.Item>
-                            <Descriptions.Item label="Course">{this.state.currentAcc.universityCourse.name}</Descriptions.Item>
-                        </Descriptions>
+                    {this.state.listAccAvai.length === 1 &&
+                        <div>
+                            <Divider/>
+                            <Descriptions title={"Profile ID:" + this.state.currentAcc.id}>
+                                <Descriptions.Item label="Fullname">{this.state.currentAcc.fullname}</Descriptions.Item>
+                                <Descriptions.Item label="Course">{this.state.currentAcc.universityCourse.name}</Descriptions.Item>
+                            </Descriptions>
+                        </div>
                     }
                 </Modal>
 
@@ -499,8 +502,9 @@ class CourseDetailComponent extends React.Component {
     render() {
         return(
             <div>
-                <CourseInfo id={1}/>
-                <AccountInCourse id={1}/>
+                <CourseInfo id={2}/>
+                <Divider orientation="left">Member in Course</Divider>
+                <AccountInCourse id={2}/>
             </div>
         )
     }
