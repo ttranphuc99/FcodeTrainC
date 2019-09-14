@@ -43,7 +43,7 @@ public class Assignment {
     private String creatorUsername;
 
     @ManyToOne
-    @JoinColumn(name = "ac_modified_id")
+    @JoinColumn(name = "ac_modifier_id")
     @JsonIgnore
     private Account modifier;
 
