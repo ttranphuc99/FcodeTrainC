@@ -1,10 +1,11 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom';
-import { Form, Spin, Button, Icon, Card, Table, Input, Row, Col } from 'antd'
+import { Form, Spin, Button, Icon, Card, Table, Input, Row, Col, notification, InputNumber } from 'antd'
 import AssignmentService from '../../../service/AssignmentService';
 import WorkService from '../../../service/WorkService';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import '../../../stylesheet/EditorStyleSheet.css';
 
 class NewAssignmentComponent extends React.Component {
     constructor(props) {
@@ -19,11 +20,29 @@ class NewAssignmentComponent extends React.Component {
     }
 
     handleSubmit(e) {
-        console.log('s');
         e.preventDefault();
         this.props.form.validateFields((err, values) =>{
-            values.content = this.state.editorVal;
-            console.log(values);
+            if (!err) {
+                values.content = this.state.editorVal;
+                AssignmentService.addNewAss(this.props.id, values)
+                .then(response => {
+                    if (response.status === 201) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Add successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        });
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: response.message,
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
+            }
         })
     }
 
@@ -36,61 +55,47 @@ class NewAssignmentComponent extends React.Component {
 
         return (
             <Form onSubmit={this.handleSubmit}>
-                <Form.Item label="Title" hasFeedback>
-                    {getFieldDecorator('title', {
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Please input ...'
-                            },
-                            {
-                                max: 255,
-                                message: 'Maximum 255 characters'
-                            }
-                        ]
-                    })(<Input/>)}
-                </Form.Item>
-
                 <Row gutter={16}>
-                    <Col lg={12} xs={24}>
-                        <Form.Item label="Submit Quantity" hasFeedback>
-                            {getFieldDecorator('submitQuantity', {
+                    <Col lg={18} xs={24}>
+                        <Form.Item label="Title" hasFeedback>
+                            {getFieldDecorator('title', {
                                 rules: [
                                     {
                                         required: true,
                                         message: 'Please input ...'
                                     },
                                     {
-                                        type: 'integer',
-                                        message: 'Must be a number between 1 and 5'
-                                    }, 
-                                    {
-                                        range: {min: 1, max: 5},
-                                        message: 'Must be a number between 1 and 5'
+                                        max: 255,
+                                        message: 'Maximum 255 characters'
                                     }
                                 ]
                             })(<Input/>)}
                         </Form.Item>
                     </Col>
 
-                    <Col lg={12} xs={24}>
+                    <Col lg={3} xs={12}>
+                        <Form.Item label="Submit Quantity" hasFeedback>
+                            {getFieldDecorator('submitQuantity', {
+                                rules: [
+                                    {
+                                        required: true,
+                                        message: 'Please input ...'
+                                    }
+                                ]
+                            })(<InputNumber style={{width: '100%'}} min={1} max={5}/>)}
+                        </Form.Item>
+                    </Col>
+
+                    <Col lg={3} xs={12}>
                         <Form.Item label="Mark" hasFeedback>
                             {getFieldDecorator('mark', {
                                 rules: [
                                     {
                                         required: true,
                                         message: 'Please input ...'
-                                    },
-                                    {
-                                        type: 'integer',
-                                        message: 'Must be a number between 1 and 50'
-                                    }, 
-                                    {
-                                        range: {min: 1, max: 50},
-                                        message: 'Must be a number between 1 and 50'
                                     }
                                 ]
-                            })(<Input/>)}
+                            })(<InputNumber style={{width: '100%'}} min={1} max={50}/>)}
                         </Form.Item>
                     </Col>
                 </Row>
@@ -131,12 +136,12 @@ class AssignmentComponent extends React.Component {
     }
 
     componentWillMount() {
-        // this.fetchData();
+        this.fetchData();
     }
 
     fetchData() {
         this.setState({isLoading: true});
-        AssignmentService.getListAssByCourse(this.props.courseId)
+        AssignmentService.getListAssByCourse(this.props.courseId || 1)
         .then(response => {
             if (response.status === 200) {
                 return response.json();
@@ -206,7 +211,7 @@ class AssignmentComponent extends React.Component {
                 title: 'Creator',
                 key: 'creator',
                 render: record => {
-                    return record.creatorFullname + " - @" + record.creatorUsername
+                    return record.creatorName + " - @" + record.creatorUsername
                 }
             },
             {
@@ -226,7 +231,7 @@ class AssignmentComponent extends React.Component {
                     <Icon type="plus" />Add new course
                 </Button>
 
-                <NewAssignment/>
+                <NewAssignment id={this.props.id || 1}/>
 
                 <Card style={{overflow: 'auto'}}>
                     <Table

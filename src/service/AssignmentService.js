@@ -10,6 +10,20 @@ class AssignmentService {
             credentials: 'include'
         })
     }
+
+    addNewAss(courseId, values) {
+        let url = API_BASE + "/auth/course/" +courseId+ "/assignment";
+
+        return fetch(url, {
+            method: 'POST',
+            withCredentials: true,
+            credentials: 'include',
+            body: JSON.stringify(values),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
 }
 
 export default new AssignmentService();
