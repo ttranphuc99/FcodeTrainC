@@ -26,6 +26,9 @@ public class Assignment {
     @Column(name = "as_submit_quantity")
     private Integer submitQuantity;
 
+    @Column(name = "as_status")
+    private Integer status;
+
     @Column(name = "as_created_time")
     private Timestamp createdTime;
 
@@ -59,12 +62,13 @@ public class Assignment {
     public Assignment() {
     }
 
-    public Assignment(String id, String title, String content, Integer mark, Integer submitQuantity, Timestamp createdTime, Timestamp lastModified, Account creator, Account modifier, Course course) {
+    public Assignment(String id, String title, String content, Integer mark, Integer submitQuantity, Integer status, Timestamp createdTime, Timestamp lastModified, Account creator, Account modifier, Course course) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.mark = mark;
         this.submitQuantity = submitQuantity;
+        this.status = status;
         this.createdTime = createdTime;
         this.lastModified = lastModified;
         this.creator = creator;
@@ -78,6 +82,14 @@ public class Assignment {
 
     public void setCourse(Course course) {
         this.course = course;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public String getId() {

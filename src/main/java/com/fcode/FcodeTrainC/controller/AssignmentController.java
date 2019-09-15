@@ -15,13 +15,15 @@ public class AssignmentController {
     @Autowired
     private AssignmentService service;
 
-    @GetMapping(value = "/auth/course/{courseId}/assignment")
+    @GetMapping(value = "/member/course/{courseId}/assignment")
     public Iterable<Assignment> getList(@PathVariable Integer courseId) {
         return service.getListAssInCourse(courseId);
     }
 
-    @GetMapping(value = "/auth/assignment/{id}")
+    @GetMapping(value = "/member/assignment/{id}")
     public Assignment getDetail(@PathVariable String id) {
         return service.findById(id);
     }
+
+
 }

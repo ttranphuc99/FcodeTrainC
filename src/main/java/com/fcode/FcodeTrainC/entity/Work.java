@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Table(name = "fc_work")
 public class Work {
     private static final long serialVersionUID = 1L;
 
