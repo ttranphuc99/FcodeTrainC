@@ -1,6 +1,6 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom';
-import { Form, Spin, Button, Icon, Card, Table, Input, Row, Col, notification, InputNumber } from 'antd'
+import { Form, Spin, Button, Icon, Card, Table, Input, Row, Col, notification, InputNumber, Modal } from 'antd'
 import AssignmentService from '../../../service/AssignmentService';
 import WorkService from '../../../service/WorkService';
 import CKEditor from '@ckeditor/ckeditor5-react';
@@ -56,7 +56,7 @@ class NewAssignmentComponent extends React.Component {
         return (
             <Form onSubmit={this.handleSubmit}>
                 <Row gutter={16}>
-                    <Col lg={18} xs={24}>
+                    <Col lg={14} xs={24}>
                         <Form.Item label="Title" hasFeedback>
                             {getFieldDecorator('title', {
                                 rules: [
@@ -73,7 +73,7 @@ class NewAssignmentComponent extends React.Component {
                         </Form.Item>
                     </Col>
 
-                    <Col lg={3} xs={12}>
+                    <Col lg={5} xs={12}>
                         <Form.Item label="Submit Quantity" hasFeedback>
                             {getFieldDecorator('submitQuantity', {
                                 rules: [
@@ -86,7 +86,7 @@ class NewAssignmentComponent extends React.Component {
                         </Form.Item>
                     </Col>
 
-                    <Col lg={3} xs={12}>
+                    <Col lg={5} xs={12}>
                         <Form.Item label="Mark" hasFeedback>
                             {getFieldDecorator('mark', {
                                 rules: [
@@ -127,16 +127,27 @@ class AssignmentComponent extends React.Component {
         this.state = {
             isLoading: false,
             listAss: [],
+            newAssModal: false,
             redirecting: false,
             isError: false
         }
 
         this.fetchData = this.fetchData.bind(this);
         this.asyncForEach = this.asyncForEach.bind(this);
+        this.openNewAssModal = this.openNewAssModal.bind(this);
+        this.closeNewAddModal = this.closeNewAssModal.bind(this);
     }
 
     componentWillMount() {
         this.fetchData();
+    }
+
+    openNewAssModal() {
+        this.setState({newAssModal: true})
+    }
+
+    closeNewAssModal() {
+        this.setState({newAssModal: false})
     }
 
     fetchData() {
@@ -227,11 +238,18 @@ class AssignmentComponent extends React.Component {
         ]
         return (
             <Spin spinning={this.state.isLoading}>
-                <Button type="primary">
+                <Button type="primary" onClick={this.openNewAssModal}>
                     <Icon type="plus" />Add new course
                 </Button>
 
-                <NewAssignment id={this.props.id || 1}/>
+                <Modal
+                    title="Add New Assignment"
+                    style={{width: '75%', minWidth: '200px'}}
+                    visible={this.state.newAssModal}
+                    onCancel={this.closeNewAddModal}
+                    footer={null}>
+                        <NewAssignment id={this.props.id || 1} update={this.fetchData} close={this.closeNewAddModal}/>
+                </Modal>
 
                 <Card style={{overflow: 'auto'}}>
                     <Table
