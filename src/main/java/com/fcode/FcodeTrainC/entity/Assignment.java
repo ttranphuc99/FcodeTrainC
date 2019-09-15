@@ -10,6 +10,10 @@ import java.sql.Timestamp;
 public class Assignment {
     private static final long serialVersionUID = 1L;
 
+    @ManyToOne
+    @JoinColumn(name = "co_id")
+    private Course course;
+
     @Id
     @Column(name = "as_id", nullable = false)
     private String id;
@@ -55,9 +59,7 @@ public class Assignment {
     @Transient
     private String modifierUsername;
 
-    @ManyToOne
-    @JoinColumn(name = "co_id")
-    private Course course;
+
 
     public Assignment() {
     }

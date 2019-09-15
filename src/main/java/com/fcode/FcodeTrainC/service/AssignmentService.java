@@ -5,6 +5,7 @@ import com.fcode.FcodeTrainC.repository.AssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,5 +21,22 @@ public class AssignmentService {
         Optional<Assignment> opt = repository.findById(id);
         if (opt.isPresent()) return opt.get();
         return null;
+    }
+
+    public Assignment add(Assignment assignment) {
+        assignment.setId(this.generateId(assignment.getCourse().getId()));
+        return repository.save(assignment);
+    }
+
+    private String generateId(Integer courseId) {
+        List<Assignment> list = repository.findByIdStartingWithOrderByCreatedTimeDesc(courseId + "_");
+        if (list.isEmpty()) return "CO-" +courseId+ "_AS-1";
+
+        String lastId = list.get(0).getId();
+        String[] idPart = lastId.split("_");
+        int seqNum = Integer.parseInt(idPart[1].split("-")[1]);
+        seqNum++;
+
+        return idPart[0] + "_AS-" + seqNum;
     }
 }
