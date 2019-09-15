@@ -14,6 +14,7 @@ import Layout from '../component/layout/DefaultLayout';
 import AuthenticationRoute from './AuthenticationRoute';
 import UnauthenticationRoute from './UnauthenticationRoute';
 import CourseDetailComponent from '../component/authComponent/manageCourse/CourseDetailComponent';
+import AssignmentComponent from '../component/authComponent/manageCourse/AssignmentComponent';
 
 
 
@@ -28,7 +29,7 @@ class RouterComponent extends React.Component {
                             <UnauthenticationRoute path="/" exact component={LoginComponent} />
                             <Layout>
                                 <Router>
-                                    <Route path='/manageCourse/course/:id' component={CourseDetailComponent}/>
+                                    <Route path='/manageCourse/course/:id' component={/*CourseDetailComponent*/AssignmentComponent}/>
                                 </Router>
                                 <AuthenticationRoute path="/error" exact component={ErrorComponent}/>
                                 <AuthenticationRoute path="/home" exact component={HomeComponent} />
