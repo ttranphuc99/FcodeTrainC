@@ -29,7 +29,7 @@ public class AssignmentService {
     }
 
     private String generateId(Integer courseId) {
-        List<Assignment> list = repository.findByIdStartingWithOrderByCreatedTimeDesc(courseId + "_");
+        List<Assignment> list = repository.findByIdStartingWithOrderByCreatedTimeDesc("CO-" + courseId + "_");
         if (list.isEmpty()) return "CO-" +courseId+ "_AS-1";
 
         String lastId = list.get(0).getId();
