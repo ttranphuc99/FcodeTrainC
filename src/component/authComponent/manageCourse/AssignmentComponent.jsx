@@ -1,11 +1,12 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom';
-import { Form, Spin, Button, Icon, Card, Table, Input, Row, Col, notification, InputNumber, Modal } from 'antd'
+import { Form, Spin, Button, Icon, Card, Table, Input, Row, Col, notification, InputNumber, Modal, Tag } from 'antd'
 import AssignmentService from '../../../service/AssignmentService';
 import WorkService from '../../../service/WorkService';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import '../../../stylesheet/EditorStyleSheet.css';
+import AssignmentDetailComponent from './AssignmentDetailComponent';
 
 class NewAssignmentComponent extends React.Component {
     constructor(props) {
@@ -152,7 +153,7 @@ class AssignmentComponent extends React.Component {
 
     fetchData() {
         this.setState({isLoading: true});
-        AssignmentService.getListAssByCourse(this.props.courseId || 1)
+        AssignmentService.getListAssByCourse(this.props.courseId || 2)
         .then(response => {
             if (response.status === 200) {
                 return response.json();
@@ -219,6 +220,17 @@ class AssignmentComponent extends React.Component {
                 dataIndex: 'mark'
             },
             {
+                title: 'Status',
+                key: 'status',
+                render: (record) => {
+                    if (record.status === 0) {
+                        return <Tag color="red">Close</Tag>
+                    } else {
+                        return <Tag color="blue">Open</Tag>
+                    }
+                }
+            },
+            {
                 title: 'Creator',
                 key: 'creator',
                 render: record => {
@@ -234,21 +246,34 @@ class AssignmentComponent extends React.Component {
                 title: 'Completed',
                 key: 'completed',
                 dataIndex: 'completed'
+            },
+            {
+                title: 'Delete',
+                key: 'delete',
+                render: (record) => {
+                    if (record.submitted === '0') {
+                        return (
+                            <Button>Delete</Button>
+                        )
+                    }
+                    return ''
+                }
             }
         ]
         return (
             <Spin spinning={this.state.isLoading}>
                 <Button type="primary" onClick={this.openNewAssModal}>
-                    <Icon type="plus" />Add new course
+                    <Icon type="plus" />Add new Assignment
                 </Button>
 
                 <Modal
                     title="Add New Assignment"
-                    style={{width: '75%', minWidth: '200px'}}
+                    style={{minWidth: '430px'}}
+                    width="50%"
                     visible={this.state.newAssModal}
                     onCancel={this.closeNewAddModal}
                     footer={null}>
-                        <NewAssignment id={this.props.id || 1} update={this.fetchData} close={this.closeNewAddModal}/>
+                        <NewAssignment id={this.props.id || 2} update={this.fetchData} close={this.closeNewAddModal}/>
                 </Modal>
 
                 <Card style={{overflow: 'auto'}}>
@@ -259,6 +284,8 @@ class AssignmentComponent extends React.Component {
                         style={{minWidth: '700px'}}
                         pagination={{pageSize: 10}}/>
                 </Card>
+
+                <AssignmentDetailComponent id={"CO-2_AS-1"}/>
             </Spin>
         )
     }
