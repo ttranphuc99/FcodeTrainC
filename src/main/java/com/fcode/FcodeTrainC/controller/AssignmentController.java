@@ -1,8 +1,10 @@
 package com.fcode.FcodeTrainC.controller;
 
 import com.fcode.FcodeTrainC.entity.Account;
+import com.fcode.FcodeTrainC.entity.AccountCourse;
 import com.fcode.FcodeTrainC.entity.Assignment;
 import com.fcode.FcodeTrainC.entity.Course;
+import com.fcode.FcodeTrainC.service.AccountCourseService;
 import com.fcode.FcodeTrainC.service.AccountService;
 import com.fcode.FcodeTrainC.service.AssignmentService;
 import com.fcode.FcodeTrainC.service.CourseService;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +23,8 @@ public class AssignmentController {
     private AssignmentService service;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private AccountCourseService accountCourseService;
 
     @GetMapping(value = "/member/course/{courseId}/assignment")
     public Iterable<Assignment> getList(@PathVariable Integer courseId) {
@@ -27,8 +32,25 @@ public class AssignmentController {
     }
 
     @GetMapping(value = "/member/assignment/{id}")
-    public Assignment getDetail(@PathVariable String id) {
-        return service.findById(id);
+    public ResponseEntity<Assignment> getDetail(@PathVariable String id, Authentication authentication) {
+        Assignment ass = service.findById(id);
+
+        for (int i = 0; i < authentication.getAuthorities().toArray().length; i++) {
+            SimpleGrantedAuthority role = (SimpleGrantedAuthority) authentication.getAuthorities().toArray()[i];
+
+            if (role.getAuthority().equalsIgnoreCase("admin") || role.getAuthority().equalsIgnoreCase("mentor")) {
+                return new ResponseEntity<>(ass, HttpStatus.OK);
+            }
+        }
+
+        Account account = accountService.findByUsername(authentication.getName());
+        Course course = ass.getCourse();
+
+        List<AccountCourse> list = accountCourseService.findByIdCourseIdAndAccountIdAndStatus(course.getId(), account.getId(), 1);
+        if (list.isEmpty()) {
+            return ResponseEntity.status(403).build();
+        }
+        return new ResponseEntity<>(ass, HttpStatus.OK);
     }
 
     @PostMapping(value = "/auth/course/{courseId}/assignment")

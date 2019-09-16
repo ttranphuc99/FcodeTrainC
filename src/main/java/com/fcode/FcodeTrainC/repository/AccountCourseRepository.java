@@ -5,10 +5,12 @@ import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.entity.AccountCourse;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
 
+@Repository
 public interface AccountCourseRepository extends CrudRepository<AccountCourse, AccountCourseIdentity> {
     Collection<AccountCourse> findByIdCourseId(Integer courseId);
 
@@ -23,4 +25,6 @@ public interface AccountCourseRepository extends CrudRepository<AccountCourse, A
             ")"
     )
     List<Account> availableAccountToCourse(String username, Integer courseId);
+
+    List<AccountCourse> findByIdCourseIdAndIdAccountIdAndStatus(Integer courseId, Integer accountId, Integer status);
 }

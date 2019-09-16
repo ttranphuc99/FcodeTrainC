@@ -41,4 +41,8 @@ public class AccountCourseService {
                         courseRepository.findById(courseId).get()));
         return this.save(accountCourse);
     }
+
+    public List<AccountCourse> findByIdCourseIdAndAccountIdAndStatus(Integer courseId, Integer accountId, Integer status) {
+        return repository.findByIdCourseIdAndIdAccountIdAndStatus(courseId, accountId, status);
+    }
 }
