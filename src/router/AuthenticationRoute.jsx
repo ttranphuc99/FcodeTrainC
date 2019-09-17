@@ -6,6 +6,15 @@ import {
 import LoginService from '../service/LoginService';
 
 class AuthenticationRoute extends React.Component {
+    include(array, value) {
+        for (let i = 0; i < array.length; i++) {
+            if (value.includes(array[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     render() {
         console.log('path: ', this.props.path);
         let isAllow = false;
@@ -30,10 +39,11 @@ class AuthenticationRoute extends React.Component {
             ];
 
             if (role === 'admin' || role === 'member' || role === 'mentor') {
+                console.log('pathhhh ', this.props.path);
                 if (authPage.includes(this.props.path)) {
                     isAllow = true;
                     return <Route {...this.props}/>
-                } else if (role === 'admin' && adminPage.includes(this.props.path)) {
+                } else if (role === 'admin' && this.include(adminPage, this.props.path)) {
                     isAllow = true;
                     return <Route {...this.props}/>
                 }

@@ -6,7 +6,7 @@ import LoginComponent from '../component/LoginComponent';
 import HomeComponent from '../component/HomeComponent';
 import LogoutComponent from '../component/LogoutComponent';
 import ManageAccountComponent from '../component/authComponent/manageAccount/ManageAccountComponent';
-import ManagaCourseComponent from '../component/authComponent/manageCourse/ManageCourseComponent';
+import ManageCourseComponent from '../component/authComponent/manageCourse/ManageCourseComponent';
 import ErrorComponent from '../component/ErrorComponent';
 
 import Layout from '../component/layout/DefaultLayout';
@@ -28,14 +28,13 @@ class RouterComponent extends React.Component {
                             <UnauthenticationRoute path="/login" exact component={LoginComponent} />
                             <UnauthenticationRoute path="/" exact component={LoginComponent} />
                             <Layout>
-                                <Router>
-                                    <Route path='/manageCourse/course/:id' component={/*CourseDetailComponent*/AssignmentComponent}/>
-                                </Router>
                                 <AuthenticationRoute path="/error" exact component={ErrorComponent}/>
                                 <AuthenticationRoute path="/home" exact component={HomeComponent} />
                                 <AuthenticationRoute path="/logout" exact component={LogoutComponent}/>
                                 <AuthenticationRoute path="/manageAccount" exact component={ManageAccountComponent}/> 
-                                <AuthenticationRoute path="/manageCourse" exact component={ManagaCourseComponent}/>  
+
+                                <AuthenticationRoute path="/manageCourse/course/:id" exact component={CourseDetailComponent}/>
+                                <AuthenticationRoute path="/manageCourse" exact component={ManageCourseComponent}/>  
                             </Layout>
                         </Switch>
                     </>

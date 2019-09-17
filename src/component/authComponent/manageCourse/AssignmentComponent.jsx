@@ -53,7 +53,7 @@ class NewAssignmentComponent extends React.Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-
+        
         return (
             <Form onSubmit={this.handleSubmit}>
                 <Row gutter={16}>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { Form, Row, Col, Input, Select, Button, notification, Spin, Icon, Card, Table, Tag, Modal, AutoComplete, Descriptions, Divider } from 'antd';
 import CourseService from '../../../service/CourseService';
 import AccountCourseService from '../../../service/AccountCourseService';
@@ -497,14 +497,24 @@ class CourseDetailComponent extends React.Component {
         this.state = {
             a : ''
         }
+        this.handleBack = this.handleBack.bind(this);
+    }
+
+    handleBack() {
+        return <Redirect to='/manageCourse'/>
     }
 
     render() {
         return(
             <div>
-                <CourseInfo id={2}/>
-                <Divider orientation="left">Member in Course</Divider>
-                <AccountInCourse id={2}/>
+                <Button>
+                    <Link to='/manageCourse'>Back</Link>
+                </Button>
+                <Card>
+                    <CourseInfo id={this.props.match.params.id}/>
+                    <Divider orientation="left">Member in Course</Divider>
+                    <AccountInCourse id={this.props.match.params.id}/>
+                </Card>
             </div>
         )
     }
