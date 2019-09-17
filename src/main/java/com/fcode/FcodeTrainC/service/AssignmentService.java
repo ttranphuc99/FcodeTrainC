@@ -39,4 +39,8 @@ public class AssignmentService {
 
         return idPart[0] + "_AS-" + seqNum;
     }
+
+    public Assignment save(Assignment assignment) {
+        return repository.save(assignment);
+    }
 }

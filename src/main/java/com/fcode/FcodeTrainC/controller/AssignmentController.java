@@ -59,4 +59,19 @@ public class AssignmentController {
         assignment.setCreator(accountService.findByUsername(auth.getName()));
         return new ResponseEntity<>(service.add(assignment), HttpStatus.CREATED);
     }
+
+    @PutMapping(value = "/auth/assignment/{id}")
+    public ResponseEntity<Assignment> update(@PathVariable String id, @RequestBody Assignment assignment, Authentication authentication) {
+        Assignment updateAss = service.findById(id);
+        updateAss.setTitle(assignment.getTitle());
+        updateAss.setSubmitQuantity(assignment.getSubmitQuantity());
+        updateAss.setMark(assignment.getMark());
+        updateAss.setContent(assignment.getContent());
+        updateAss.setStatus(assignment.getStatus());
+        updateAss.setModifier(accountService.findByUsername(authentication.getName()));
+
+        assignment = service.save(updateAss);
+
+        return new ResponseEntity<>(assignment, HttpStatus.OK);
+    }
 }
