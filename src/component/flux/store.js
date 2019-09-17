@@ -21,6 +21,11 @@ let adminMenu = {
       title: "Manage Course",
       to: "/manageCourse",
       htmlBefore: '<i class="layout-icon fa fa-graduation-cap" aria-hidden="true"></i>'
+    },
+    {
+      title: "Manage Assignment",
+      to: "/manageAssignment",
+      htmlBefore: '<i class="layout-icon fa fa-file-code-o" aria-hidden="true"></i>'
     }
   ]
 };

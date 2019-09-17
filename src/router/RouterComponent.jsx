@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch} from 'react-router-dom';
-import { Route } from 'react-router';
 
 import LoginComponent from '../component/LoginComponent';
 import HomeComponent from '../component/HomeComponent';
@@ -14,7 +13,8 @@ import Layout from '../component/layout/DefaultLayout';
 import AuthenticationRoute from './AuthenticationRoute';
 import UnauthenticationRoute from './UnauthenticationRoute';
 import CourseDetailComponent from '../component/authComponent/manageCourse/CourseDetailComponent';
-import AssignmentComponent from '../component/authComponent/manageCourse/AssignmentComponent';
+import AssignmentDetailComponent from '../component/authComponent/manageAssignment/AssignmentDetailComponent';
+import ManageAssignmentComponent from '../component/authComponent/manageAssignment/ManageAssignmentComponent';
 
 
 
@@ -35,6 +35,10 @@ class RouterComponent extends React.Component {
 
                                 <AuthenticationRoute path="/manageCourse/course/:id" exact component={CourseDetailComponent}/>
                                 <AuthenticationRoute path="/manageCourse" exact component={ManageCourseComponent}/>  
+
+                                <AuthenticationRoute path="/manageAssignment" exact component={ManageAssignmentComponent}/>
+                                <AuthenticationRoute path="/manageAssignment/:courseId" exact component={ManageAssignmentComponent}/>
+                                <AuthenticationRoute path="/manageAssignment/assignment/:id" exact component={AssignmentDetailComponent}/>
                             </Layout>
                         </Switch>
                     </>

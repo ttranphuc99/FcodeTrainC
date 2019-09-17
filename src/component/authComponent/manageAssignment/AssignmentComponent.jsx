@@ -1,12 +1,11 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { Form, Spin, Button, Icon, Card, Table, Input, Row, Col, notification, InputNumber, Modal, Tag } from 'antd'
 import AssignmentService from '../../../service/AssignmentService';
 import WorkService from '../../../service/WorkService';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import '../../../stylesheet/EditorStyleSheet.css';
-import AssignmentDetailComponent from './AssignmentDetailComponent';
 
 class NewAssignmentComponent extends React.Component {
     constructor(props) {
@@ -34,6 +33,7 @@ class NewAssignmentComponent extends React.Component {
                             top: 70,
                             placement: 'topRight',
                         });
+                        this.props.update();
                     } else {
                         notification.error({
                             message: 'Error',
@@ -152,45 +152,47 @@ class AssignmentComponent extends React.Component {
     }
 
     fetchData() {
-        this.setState({isLoading: true});
-        AssignmentService.getListAssByCourse(this.props.courseId || 2)
-        .then(response => {
-            if (response.status === 200) {
-                return response.json();
-            } else if (response.status === 401) {
-                localStorage.setItem('loggedIn', false);
-                this.setState({ redirecting: true });
-            } else {
-                this.setState({ isError: true, error: response });
-            }
-        }).then(data => {
-            if (data != null) {
-                const start = async(data) => {
-                    await this.asyncForEach(data, async(row) => {		
-                        let response = await WorkService.countWorkSuccessByAss(row.id);	
-
-                        if (response.status === 200) {	
-                            let text = await response.text();	
-                            row["completed"] = text	
-                        }
-
-                        response = await WorkService.countWorkUnsuccessByAss(row.id);
-
-                        if (response.status === 200) {	
-                            let text = await response.text();	
-                            row["submitted"] = text	
-                        }
-                    })	
-                    return data;
+        if (this.props.courseId > 0 || false) {
+            this.setState({isLoading: true});
+            AssignmentService.getListAssByCourse(this.props.courseId)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else if (response.status === 401) {
+                    localStorage.setItem('loggedIn', false);
+                    this.setState({ redirecting: true });
+                } else {
+                    this.setState({ isError: true, error: response });
                 }
-                return start(data);
-            }
-        }).then(data => {
-            if (data != null) {
-                this.setState({listAss: data});
-            }
-            this.setState({isLoading: false});
-        })
+            }).then(data => {
+                if (data != null) {
+                    const start = async(data) => {
+                        await this.asyncForEach(data, async(row) => {		
+                            let response = await WorkService.countWorkSuccessByAss(row.id);	
+
+                            if (response.status === 200) {	
+                                let text = await response.text();	
+                                row["completed"] = text	
+                            }
+
+                            response = await WorkService.countWorkUnsuccessByAss(row.id);
+
+                            if (response.status === 200) {	
+                                let text = await response.text();	
+                                row["submitted"] = text	
+                            }
+                        })	
+                        return data;
+                    }
+                    return start(data);
+                }
+            }).then(data => {
+                if (data != null) {
+                    this.setState({listAss: data});
+                }
+                this.setState({isLoading: false});
+            })
+        }
     }
 
     async asyncForEach(array, callback) {	
@@ -207,7 +209,9 @@ class AssignmentComponent extends React.Component {
             {
                 title: 'ID',
                 key: 'id',
-                dataIndex: 'id'
+                render: record => {
+                    return <Link to={'/manageAssignment/assignment/' + record.id}>{record.id}</Link> 
+                }
             },
             {
                 title: 'Title',
@@ -273,7 +277,7 @@ class AssignmentComponent extends React.Component {
                     visible={this.state.newAssModal}
                     onCancel={this.closeNewAddModal}
                     footer={null}>
-                        <NewAssignment id={this.props.id || 2} update={this.fetchData} close={this.closeNewAddModal}/>
+                        <NewAssignment id={this.props.courseId} update={this.fetchData} close={this.closeNewAddModal}/>
                 </Modal>
 
                 <Card style={{overflow: 'auto'}}>
@@ -284,8 +288,6 @@ class AssignmentComponent extends React.Component {
                         style={{minWidth: '700px'}}
                         pagination={{pageSize: 10}}/>
                 </Card>
-
-                <AssignmentDetailComponent id={"CO-2_AS-1"}/>
             </Spin>
         )
     }

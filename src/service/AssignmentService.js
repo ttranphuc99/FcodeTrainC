@@ -34,6 +34,20 @@ class AssignmentService {
             credentials: 'include'
         })
     }
+
+    update(values, id) {
+        let url = API_BASE + "/auth/assignment/" + id;
+
+        return fetch(url, {
+            method: 'PUT',
+            withCredentials: true,
+            credentials: 'include',
+            body: JSON.stringify(values),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
 }
 
 export default new AssignmentService();
