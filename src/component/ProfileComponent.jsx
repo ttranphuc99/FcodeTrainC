@@ -209,6 +209,6 @@ class UpdateProfile extends React.Component {
     }
 }
 
-const HomeComponent = Form.create({ name: 'profile' })(UpdateProfile);
+const ProfileComponent = Form.create({ name: 'profile' })(UpdateProfile);
 
-export default HomeComponent;
+export default ProfileComponent;

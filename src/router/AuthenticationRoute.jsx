@@ -25,7 +25,9 @@ class AuthenticationRoute extends React.Component {
             let authPage = [
                 '/home',
                 '/logout',
-                '/error'
+                '/error',
+                '/changePassword',
+                '/editProfile'
             ];
             let adminPage = [
                 '/manageAccount',

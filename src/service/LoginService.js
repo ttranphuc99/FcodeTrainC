@@ -1,12 +1,20 @@
+import { Form } from "antd";
+
 const API_BASE = "http://localhost:8080";
 
 class LoginService {
     login(data) {
-        let url = API_BASE + '/login?username=' + data.username + '&password=' + data.password;
+        let url = API_BASE + '/login';
+        let formData = new FormData();
+
+        formData.append('username', data.username);
+        formData.append('password', data.password);
+
         return fetch(url, {
-            method: 'GET',
+            method: 'POST',
             withCredentials: true,
-            credentials: 'include'
+            credentials: 'include',
+            body: formData
         });
     }
 
@@ -18,6 +26,35 @@ class LoginService {
             credentials: 'include'
         });
         return await response.status;
+    }
+
+    checkPassword(password) {
+        let url = API_BASE + '/member/password';
+
+        let formData = new FormData();
+        formData.append('oldPassword', password);
+
+        return fetch(url, {
+            method: 'POST',
+            withCredentials: true,
+            credentials: 'include',
+            body: formData
+        });
+    }
+
+    changePassword(form) {
+        let url = API_BASE + '/member/changePassword';
+
+        let formData = new FormData();
+        formData.append('oldPassword', form.oldPassword);
+        formData.append('newPassword', form.newPassword);
+
+        return fetch(url, {
+            method: 'POST',
+            withCredentials: true,
+            credentials: 'include',
+            body: formData
+        })
     }
 
     isLoggedIn() {

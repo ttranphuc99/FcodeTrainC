@@ -35,10 +35,10 @@ class UserAction extends React.Component {
                 <span className="d-md-inline-block fullname">{this.props.fullname || ''}</span>
             </DropdownToggle>
             <Collapse tag={DropdownMenu} right small open={this.state.visible}>
-                <DropdownItem tag={Link} to="user-profile">
+                <DropdownItem tag={Link} to="/editProfile">
                     Edit Profile
                 </DropdownItem>
-                <DropdownItem tag={Link} to="edit-user-profile">
+                <DropdownItem tag={Link} to="/changePassword">
                     Change Password
                 </DropdownItem>
                 <DropdownItem divider />
