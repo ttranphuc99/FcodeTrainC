@@ -1,12 +1,22 @@
 package com.fcode.FcodeTrainC.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.fcode.FcodeTrainC.entity.Account;
+import com.fcode.FcodeTrainC.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class AuthenticationController {
-    @GetMapping(path = "/login")
+    @Autowired
+    private AccountService accountService;
+
+    @PostMapping(path = "/login")
     public String authenticate() {
         return "Successful Authentication";
     }
@@ -14,5 +24,38 @@ public class AuthenticationController {
     @RequestMapping(path = "/logout")
     public String logout() {
         return "Logout successfully";
+    }
+
+    @PostMapping(path = "/member/password")
+    public ResponseEntity checkPassword(HttpServletRequest request, Authentication authentication) {
+        Account account = accountService.findByUsername(authentication.getName());
+        String password = request.getParameter("oldPassword");
+        if (password != null) {
+            if (BCrypt.checkpw(password, account.getPassword())) {
+                return ResponseEntity.ok().build();
+            }
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping(path = "/member/changePassword")
+    public ResponseEntity changePassword(HttpServletRequest request, Authentication authentication) {
+        Account account = accountService.findByUsername(authentication.getName());
+        String oldPassword = request.getParameter("oldPassword");
+        String newPassword = request.getParameter("newPassword");
+
+        if (oldPassword != null) {
+            if (BCrypt.checkpw(oldPassword, account.getPassword())) {
+                if (newPassword != null && newPassword.length() >= 6 && newPassword.length() <= 20) {
+                    String hashPass = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+                    account.setPassword(hashPass);
+
+                    accountService.save(account);
+
+                    return ResponseEntity.ok().build();
+                }
+            }
+        }
+        return ResponseEntity.badRequest().build();
     }
 }
