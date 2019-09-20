@@ -35,7 +35,8 @@ class AuthenticationRoute extends React.Component {
                 '/manageAssignment'
             ];
             let memberPage = [
-                '/member/course'
+                '/member/course',
+                '/member/assignment'
             ];
             let mentorPage = [
 

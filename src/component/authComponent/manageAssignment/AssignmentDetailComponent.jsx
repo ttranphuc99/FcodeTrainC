@@ -53,7 +53,7 @@ class AssignmentDetailComponent extends React.Component {
                 this.setState({ redirecting: true });
             } else {
                 this.setState({
-                    isError: false
+                    isError: true
                 })
             }
         }).then(data => {

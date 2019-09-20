@@ -42,6 +42,11 @@ let memMenu = {
       title: "Course",
       to: "/member/course",
       htmlBefore: '<i class="layout-icon fa fa-graduation-cap" aria-hidden="true"></i>'
+    },
+    {
+      title: "Assignment",
+      to: "/member/assignment",
+      htmlBefore: '<i class="layout-icon fa fa-file-code-o" aria-hidden="true"></i>'
     }
   ]
 };

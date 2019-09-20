@@ -17,6 +17,8 @@ import UnauthenticationRoute from './UnauthenticationRoute';
 import CourseDetailComponent from '../component/authComponent/manageCourse/CourseDetailComponent';
 import AssignmentDetailComponent from '../component/authComponent/manageAssignment/AssignmentDetailComponent';
 import ManageAssignmentComponent from '../component/authComponent/manageAssignment/ManageAssignmentComponent';
+import AssignmentComponent from '../component/memComponent/assignment/AssignmentComponent';
+import MemberAssignmentDetailComponent from '../component/memComponent/assignment/MemberAssignmentDetailComponent';
 
 
 class RouterComponent extends React.Component {
@@ -44,6 +46,8 @@ class RouterComponent extends React.Component {
                                 <AuthenticationRoute path="/manageAssignment/assignment/:id" exact component={AssignmentDetailComponent}/>
 
                                 <AuthenticationRoute path="/member/course" exact component={CourseComponent}/>
+                                <AuthenticationRoute path="/member/assignment" exact component={AssignmentComponent}/>
+                                <AuthenticationRoute path="/member/assignment/:id" exact component={MemberAssignmentDetailComponent}/>
                             </Layout>
                         </Switch>
                     </>
