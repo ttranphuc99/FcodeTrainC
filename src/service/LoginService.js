@@ -66,7 +66,13 @@ class LoginService {
     }
 
     getFullname() {
-        return this.getCookie('fullname');
+        let fullname = this.getCookie('fullname');
+        
+        do {
+            fullname = fullname.replace('+', ' ');
+        } while (fullname.indexOf('+') > -1)
+
+        return fullname;
     }
 
     getRole() {

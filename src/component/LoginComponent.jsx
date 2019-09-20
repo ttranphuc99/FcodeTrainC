@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
+import {Redirect} from 'react-router-dom';
 import LoginService from '../service/LoginService';
 import '../stylesheet/LoginStylesheet.css';
 import "antd/dist/antd.css";
@@ -7,7 +8,9 @@ import "antd/dist/antd.css";
 class LoginComponent extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			redirect: false
+		};
 	}
 
     handleSubmit = e => {
@@ -21,7 +24,7 @@ class LoginComponent extends React.Component {
                 .then((response) => {
 					if (response.status === 200) {
 						localStorage.setItem('loggedIn', true);
-						this.props.history.push(`/home`);
+						this.setState({redirect: true});
 					} else if (response.status === 401) {
 						this.setState({
 							errorMess: "Incorrect username or password!"
@@ -35,6 +38,7 @@ class LoginComponent extends React.Component {
     };
       
     render() {
+		if (this.state.redirect) return <Redirect to='/home'/>
         let storedUsername = localStorage.getItem('username') || '';
         const { getFieldDecorator } = this.props.form;
         return (

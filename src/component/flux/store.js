@@ -35,9 +35,9 @@ let memMenu = {
   navItems: [
     {
       title: "Home",
-      to: "/",
-      htmlBefore: '<i class="fa fa-home" aria-hidden="true"></i>'
-    }
+      to: "/home",
+      htmlBefore: '<i class="layout-icon fa fa-home" aria-hidden="true"></i>'
+    },
   ]
 };
 
@@ -74,7 +74,7 @@ class Store extends EventEmitter {
         _store = adminMenu;
         break;
       }
-      case 'menber' : {
+      case 'member' : {
         _store = memMenu;
         break;
       }

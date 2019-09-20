@@ -8,12 +8,12 @@ import LoginService from '../../service/LoginService';
 
 import "../../stylesheet/layout/LayoutStyle.css";
 
-const username = LoginService.getUsername();
-const fullname = LoginService.getFullname();
-const role = LoginService.getRole();
-
 class Layout extends React.Component {
+
   render() {
+    const username = LoginService.getUsername();
+    const fullname = LoginService.getFullname();
+    const role = LoginService.getRole();
     return (
       <Container fluid>
         <Row>
