@@ -72,7 +72,7 @@ public class CourseController {
     @PutMapping(value = "/auth/course/{id}")
     public ResponseEntity<Course> update(@PathVariable Integer id, @RequestBody Course course, Authentication authentication) {
         ResponseEntity result = null;
-        if (course ==  null) {
+        if (course == null) {
             result = ResponseEntity.notFound().build();
         } else {
             if (course.getId() != id) {

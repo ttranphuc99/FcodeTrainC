@@ -29,16 +29,21 @@ public class AccountCourseService {
         return repository.findByIdCourseId(courseId);
     }
 
+    public List<AccountCourse> getListCourseOfAnAccount(String username) {
+        return repository.findByIdAccountUsername(username);
+    }
+
     public List<Account> availableAccountToCourse(String username, Integer courseId) {
         return repository.availableAccountToCourse(username, courseId);
     }
 
-    public AccountCourse addNew(Integer courseId, String username) {
+    public AccountCourse addNew(Integer courseId, String username, Account creator) {
         AccountCourse accountCourse = new AccountCourse();
 
         accountCourse.setId(
                 new AccountCourseIdentity(accountRepository.findFirstByUsername(username),
                         courseRepository.findById(courseId).get()));
+        accountCourse.setCreator(creator);
         return this.save(accountCourse);
     }
 

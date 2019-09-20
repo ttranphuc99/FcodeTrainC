@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface AccountCourseRepository extends CrudRepository<AccountCourse, AccountCourseIdentity> {
     Collection<AccountCourse> findByIdCourseId(Integer courseId);
+    List<AccountCourse> findByIdAccountUsername(String username);
 
     @Query("SELECT a FROM Account a " +
             "WHERE a.username LIKE %?1% " +
