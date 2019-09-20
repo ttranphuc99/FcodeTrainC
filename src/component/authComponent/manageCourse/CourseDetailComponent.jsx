@@ -464,7 +464,7 @@ class AccountInCourseComponent extends React.Component {
                             )}
                         </Form.Item>
                     </Form>
-                    {this.state.listAccAvai.length === 1 &&
+                    {this.state.currentAcc.id !== -1 &&
                         <div>
                             <Divider/>
                             <Descriptions title={"Profile ID:" + this.state.currentAcc.id}>

@@ -30,6 +30,16 @@ class AccountCourseService {
             credentials: 'include'
         })
     }
+
+    getCourseOfAccount() {
+        let url = API_BASE + "/member/course";
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
 }
 
 export default new AccountCourseService();

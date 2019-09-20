@@ -16,6 +16,7 @@ class AuthenticationRoute extends React.Component {
     }
 
     render() {
+        console.log('path ', this.props.path);
         let isAllow = false;
 
         if (LoginService.isLoggedIn()) {
@@ -34,12 +35,11 @@ class AuthenticationRoute extends React.Component {
                 '/manageAssignment'
             ];
             let memberPage = [
-                
+                '/member/course'
             ];
             let mentorPage = [
 
             ];
-
             if (role === 'admin' || role === 'member' || role === 'mentor') {
                 if (this.include(authPage, this.props.path)) {
                     isAllow = true;
