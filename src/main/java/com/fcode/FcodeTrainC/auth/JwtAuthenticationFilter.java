@@ -16,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         username.setMaxAge(864000);
         response.addCookie(username);
 
-        Cookie fullname = new Cookie("fullname", user.getFullname());
+        Cookie fullname = new Cookie("fullname", URLEncoder.encode(user.getFullname(), "UTF-8"));
         fullname.setMaxAge(864000);
         response.addCookie(fullname);
     }
