@@ -159,6 +159,9 @@ class AssignmentComponent extends React.Component {
 
     componentWillMount() {
         this.getListCourse();
+        if (this.props.match.params.courseId) {
+            this.loadAssignment(this.props.match.params.courseId);
+        }
     }
     
     getListCourse() {

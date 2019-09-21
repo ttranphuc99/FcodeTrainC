@@ -47,6 +47,7 @@ class RouterComponent extends React.Component {
 
                                 <AuthenticationRoute path="/member/course" exact component={CourseComponent}/>
                                 <AuthenticationRoute path="/member/assignment" exact component={AssignmentComponent}/>
+                                <AuthenticationRoute path="/member/assignment/course/:courseId" exact component={AssignmentComponent}/>
                                 <AuthenticationRoute path="/member/assignment/:id" exact component={MemberAssignmentDetailComponent}/>
                             </Layout>
                         </Switch>

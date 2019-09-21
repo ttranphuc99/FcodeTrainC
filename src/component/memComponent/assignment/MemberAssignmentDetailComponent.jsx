@@ -1,6 +1,7 @@
 import React from 'react'
 import AssignmentService from '../../../service/AssignmentService';
-import { Typography, Divider, Card } from 'antd';
+import { Typography, Divider, Card, Button } from 'antd';
+import {Link} from 'react-router-dom';
 
 class MemberAssignmentDetailComponent extends React.Component {
     constructor(props) {
@@ -47,6 +48,10 @@ class MemberAssignmentDetailComponent extends React.Component {
         return (
             <Card>
             {this.state.assignment !== null &&
+                <div>
+                <Button>
+                    <Link to={'/member/assignment/course/' + this.state.assignment.course.id}>Back</Link>
+                </Button>
                 <Typography>
                     <Title style={{textAlign: 'center'}}>{this.state.assignment.title}</Title>
                     
@@ -65,6 +70,7 @@ class MemberAssignmentDetailComponent extends React.Component {
                     </Text>
 
                 </Typography>
+                </div>
             }
             </Card>
         )

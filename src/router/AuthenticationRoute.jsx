@@ -53,15 +53,18 @@ class AuthenticationRoute extends React.Component {
                     return <Route {...this.props}/>
                 }
             }
-        }
 
-        if (!isAllow) {
-            // if (this.props.path.includes('/home')) {
-            //     return <Redirect to="/login" />
-            // }
-            // return <Redirect to="/home" />
-            return null;
-        }
+            if (!isAllow) {
+                // if (this.props.path.includes('/home')) {
+                //     return <Redirect to="/login" />
+                // }
+                // return <Redirect to="/home" />
+                return null;
+            }
+        } else {
+            console.log('go to login');
+            return <Redirect to='/login'/>
+        }        
     }
 }
 

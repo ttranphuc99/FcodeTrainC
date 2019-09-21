@@ -31,10 +31,11 @@ class SidebarListItems extends React.Component {
     
     render() {
         const { navItems: items } = this.state;
+        
         return (
             <div className="nav-wrapper">
                 <Nav className="nav--no-borders flex-column">
-                    {items.map((item, idx) => (
+                    {items !== undefined && items.map((item, idx) => (
                         <SidebarNavItem key={idx} item={item} />
                     ))}
                 </Nav>

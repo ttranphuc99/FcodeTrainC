@@ -117,6 +117,7 @@ class Store extends EventEmitter {
   }
 
   getSidebarItems() {
+    this.initMenu();
     return _store.navItems;
   }
 
