@@ -1,5 +1,6 @@
 package com.fcode.FcodeTrainC.service;
 
+import com.fcode.FcodeTrainC.entity.Work;
 import com.fcode.FcodeTrainC.file.FileStorageProperty;
 import com.fcode.FcodeTrainC.repository.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,19 @@ public class WorkService {
         return repository.countUnsuccessWorkByAss(assignmentId);
     }
 
+    public Work insert(Work work) {
+        return repository.save(work);
+    }
+
+    public Integer getLastSubmitQuanity(String assignmentId, String username) {
+        Work work = repository.findFirstByAssignmentIdAndWorkerUsernameOrderBySubmitTimeDesc(assignmentId, username);
+
+        if (work != null) {
+            return work.getSubmitQuantity();
+        }
+        return 0;
+    }
+
     private final Path fileStorageLocation;
 
     @Autowired
@@ -42,10 +56,11 @@ public class WorkService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
+    public String storeFile(MultipartFile file, String filename) {
         //normalize file name
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
-
+        String originName = StringUtils.cleanPath(file.getOriginalFilename());
+        String extendsion = originName.substring(originName.lastIndexOf("."));
+        filename += extendsion;
         try {
             Path targetLocation = this.fileStorageLocation.resolve(filename);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);

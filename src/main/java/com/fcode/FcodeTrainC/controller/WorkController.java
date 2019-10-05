@@ -1,21 +1,33 @@
 package com.fcode.FcodeTrainC.controller;
 
+import com.fcode.FcodeTrainC.entity.*;
+import com.fcode.FcodeTrainC.service.AccountCourseService;
+import com.fcode.FcodeTrainC.service.AccountService;
+import com.fcode.FcodeTrainC.service.AssignmentService;
 import com.fcode.FcodeTrainC.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class WorkController {
     @Autowired
     private WorkService service;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private AccountCourseService accountCourseService;
 
     @GetMapping(value = "/member/assignment/{assignmentId}/work_success_list_count")
     public Integer countWorkSuccess(@PathVariable(name = "assignmentId") String assignmentId) {
@@ -27,10 +39,47 @@ public class WorkController {
         return service.countWorkUnsuccess(assignmentId);
     }
 
-    @PostMapping(value = "/member/uploadFile")
-    public ResponseEntity uploadFile(@RequestParam("file") MultipartFile file) {
-        String filename = service.storeFile(file);
-        return ResponseEntity.ok().build();
+    @PostMapping(value = "/member/assignment/{assignmentId}/work/")
+    public ResponseEntity insertWork(@PathVariable(name = "assignmentId") String assignmentId,
+                                     @RequestParam("file") MultipartFile file,
+                                     Authentication authentication) {
+        ResponseEntity respone = null;
+        Assignment assignment = assignmentService.findById(assignmentId);
+
+        if (assignment != null) {
+            Account account = accountService.findByUsername(authentication.getName());
+            Course course = assignment.getCourse();
+
+            List<AccountCourse> list = accountCourseService.findByIdCourseIdAndAccountIdAndStatus(course.getId(), account.getId(), 1);
+            if (list.isEmpty()) {
+                return ResponseEntity.status(403).build();
+            }
+
+            Work work = new Work();
+
+            String id = authentication.getName() + "_" + assignmentId;
+            Integer submitQuantity = service.getLastSubmitQuanity(assignmentId, authentication.getName());
+
+            if (submitQuantity < assignment.getSubmitQuantity()) {
+                submitQuantity++;
+                id += "_" + submitQuantity;
+
+                work.setAssignment(assignment);
+                work.setId(id);
+                work.setSubmitQuantity(submitQuantity);
+                work.setWorker(account);
+                service.storeFile(file, id);
+                service.insert(work);
+
+                respone = ResponseEntity.ok().build();
+            } else {
+                respone = ResponseEntity.badRequest().body("Maximum submission quantity");
+            }
+        } else {
+            respone = ResponseEntity.badRequest().body("Not found Assignment");
+        }
+
+        return respone;
     }
 
     @GetMapping(value = "/member/downloadFile/{filename}")
