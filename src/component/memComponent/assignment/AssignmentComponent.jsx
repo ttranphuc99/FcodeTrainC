@@ -209,18 +209,22 @@ class AssignmentComponent extends React.Component {
         return (
             <Card>
                 {!this.state.isLoading && 
-                <Select 
-                    loading={this.state.isLoadingCourse}
-                    placeholder="Select Course ..."
-                    onChange={this.loadAssignment}
-                    style={{width: '25%', minWidth: '200px'}}
-                    defaultValue={parseInt(this.props.match.params.courseId) || 'Select course ...'}
-                    value={this.state.defaulVal}
-                >
-                    {this.state.listCourse.map(course => (
-                        <Option key={course.id} value={course.id}>{course.name}</Option>   
-                    ))}
-                </Select>
+                <div>
+                    <span className="mr-5">Select Course:</span>
+                    <Select 
+                        loading={this.state.isLoadingCourse}
+                        placeholder="Select Course ..."
+                        onChange={this.loadAssignment}
+                        style={{width: '25%', minWidth: '200px'}}
+                        defaultValue={parseInt(this.props.match.params.courseId) || 'Select course ...'}
+                        value={this.state.defaulVal}
+                    >
+                        {this.state.listCourse.map(course => (
+                            <Option key={course.id} value={course.id}>{course.name}</Option>   
+                        ))}
+                    </Select>
+                </div>
+                
                 }
 
                 {this.state.currentCourseId > 0 && <ListAssignmentComponent ref="assignment" courseId={this.state.currentCourseId}/>}
