@@ -39,6 +39,11 @@ public class WorkController {
         return service.countWorkUnsuccess(assignmentId);
     }
 
+    @GetMapping(value = "/member/assignment/{assignmentId}/work_submit_count")
+    public Integer countWorkSubmited(@PathVariable(name = "assignmentId") String assignmentId, Authentication authentication) {
+        return service.getLastSubmitQuanity(assignmentId, authentication.getName());
+    }
+
     @PostMapping(value = "/member/assignment/{assignmentId}/work/")
     public ResponseEntity insertWork(@PathVariable(name = "assignmentId") String assignmentId,
                                      @RequestParam("file") MultipartFile file,
@@ -59,7 +64,6 @@ public class WorkController {
 
             String id = authentication.getName() + "_" + assignmentId;
             Integer submitQuantity = service.getLastSubmitQuanity(assignmentId, authentication.getName());
-
             if (submitQuantity < assignment.getSubmitQuantity()) {
                 submitQuantity++;
                 id += "_" + submitQuantity;
