@@ -41,21 +41,21 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return account.getStatus() == 1;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return account.getStatus() == 1;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return account.getStatus() == 1;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return account.getStatus() == 1;
     }
 }
