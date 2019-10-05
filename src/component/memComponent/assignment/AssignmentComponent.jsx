@@ -150,7 +150,8 @@ class AssignmentComponent extends React.Component {
             isLoading: false,
             listCourse: [],
             redirect: false,
-            isError: false
+            isError: false,
+            defaulVal: null
         }
 
         this.loadAssignment = this.loadAssignment.bind(this);
@@ -178,18 +179,25 @@ class AssignmentComponent extends React.Component {
             }
         }).then(data => {
             if (data != null) {
-                console.log(data);
                 this.setState({listCourse: data});
             }
-            this.setState({isLoadingCourse: false});
+            this.setState({
+                isLoadingCourse: false, 
+                defaulVal: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 'Select course...',
+                currentCourseId: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 0
+            });
         }).catch((err) => {
             this.setState({ isError: true, error: err });
             this.setState({isLoadingCourse: false});
         })
     }
     
-    loadAssignment(courseId) {
-        this.setState({currentCourseId: courseId});
+    async loadAssignment(courseId) {
+        console.log('valueeee ', courseId)
+        await this.setState({
+            currentCourseId: courseId,
+            defaulVal: courseId
+        });
         if (this.refs.assignment !== undefined) this.refs.assignment.fetchData();
     }
 
@@ -198,20 +206,22 @@ class AssignmentComponent extends React.Component {
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
 
         const {Option} = Select;
-
         return (
             <Card>
+                {!this.state.isLoading && 
                 <Select 
                     loading={this.state.isLoadingCourse}
                     placeholder="Select Course ..."
                     onChange={this.loadAssignment}
                     style={{width: '25%', minWidth: '200px'}}
-                    defaultValue={parseInt(this.props.match.params.courseId) || 'Select Course...'}
+                    defaultValue={parseInt(this.props.match.params.courseId) || 'Select course ...'}
+                    value={this.state.defaulVal}
                 >
                     {this.state.listCourse.map(course => (
                         <Option key={course.id} value={course.id}>{course.name}</Option>   
                     ))}
                 </Select>
+                }
 
                 {this.state.currentCourseId > 0 && <ListAssignmentComponent ref="assignment" courseId={this.state.currentCourseId}/>}
             </Card>
