@@ -19,6 +19,7 @@ import AssignmentDetailComponent from '../component/authComponent/manageAssignme
 import ManageAssignmentComponent from '../component/authComponent/manageAssignment/ManageAssignmentComponent';
 import AssignmentComponent from '../component/memComponent/assignment/AssignmentComponent';
 import MemberAssignmentDetailComponent from '../component/memComponent/assignment/MemberAssignmentDetailComponent';
+import SubmissionComponent from '../component/memComponent/submission/SubmissionComponent';
 
 
 class RouterComponent extends React.Component {
@@ -49,6 +50,7 @@ class RouterComponent extends React.Component {
                                 <AuthenticationRoute path="/member/assignment" exact component={AssignmentComponent}/>
                                 <AuthenticationRoute path="/member/assignment/course/:courseId" exact component={AssignmentComponent}/>
                                 <AuthenticationRoute path="/member/assignment/:id" exact component={MemberAssignmentDetailComponent}/>
+                                <AuthenticationRoute path="/member/submission" exact component={SubmissionComponent}/>
                             </Layout>
                         </Switch>
                     </>

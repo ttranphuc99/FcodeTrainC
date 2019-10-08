@@ -47,6 +47,11 @@ let memMenu = {
       title: "Assignment",
       to: "/member/assignment",
       htmlBefore: '<i class="layout-icon fa fa-file-code-o" aria-hidden="true"></i>'
+    },
+    {
+      title: "Submission",
+      to: "/member/submission",
+      htmlBefore: '<i class="layout-icon fa fa-file" aria-hidden="true"></i>'
     }
   ]
 };

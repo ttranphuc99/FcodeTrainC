@@ -1,24 +1,21 @@
 import React from 'react'
-import { Redirect, Link } from 'react-router-dom';
-import { Select, Card, Spin, Table, Tag } from 'antd';
 import AccountCourseService from '../../../service/AccountCourseService';
 import WorkService from '../../../service/WorkService';
-import AssignmentService from '../../../service/AssignmentService';
+import { Redirect, Link } from 'react-router-dom';
+import { Select, Card, Tag, Spin, Table } from 'antd';
 
-class ListAssignmentComponent extends React.Component {
+class ListSubmissionComponent extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             isLoading: false,
-            listAss: [],
-            newAssModal: false,
+            listSub: [],
             redirecting: false,
             isError: false
         }
 
         this.fetchData = this.fetchData.bind(this);
-        this.asyncForEach = this.asyncForEach.bind(this);
     }
 
     componentWillMount() {
@@ -28,7 +25,7 @@ class ListAssignmentComponent extends React.Component {
     fetchData() {
         if (this.props.courseId > 0 || false) {
             this.setState({isLoading: true});
-            AssignmentService.getListAssByCourse(this.props.courseId)
+            WorkService.getSubmissionByCourse(this.props.courseId)
             .then(response => {
                 if (response.status === 200) {
                     return response.json();
@@ -40,39 +37,11 @@ class ListAssignmentComponent extends React.Component {
                 }
             }).then(data => {
                 if (data != null) {
-                    const start = async(data) => {
-                        await this.asyncForEach(data, async(row) => {		
-                            let response = await WorkService.countWorkSuccessByAss(row.id);	
-
-                            if (response.status === 200) {	
-                                let text = await response.text();	
-                                row["completed"] = text	
-                            }
-
-                            response = await WorkService.countWorkUnsuccessByAss(row.id);
-
-                            if (response.status === 200) {	
-                                let text = await response.text();	
-                                row["submitted"] = text	
-                            }
-                        })	
-                        return data;
-                    }
-                    return start(data);
-                }
-            }).then(data => {
-                if (data != null) {
-                    this.setState({listAss: data});
+                    this.setState({listSub: data});
                 }
                 this.setState({isLoading: false});
             })
         }
-    }
-
-    async asyncForEach(array, callback) {	
-        for (let index = 0; index < array.length; index++) {	
-          await callback(array[index], index, array);	
-        }	
     }
 
     render() {
@@ -88,14 +57,16 @@ class ListAssignmentComponent extends React.Component {
                 }
             },
             {
-                title: 'Title',
-                key: 'title',
-                dataIndex: 'title'
+                title: 'Assignment',
+                key: 'assignment',
+                render: record => {
+                    return record.assignment.id;
+                }
             },
             {
-                title: 'Mark',
-                key: 'mark',
-                dataIndex: 'mark'
+                title: 'Submit Quantity',
+                key: 'submitQuantity',
+                dataIndex: 'submitQuantity'
             },
             {
                 title: 'Status',
@@ -109,21 +80,9 @@ class ListAssignmentComponent extends React.Component {
                 }
             },
             {
-                title: 'Creator',
-                key: 'creator',
-                render: record => {
-                    return record.creatorName + " - @" + record.creatorUsername
-                }
-            },
-            {
-                title: 'Submitted',
-                key: 'submitted',
-                dataIndex: 'submitted'
-            },
-            {
-                title: 'Completed',
-                key: 'completed',
-                dataIndex: 'completed'
+                title: 'Submit time',
+                key: 'submitTime',
+                dataIndex: 'submitTime'
             }
         ]
         return (
@@ -132,7 +91,7 @@ class ListAssignmentComponent extends React.Component {
                     <Table
                         rowKey={record => record.id}
                         columns={column}
-                        dataSource={this.state.listAss}
+                        dataSource={this.state.listSub}
                         style={{minWidth: '700px'}}
                         pagination={{pageSize: 10}}/>
                 </Card>
@@ -141,29 +100,26 @@ class ListAssignmentComponent extends React.Component {
     }
 }
 
-class AssignmentComponent extends React.Component {
+class SubmissionComponent extends React.Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
-            isLoading: false,
             listCourse: [],
-            redirect: false,
+            isLoadingCourse: false,
             isError: false,
-            defaulVal: null
+            redirecting: false
         }
 
-        this.loadAssignment = this.loadAssignment.bind(this);
         this.getListCourse = this.getListCourse.bind(this);
+        this.loadSubmission = this.loadSubmission.bind(this);
     }
 
     componentWillMount() {
+        console.log('innnnnnnnnn');
         this.getListCourse();
-        if (this.props.match.params.courseId) {
-            this.loadAssignment(this.props.match.params.courseId);
-        }
     }
-    
+
     getListCourse() {
         this.setState({isLoadingCourse: true});
         AccountCourseService.getCourseOfAccount()
@@ -190,13 +146,13 @@ class AssignmentComponent extends React.Component {
             this.setState({isLoadingCourse: false});
         })
     }
-    
-    async loadAssignment(courseId) {
+
+    async loadSubmission(courseId) {
         await this.setState({
             currentCourseId: courseId,
             defaulVal: courseId
         });
-        if (this.refs.assignment !== undefined) this.refs.assignment.fetchData();
+        if (this.refs.submission !== undefined) this.refs.submission.fetchData();
     }
 
     render() {
@@ -212,7 +168,7 @@ class AssignmentComponent extends React.Component {
                     <Select 
                         loading={this.state.isLoadingCourse}
                         placeholder="Select Course ..."
-                        onChange={this.loadAssignment}
+                        onChange={this.loadSubmission}
                         style={{width: '25%', minWidth: '200px'}}
                         defaultValue={parseInt(this.props.match.params.courseId) || 'Select course ...'}
                         value={this.state.defaulVal}
@@ -225,10 +181,10 @@ class AssignmentComponent extends React.Component {
                 
                 }
 
-                {this.state.currentCourseId > 0 && <ListAssignmentComponent ref="assignment" courseId={this.state.currentCourseId}/>}
+                {this.state.currentCourseId > 0 && <ListSubmissionComponent ref="submission" courseId={this.state.currentCourseId}/>}
             </Card>
         )
     }
 }
 
-export default AssignmentComponent;
+export default SubmissionComponent;

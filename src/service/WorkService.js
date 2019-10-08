@@ -44,6 +44,16 @@ class WorkService {
             credentials: 'include'
         })
     }
+
+    getSubmissionByCourse(courseId) {
+        let url = API_BASE + '/member/' +courseId+ '/work';
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
 }
 
 export default new WorkService();
