@@ -53,7 +53,7 @@ class ListSubmissionComponent extends React.Component {
                 title: 'ID',
                 key: 'id',
                 render: record => {
-                    return <Link to={'/member/assignment/' + record.id}>{record.id}</Link> 
+                    return <Link to={'/member/submission/' + record.id}>{record.id}</Link> 
                 }
             },
             {
