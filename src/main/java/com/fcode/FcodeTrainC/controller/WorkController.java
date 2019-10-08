@@ -127,11 +127,16 @@ public class WorkController {
     public ResponseEntity getWorkDetail(@PathVariable(name = "workId") String workId, Authentication authentication) {
         ResponseEntity response = null;
         Work work = service.getWork(workId);
-        if (work.getJudger().getUsername().equals(authentication.getName())) {
-            response = new ResponseEntity(work, HttpStatus.OK);
+        if (work != null) {
+            if (work.getWorker().getUsername().equals(authentication.getName())) {
+                response = new ResponseEntity(work, HttpStatus.OK);
+            } else {
+                response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
         } else {
-            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            response = ResponseEntity.badRequest().build();
         }
+
         return response;
     }
 
