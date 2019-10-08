@@ -24,6 +24,9 @@ public class Work {
     @JoinColumn(name = "ac_judger")
     private Account judger;
 
+    @Column(name = "wo_name", unique = true)
+    private String name;
+
     @Column(name = "wo_submit_quantity")
     private Integer submitQuantity;
 
@@ -42,11 +45,12 @@ public class Work {
     public Work() {
     }
 
-    public Work(String id, Assignment assignment, Account worker, Account judger, Integer submitQuantity, String comment, Integer status, Timestamp submitTime, Timestamp judgeTime) {
+    public Work(String id, Assignment assignment, Account worker, Account judger, String name, Integer submitQuantity, String comment, Integer status, Timestamp submitTime, Timestamp judgeTime) {
         this.id = id;
         this.assignment = assignment;
         this.worker = worker;
         this.judger = judger;
+        this.name = name;
         this.submitQuantity = submitQuantity;
         this.comment = comment;
         this.status = status;
@@ -124,5 +128,13 @@ public class Work {
 
     public void setJudgeTime(Timestamp judgeTime) {
         this.judgeTime = judgeTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

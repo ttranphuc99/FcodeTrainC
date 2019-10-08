@@ -8,6 +8,7 @@ import com.fcode.FcodeTrainC.service.WorkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -72,7 +73,9 @@ public class WorkController {
                 work.setId(id);
                 work.setSubmitQuantity(submitQuantity);
                 work.setWorker(account);
-                service.storeFile(file, id);
+                String filename = service.storeFile(file, id);
+                work.setName(filename);
+
                 service.insert(work);
 
                 respone = ResponseEntity.ok().build();
@@ -105,5 +108,35 @@ public class WorkController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @GetMapping(value = "/member/{courseId}/work")
+    public ResponseEntity getListWork(@PathVariable(name = "courseId") Integer courseId, Authentication authentication) {
+        ResponseEntity response = null;
+        List<Work> list = service.getListWorkByCourseAndUsername(courseId, authentication.getName());
+        if (list != null) {
+            response = new ResponseEntity(list, HttpStatus.OK);
+        } else {
+            response = ResponseEntity.noContent().build();
+        }
+
+        return response;
+    }
+
+    @GetMapping(value = "/member/work/{workId}")
+    public ResponseEntity getWorkDetail(@PathVariable(name = "workId") String workId, Authentication authentication) {
+        ResponseEntity response = null;
+        Work work = service.getWork(workId);
+        if (work.getJudger().getUsername().equals(authentication.getName())) {
+            response = new ResponseEntity(work, HttpStatus.OK);
+        } else {
+            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return response;
+    }
+
+    @GetMapping(value = "/member/work/{workId}/content")
+    public String getWorkContent(@PathVariable(name = "workId") String wordId, Authentication authentication) {
+        return service.getWorkContent(wordId);
     }
 }

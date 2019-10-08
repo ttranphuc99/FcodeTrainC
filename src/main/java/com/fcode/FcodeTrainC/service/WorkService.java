@@ -10,12 +10,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WorkService {
@@ -41,6 +46,49 @@ public class WorkService {
             return work.getSubmitQuantity();
         }
         return 0;
+    }
+
+    public List<Work> getListWorkByCourseAndUsername(Integer courseId, String username) {
+        return repository.getListWorkByCourseAndUsername(courseId, username);
+    }
+
+    public Work getWork(String workId) {
+        Optional<Work> opt = repository.findById(workId);
+        return opt.isPresent() ? opt.get() : null;
+    }
+
+    public String getWorkContent(String workId) {
+        String detail = "";
+
+        Work work = this.getWork(workId);
+
+        if (work != null) {
+            File f = null;
+            FileReader fr = null;
+            BufferedReader br = null;
+            try {
+                f = new File(this.fileStorageLocation.toString() +"/"+ work.getName());
+                fr = new FileReader(f);
+                br = new BufferedReader(fr);
+
+                String line = "";
+
+                while ((line = br.readLine()) != null) {
+                    detail += line + "\n";
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (br != null) br.close();
+                    if (fr != null) fr.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return detail;
     }
 
     private final Path fileStorageLocation;
