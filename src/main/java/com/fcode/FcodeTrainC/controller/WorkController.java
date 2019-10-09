@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -89,25 +90,45 @@ public class WorkController {
         return respone;
     }
 
-    @GetMapping(value = "/member/downloadFile/{filename}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String filename, HttpServletRequest request) {
-        Resource resource = service.loadFileAsResource(filename);
+    @GetMapping(value = "/member/work/{workId}/file")
+    public ResponseEntity downloadFile(@PathVariable String workId, HttpServletRequest request, Authentication authentication) {
+        ResponseEntity response = null;
+        Work work = service.getWork(workId);
 
-        String contentType = null;
-        try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
+        String roleStr = "";
+        for (int i = 0; i < authentication.getAuthorities().toArray().length; i++) {
+            SimpleGrantedAuthority role = (SimpleGrantedAuthority) authentication.getAuthorities().toArray()[i];
+            roleStr = role.getAuthority();
         }
 
-        if (contentType == null) {
-            contentType = "application/octet-stream";
+        if (work != null) {
+            if (work.getWorker().getUsername().equals(authentication.getName())
+                    || roleStr.equalsIgnoreCase("admin") || roleStr.equalsIgnoreCase("mentor")) {
+                Resource resource = service.loadFileAsResource(work.getName());
+
+                String contentType = null;
+                try {
+                    contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (contentType == null) {
+                    contentType = "application/octet-stream";
+                }
+
+                response = ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } else {
+            response = ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+        return response;
     }
 
     @GetMapping(value = "/member/{courseId}/work")
@@ -127,8 +148,15 @@ public class WorkController {
     public ResponseEntity getWorkDetail(@PathVariable(name = "workId") String workId, Authentication authentication) {
         ResponseEntity response = null;
         Work work = service.getWork(workId);
+        String roleStr = "";
+        for (int i = 0; i < authentication.getAuthorities().toArray().length; i++) {
+            SimpleGrantedAuthority role = (SimpleGrantedAuthority) authentication.getAuthorities().toArray()[i];
+            roleStr = role.getAuthority();
+        }
+
         if (work != null) {
-            if (work.getWorker().getUsername().equals(authentication.getName())) {
+            if (work.getWorker().getUsername().equals(authentication.getName())
+                    || roleStr.equalsIgnoreCase("admin") || roleStr.equalsIgnoreCase("mentor")) {
                 response = new ResponseEntity(work, HttpStatus.OK);
             } else {
                 response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
