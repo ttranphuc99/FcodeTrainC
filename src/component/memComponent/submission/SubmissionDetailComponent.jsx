@@ -1,5 +1,6 @@
 import React from 'react'
-import { Spin, Descriptions, Card } from 'antd';
+import {Link} from 'react-router-dom';
+import { Spin, Descriptions, Card, Button, Icon, Tag } from 'antd';
 import WorkService from '../../../service/WorkService';
 
 class SubmissionDetailComponent extends React.Component {
@@ -9,7 +10,7 @@ class SubmissionDetailComponent extends React.Component {
         this.state = {
             work: {
                 id: '',
-                assignment: {id: ''},
+                assignment: {id: '', course: {id: ''}},
                 submitTime: '',
                 status: 0,
                 judger:{fullname: '', username: ''},
@@ -64,6 +65,10 @@ class SubmissionDetailComponent extends React.Component {
             })
     }
 
+    downloadFile(id) {
+        WorkService.downloadFile('/member/work/' + id + '/file');
+    }
+
     render() {
         const isJudge = () => {
             if (this.state.work.judger) 
@@ -75,15 +80,33 @@ class SubmissionDetailComponent extends React.Component {
             return <div></div>;
         }
 
+        const status = () => {
+            switch (this.state.work.status) {
+                case 0: return <Tag color="magenta">Waiting</Tag>
+                case 1: return <Tag color="blue">Success</Tag>
+                case -1 : return <Tag color="gold">Wrong</Tag>
+                case -2: return <Tag color="cyan">Run-Error</Tag>
+                case -3: return <Tag color="red">Rejected</Tag>
+                default: return ''
+            }
+        }
+
         return (
-            <Card>
+            <Card style={{overflow: 'auto'}}>
                 <Spin spinning={this.state.isLoading}>
-                    <div>
-                        <Descriptions title="Submission Detail" layout="horizontal" bordered>
-                            <Descriptions.Item label="ID">{this.state.work.id}</Descriptions.Item>
+                    <div style={{minWidth: '600px'}}>
+                        <Descriptions title="Submission Detail" layout="horizontal" column={{lg: 2, md: 1, sm: 1, xs: 1}} bordered>
+                            <Descriptions.Item label="ID">
+                                {this.state.work.id}
+                                <Button size="small" style={{marginLeft: '15px'}} onClick={() => this.downloadFile(this.state.work.id)}>
+                                    <Icon type="download" />
+                                </Button>
+                            </Descriptions.Item>
                             <Descriptions.Item label="Assignment ID">{this.state.work.assignment.id}</Descriptions.Item>
 
-                            <Descriptions.Item label="Status">{this.state.work.status}</Descriptions.Item>
+                            <Descriptions.Item label="Status">
+                                {status()}
+                            </Descriptions.Item>
                             <Descriptions.Item label="Submit Time">{this.state.work.submitTime}</Descriptions.Item>
 
                             {isJudge}
@@ -97,6 +120,10 @@ class SubmissionDetailComponent extends React.Component {
                                 <pre>{this.state.content}</pre>
                             </Descriptions.Item>
                         </Descriptions>
+
+                        <Button>
+                            <Link to={'/member/submission/course/' + this.state.work.assignment.course.id}>Back</Link>
+                        </Button>
                     </div>
                 </Spin>
             </Card>

@@ -2,7 +2,7 @@ import React from 'react'
 import AccountCourseService from '../../../service/AccountCourseService';
 import WorkService from '../../../service/WorkService';
 import { Redirect, Link } from 'react-router-dom';
-import { Select, Card, Tag, Spin, Table } from 'antd';
+import { Select, Card, Tag, Spin, Table, Icon, Button } from 'antd';
 
 class ListSubmissionComponent extends React.Component {
     constructor(props) {
@@ -44,6 +44,10 @@ class ListSubmissionComponent extends React.Component {
         }
     }
 
+    downloadFile(id) {
+        WorkService.downloadFile('/member/work/' + id + '/file');
+    }
+
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
@@ -53,7 +57,14 @@ class ListSubmissionComponent extends React.Component {
                 title: 'ID',
                 key: 'id',
                 render: record => {
-                    return <Link to={'/member/submission/' + record.id}>{record.id}</Link> 
+                    return (
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <Link to={'/member/submission/' + record.id}>{record.id}</Link> 
+                            <Button size="small" style={{marginLeft: '15px'}} onClick={() => this.downloadFile(record.id)}>
+                                <Icon type="download" />
+                            </Button>
+                        </div>
+                    ) 
                 }
             },
             {
@@ -72,10 +83,13 @@ class ListSubmissionComponent extends React.Component {
                 title: 'Status',
                 key: 'status',
                 render: (record) => {
-                    if (record.status === 0) {
-                        return <Tag color="red">Close</Tag>
-                    } else {
-                        return <Tag color="blue">Open</Tag>
+                    switch (record.status) {
+                        case 0: return <Tag color="magenta">Waiting</Tag>
+                        case 1: return <Tag color="blue">Success</Tag>
+                        case -1 : return <Tag color="gold">Wrong</Tag>
+                        case -2: return <Tag color="cyan">Run-Error</Tag>
+                        case -3: return <Tag color="red">Rejected</Tag>
+                        default: return ''
                     }
                 }
             },
@@ -116,7 +130,6 @@ class SubmissionComponent extends React.Component {
     }
 
     componentWillMount() {
-        console.log('innnnnnnnnn');
         this.getListCourse();
     }
 
@@ -136,11 +149,20 @@ class SubmissionComponent extends React.Component {
             if (data != null) {
                 this.setState({listCourse: data});
             }
-            this.setState({
-                isLoadingCourse: false, 
-                defaulVal: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 'Select course...',
-                currentCourseId: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 0
-            });
+
+            if (parseInt(this.props.match.params.courseId)) {
+                this.setState({
+                    defaulVal: parseInt(this.props.match.params.courseId),
+                    currentCourseId: parseInt(this.props.match.params.courseId),
+                    isLoadingCourse: false
+                })
+            } else {
+                this.setState({
+                    isLoadingCourse: false, 
+                    defaulVal: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 'Select course...',
+                    currentCourseId: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 0
+                });
+            }
         }).catch((err) => {
             this.setState({ isError: true, error: err });
             this.setState({isLoadingCourse: false});
@@ -170,7 +192,7 @@ class SubmissionComponent extends React.Component {
                         placeholder="Select Course ..."
                         onChange={this.loadSubmission}
                         style={{width: '25%', minWidth: '200px'}}
-                        defaultValue={parseInt(this.props.match.params.courseId) || 'Select course ...'}
+                        defaultValue={'Select course ...'}
                         value={this.state.defaulVal}
                     >
                         {this.state.listCourse.map(course => (

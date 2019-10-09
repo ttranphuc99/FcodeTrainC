@@ -74,6 +74,12 @@ class WorkService {
             credentials: 'include'
         })
     }
+
+    downloadFile(path) {
+        let url = API_BASE + path;
+
+        window.location.href = url;
+    }
 }
 
 export default new WorkService();

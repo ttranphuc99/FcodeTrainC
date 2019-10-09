@@ -180,11 +180,20 @@ class AssignmentComponent extends React.Component {
             if (data != null) {
                 this.setState({listCourse: data});
             }
-            this.setState({
-                isLoadingCourse: false, 
-                defaulVal: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 'Select course...',
-                currentCourseId: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 0
-            });
+
+            if (parseInt(this.props.match.params.courseId)) {
+                this.setState({
+                    isLoadingCourse: false,
+                    defaulVal: parseInt(this.props.match.params.courseId),
+                    currentCourseId: parseInt(this.props.match.params.courseId)
+                })
+            } else {
+                this.setState({
+                    isLoadingCourse: false, 
+                    defaulVal: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 'Select course...',
+                    currentCourseId: (this.state.listCourse.length > 0) ? this.state.listCourse[0].id : 0
+                });
+            }
         }).catch((err) => {
             this.setState({ isError: true, error: err });
             this.setState({isLoadingCourse: false});
@@ -214,7 +223,7 @@ class AssignmentComponent extends React.Component {
                         placeholder="Select Course ..."
                         onChange={this.loadAssignment}
                         style={{width: '25%', minWidth: '200px'}}
-                        defaultValue={parseInt(this.props.match.params.courseId) || 'Select course ...'}
+                        defaultValue={'Select course ...'}
                         value={this.state.defaulVal}
                     >
                         {this.state.listCourse.map(course => (
