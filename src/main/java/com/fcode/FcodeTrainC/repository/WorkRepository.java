@@ -17,4 +17,6 @@ public interface WorkRepository extends CrudRepository<Work,String> {
 
     @Query("SELECT w FROM Work w WHERE w.assignment.course.id = ?1 AND w.worker.username = ?2 ORDER BY w.submitTime DESC")
     List<Work> getListWorkByCourseAndUsername(Integer courseId, String username);
+
+    List<Work> findByAssignmentCourseIdOrderBySubmitTimeDesc(Integer courseId);
 }

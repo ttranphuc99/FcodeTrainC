@@ -144,6 +144,19 @@ public class WorkController {
         return response;
     }
 
+    @GetMapping(value = "/auth/{courseId}/work")
+    public ResponseEntity adminGetListWork(@PathVariable(name = "courseId") Integer courseId) {
+        ResponseEntity response = null;
+        List<Work> list = service.getAllWorkOfCourse(courseId);
+        if (list != null) {
+            response = new ResponseEntity(list, HttpStatus.OK);
+        } else {
+            response = ResponseEntity.noContent().build();
+        }
+
+        return response;
+    }
+
     @GetMapping(value = "/member/work/{workId}")
     public ResponseEntity getWorkDetail(@PathVariable(name = "workId") String workId, Authentication authentication) {
         ResponseEntity response = null;

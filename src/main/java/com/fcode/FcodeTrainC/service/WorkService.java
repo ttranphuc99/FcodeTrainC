@@ -135,4 +135,7 @@ public class WorkService {
         return null;
     }
 
+    public List<Work> getAllWorkOfCourse(Integer courseId) {
+        return repository.findByAssignmentCourseIdOrderBySubmitTimeDesc(courseId);
+    }
 }
