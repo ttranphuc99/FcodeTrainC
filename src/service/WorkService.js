@@ -55,6 +55,16 @@ class WorkService {
         })
     }
 
+    adminGetSubmissionByCourse(courseId) {
+        let url = API_BASE + '/auth/' +courseId+ '/work';
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
+
     getSubmissionDetail(id) {
         let url = API_BASE + '/member/work/' +id;
 

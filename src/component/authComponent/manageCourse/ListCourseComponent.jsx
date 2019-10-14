@@ -135,7 +135,7 @@ class ListCourseComponent extends React.Component {
         this.fetchData = this.fetchData.bind(this);
     }
 
-    getColumnSearchProps = dataIndex => ({
+    getColumnSearchProps = dataIndex => ({ 
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
           <div style={{ padding: 8 }}>
             <Input

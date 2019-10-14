@@ -21,6 +21,8 @@ import AssignmentComponent from '../component/memComponent/assignment/Assignment
 import MemberAssignmentDetailComponent from '../component/memComponent/assignment/MemberAssignmentDetailComponent';
 import SubmissionComponent from '../component/memComponent/submission/SubmissionComponent';
 import SubmissionDetailComponent from '../component/memComponent/submission/SubmissionDetailComponent';
+import AuthSubmissionComponent from '../component/authComponent/manageSubmission/AuthSubmissionComponent';
+import AuthSubmissionDetailComponent from '../component/authComponent/manageSubmission/AuthSubmissionDetailComponent';
 
 
 class RouterComponent extends React.Component {
@@ -46,6 +48,9 @@ class RouterComponent extends React.Component {
                                 <AuthenticationRoute path="/manageAssignment" exact component={ManageAssignmentComponent}/>
                                 <AuthenticationRoute path="/manageAssignment/:courseId" exact component={ManageAssignmentComponent}/>
                                 <AuthenticationRoute path="/manageAssignment/assignment/:id" exact component={AssignmentDetailComponent}/>
+
+                                <AuthenticationRoute path="/manageSubmission" exact component={AuthSubmissionComponent}/>
+                                <AuthenticationRoute path="/manageSubmission/:id" exact component={AuthSubmissionDetailComponent}/>
 
                                 <AuthenticationRoute path="/member/course" exact component={CourseComponent}/>
                                 <AuthenticationRoute path="/member/assignment" exact component={AssignmentComponent}/>

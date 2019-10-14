@@ -26,6 +26,11 @@ let adminMenu = {
       title: "Manage Assignment",
       to: "/manageAssignment",
       htmlBefore: '<i class="layout-icon fa fa-file-code-o" aria-hidden="true"></i>'
+    },
+    {
+      title: "Manage Submission",
+      to: "/manageSubmission",
+      htmlBefore: '<i class="layout-icon fa fa-cloud-upload" aria-hidden="true"></i>'
     }
   ]
 };

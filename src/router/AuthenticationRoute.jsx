@@ -16,7 +16,6 @@ class AuthenticationRoute extends React.Component {
     }
 
     render() {
-        console.log('path ', this.props.path);
         let isAllow = false;
 
         if (LoginService.isLoggedIn()) {
@@ -32,7 +31,8 @@ class AuthenticationRoute extends React.Component {
             let adminPage = [
                 '/manageAccount',
                 '/manageCourse',
-                '/manageAssignment'
+                '/manageAssignment',
+                '/manageSubmission'
             ];
             let memberPage = [
                 '/member/course',
@@ -63,7 +63,6 @@ class AuthenticationRoute extends React.Component {
                 return null;
             }
         } else {
-            console.log('go to login');
             return <Redirect to='/login'/>
         }        
     }

@@ -1,8 +1,8 @@
 import React from 'react'
-import AccountCourseService from '../../../service/AccountCourseService';
+import CourseService from '../../../service/CourseService';
 import WorkService from '../../../service/WorkService';
 import { Redirect, Link } from 'react-router-dom';
-import { Select, Card, Tag, Spin, Table, Icon, Button, Input } from 'antd';
+import { Select, Card, Tag, Spin, Table, Icon, Button } from 'antd';
 
 class ListSubmissionComponent extends React.Component {
     constructor(props) {
@@ -12,14 +12,10 @@ class ListSubmissionComponent extends React.Component {
             isLoading: false,
             listSub: [],
             redirecting: false,
-            isError: false,
-            listAss: []
+            isError: false
         }
 
         this.fetchData = this.fetchData.bind(this);
-        this.handleReset = this.handleReset.bind(this);
-        this.handleSearch = this.handleSearch.bind(this);
-        this.getListAssignment = this.getListAssignment.bind(this);
     }
 
     componentWillMount() {
@@ -29,7 +25,7 @@ class ListSubmissionComponent extends React.Component {
     fetchData() {
         if (this.props.courseId > 0 || false) {
             this.setState({isLoading: true});
-            WorkService.getSubmissionByCourse(this.props.courseId)
+            WorkService.adminGetSubmissionByCourse(this.props.courseId)
             .then(response => {
                 if (response.status === 200) {
                     return response.json();
@@ -42,9 +38,7 @@ class ListSubmissionComponent extends React.Component {
             }).then(data => {
                 if (data != null) {
                     this.setState({listSub: data});
-                    this.getListAssignment();
                 }
-                console.log("ass ", this.state.listAss);
                 this.setState({isLoading: false});
             })
         }
@@ -52,64 +46,6 @@ class ListSubmissionComponent extends React.Component {
 
     downloadFile(id) {
         WorkService.downloadFile('/member/work/' + id + '/file');
-    }
-
-    getColumnSearchProps = dataIndex => ({ 
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-          <div style={{ padding: 8 }}>
-            <Input
-              ref={node => {this.searchInput = node;}}
-              placeholder={`Search ${dataIndex}`}
-              value={selectedKeys[0]}
-              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-              onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
-              style={{ width: 188, marginBottom: 8, display: 'block' }}
-            />
-            <Button
-              type="primary"
-              onClick={() => this.handleSearch(selectedKeys, confirm)}
-              icon="search"
-              size="small"
-              style={{ width: 90, marginRight: 8 }}
-            >
-              Search
-            </Button>
-            <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-              Reset
-            </Button>
-          </div>
-        ),
-        filterIcon: filtered => (
-          <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
-        ),
-        onFilter: (value, record) =>
-          record[dataIndex]
-            .toString()
-            .toLowerCase()
-            .includes(value.toLowerCase()),
-        onFilterDropdownVisibleChange: visible => {
-          if (visible) {
-            setTimeout(() => this.searchInput.select());
-          }
-        },
-    })
-
-    handleSearch = (selectedKeys, confirm) => {
-        confirm();
-        this.setState({ searchText: selectedKeys[0] });
-    }
-    
-    handleReset = clearFilters => {
-        clearFilters();
-        this.setState({ searchText: '' });
-    }
-
-    async getListAssignment() {
-        await this.state.listSub.forEach((row) => {
-            let ass = {text: row.assignment.id, value: row.assignment.id};
-            let index = this.state.listAss.findIndex(row => row.text === ass.text);
-            if (index < 0) this.state.listAss.push(ass);
-        })
     }
 
     render() {
@@ -129,26 +65,19 @@ class ListSubmissionComponent extends React.Component {
                             </Button>
                         </div>
                     ) 
-                },
-                sorter: (a,b) => a.id - b.id,
-                width: '25%'
+                }
             },
             {
                 title: 'Assignment',
                 key: 'assignment',
                 render: record => {
                     return record.assignment.id;
-                },
-                width: '20%',
-                filters: this.state.listAss,
-                onFilter: (value, record) => record.assignment.id === value,
+                }
             },
             {
                 title: 'Submit Quantity',
                 key: 'submitQuantity',
-                dataIndex: 'submitQuantity',
-                sorter: (a,b) => a.submitQuantity - b.submitQuantity,
-                width: '5%'
+                dataIndex: 'submitQuantity'
             },
             {
                 title: 'Status',
@@ -162,25 +91,12 @@ class ListSubmissionComponent extends React.Component {
                         case -3: return <Tag color="red">Rejected</Tag>
                         default: return ''
                     }
-                },
-                filters: [
-                    { text: 'Waiting', value: 0 },
-                    { text: 'Success', value: 1 },
-                    { text: 'Wrong', value: -1 },
-                    { text: 'Run Error', value: -2 },
-                    { text: 'Rejected', value: -3 },
-                ],
-                onFilter: (value, record) => record.status === value,
-                width: '5%'
+                }
             },
             {
                 title: 'Submit time',
                 key: 'submitTime',
-                dataIndex: 'submitTime',
-                sorter: (a,b) => {
-                    if (a.submitTime > b.submitTime) return 1;
-                    return -1;
-                }
+                dataIndex: 'submitTime'
             }
         ]
         return (
@@ -198,7 +114,7 @@ class ListSubmissionComponent extends React.Component {
     }
 }
 
-class SubmissionComponent extends React.Component {
+class AuthSubmissionComponent extends React.Component {
     constructor(props) {
         super(props);
 
@@ -219,7 +135,7 @@ class SubmissionComponent extends React.Component {
 
     getListCourse() {
         this.setState({isLoadingCourse: true});
-        AccountCourseService.getCourseOfAccount()
+        CourseService.getListCourse()
         .then(response => {
             if (response.status === 200) {
                 return response.json();
@@ -293,4 +209,4 @@ class SubmissionComponent extends React.Component {
     }
 }
 
-export default SubmissionComponent;
+export default AuthSubmissionComponent;
