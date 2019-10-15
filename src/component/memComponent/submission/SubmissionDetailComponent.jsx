@@ -70,14 +70,15 @@ class SubmissionDetailComponent extends React.Component {
     }
 
     render() {
-        const isJudge = () => {
+        const judgeName = () => {
             if (this.state.work.judger) 
-                return (
-                    <div>
-                        <Descriptions.Item label="Judger">{this.state.work.judger.fullname} - @{this.state.work.judger.username}</Descriptions.Item>
-                        <Descriptions.Item label="Judge Time">{this.state.work.judgeTime}</Descriptions.Item>
-                    </div>);
-            return <div></div>;
+                return this.state.work.judger.fullname + " - @" + this.state.work.judger.username;
+            return '';
+        }
+
+        const judgeTime = () => {
+            if (this.state.work.judger) return this.state.work.judgeTime
+            return '';
         }
 
         const status = () => {
@@ -109,7 +110,8 @@ class SubmissionDetailComponent extends React.Component {
                             </Descriptions.Item>
                             <Descriptions.Item label="Submit Time">{this.state.work.submitTime}</Descriptions.Item>
 
-                            {isJudge}
+                            <Descriptions.Item label="Judger">{judgeName()}</Descriptions.Item>
+                            <Descriptions.Item label="Judge Time">{judgeTime()}</Descriptions.Item>
 
                             <Descriptions.Item label="Submit Quantity">{this.state.work.submitQuantity}</Descriptions.Item>
                             <Descriptions.Item label="Comment">{this.state.work.comment}</Descriptions.Item>

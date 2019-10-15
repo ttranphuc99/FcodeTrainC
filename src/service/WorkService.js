@@ -90,6 +90,22 @@ class WorkService {
 
         window.location.href = url;
     }
+
+    judgeSubmission(submissionId, status, comment) {
+        let url = API_BASE + '/auth/work/' +submissionId+ '/judge';
+
+        let form = new FormData();
+
+        form.append('status', status);
+        form.append('comment', comment);
+
+        return fetch(url, {
+            method: 'POST',
+            withCredentials: true,
+            credentials: 'include',
+            body: form
+        })
+    }
 }
 
 export default new WorkService();

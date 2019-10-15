@@ -2,8 +2,9 @@ import React from 'react'
 import CourseService from '../../../service/CourseService';
 import WorkService from '../../../service/WorkService';
 import { Redirect, Link } from 'react-router-dom';
-import { Select, Card, Tag, Spin, Table, Icon, Button, Input, Modal, notification } from 'antd';
+import { Select, Card, Tag, Spin, Table, Icon, Button, Input, Modal, notification, Form } from 'antd';
 import ProfileDetailComponent from '../manageAccount/ProfileDetailComponent';
+import JudgeComponent from './JudgeComponent';
 
 class ListSubmissionComponent extends React.Component {
     constructor(props) {
@@ -28,6 +29,9 @@ class ListSubmissionComponent extends React.Component {
         this.getListAssignment = this.getListAssignment.bind(this);
         this.showDetailModal = this.showDetailModal.bind(this);
         this.closeDetailModal = this.closeDetailModal.bind(this);
+        this.openJudgeModal = this.openJudgeModal.bind(this);
+        this.closeJudgeModal = this.closeJudgeModal.bind(this);
+        this.updateRecord = this.updateRecord.bind(this);
     }
 
     componentWillMount() {
@@ -50,6 +54,7 @@ class ListSubmissionComponent extends React.Component {
             }).then(data => {
                 if (data != null) {
                     this.setState({listSub: data});
+                    this.getListAssignment();
                 }
                 this.setState({isLoading: false});
             })
@@ -136,12 +141,29 @@ class ListSubmissionComponent extends React.Component {
         })
     }
 
-    async openJudgeModal(submissionId) {
-        await this.setState({judgeModalVisible: true, currentSubmisionId: submissionId});
+    async openJudgeModal(submissionId, status, comment) {
+        await this.setState({
+            judgeModalVisible: true, 
+            currentSubmisionId: submissionId, 
+            currentStatus: status, 
+            currentComment: comment !== null ? comment : ''
+        });
+        this.form.refresh();
     }
 
     closeJudgeModal() {
         this.setState({judgeModalVisible: false})
+    }
+
+    updateRecord(submissionId, status) {
+        console.log('submit ' , submissionId, ' status', status)
+
+        let updatedList = this.state.listSub;
+        let index = updatedList.findIndex((row) => row.id === submissionId);
+        
+        updatedList[index].status = status;
+
+        this.setState({listSub: updatedList});
     }
 
     render() {
@@ -155,7 +177,7 @@ class ListSubmissionComponent extends React.Component {
                 render: record => {
                     return (
                         <div style={{display: 'flex', alignItems: 'center'}}>
-                            <Link to={'/member/submission/' + record.id}>{record.id}</Link> 
+                            <Link to={'/manageSubmission/' + record.id} target="_blank">{record.id}</Link> 
                             <Button size="small" style={{marginLeft: '15px'}} onClick={() => this.downloadFile(record.id)}>
                                 <Icon type="download" />
                             </Button>
@@ -187,7 +209,7 @@ class ListSubmissionComponent extends React.Component {
                 render: record => {
                     return record.assignment.id;
                 },
-                width: 150,
+                width: 170,
                 filters: this.state.listAss,
                 onFilter: (value, record) => record.assignment.id === value,
             },
@@ -234,9 +256,9 @@ class ListSubmissionComponent extends React.Component {
             {
                 title: 'Judge',
                 key: 'judge',
-                render: () => {
+                render: row => {
                     return (
-                        <Button>
+                        <Button onClick={() => this.openJudgeModal(row.id, row.status, row.comment)}>
                             <Icon type="flag" />
                         </Button>
                     )
@@ -276,7 +298,14 @@ class ListSubmissionComponent extends React.Component {
                     onCancel={this.closeJudgeModal}
                     footer={null}
                     >
-                        
+                        <JudgeComponent 
+                            ref="judgeSubmission"
+                            submissionId={this.state.currentSubmisionId} 
+                            update={this.updateRecord} 
+                            status={this.state.currentStatus}
+                            comment={this.state.currentComment}
+                            closeModal={this.closeJudgeModal}
+                            wrappedComponentRef={(form) => this.form = form}/>
                 </Modal>
             </Spin>
         )
