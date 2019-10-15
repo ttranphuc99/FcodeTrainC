@@ -185,4 +185,25 @@ public class WorkController {
     public String getWorkContent(@PathVariable(name = "workId") String wordId, Authentication authentication) {
         return service.getWorkContent(wordId);
     }
+
+    @PostMapping(value = "/auth/work/{workId}/judge")
+    public ResponseEntity judgeWork(@PathVariable(name = "workId") String workId, HttpServletRequest request, Authentication authentication) {
+        ResponseEntity response = null;
+        Work work = service.getWork(workId);
+
+        if (work == null) {
+            response = ResponseEntity.notFound().build();
+        } else {
+            work.setStatus(Integer.parseInt(request.getParameter("status")));
+            work.setComment(request.getParameter("comment"));
+
+            Account judger = accountService.findByUsername(authentication.getName());
+            work.setJudger(judger);
+
+            service.save(work);
+
+            response = ResponseEntity.ok().build();
+        }
+        return response;
+    }
 }
