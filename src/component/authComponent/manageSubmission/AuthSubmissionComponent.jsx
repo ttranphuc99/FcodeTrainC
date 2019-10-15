@@ -2,7 +2,8 @@ import React from 'react'
 import CourseService from '../../../service/CourseService';
 import WorkService from '../../../service/WorkService';
 import { Redirect, Link } from 'react-router-dom';
-import { Select, Card, Tag, Spin, Table, Icon, Button } from 'antd';
+import { Select, Card, Tag, Spin, Table, Icon, Button, Input, Modal, notification } from 'antd';
+import ProfileDetailComponent from '../manageAccount/ProfileDetailComponent';
 
 class ListSubmissionComponent extends React.Component {
     constructor(props) {
@@ -12,10 +13,21 @@ class ListSubmissionComponent extends React.Component {
             isLoading: false,
             listSub: [],
             redirecting: false,
-            isError: false
+            isError: false,
+            listAss: [],
+            detailModalVisible: false,
+            detailUsername: '',
+            judgeModalVisible: false,
+            currentSubmisionId: ''
         }
 
         this.fetchData = this.fetchData.bind(this);
+        this.getColumnSearchProps = this.getColumnSearchProps.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
+        this.handleReset = this.handleReset.bind(this);
+        this.getListAssignment = this.getListAssignment.bind(this);
+        this.showDetailModal = this.showDetailModal.bind(this);
+        this.closeDetailModal = this.closeDetailModal.bind(this);
     }
 
     componentWillMount() {
@@ -48,6 +60,90 @@ class ListSubmissionComponent extends React.Component {
         WorkService.downloadFile('/member/work/' + id + '/file');
     }
 
+    getColumnSearchProps = dataIndex => ({ 
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Input
+              ref={node => {this.searchInput = node;}}
+              placeholder={`Search ${dataIndex}`}
+              value={selectedKeys[0]}
+              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onPressEnter={() => this.handleSearch(selectedKeys, confirm)}
+              style={{ width: 188, marginBottom: 8, display: 'block' }}
+            />
+            <Button
+              type="primary"
+              onClick={() => this.handleSearch(selectedKeys, confirm)}
+              icon="search"
+              size="small"
+              style={{ width: 90, marginRight: 8 }}
+            >
+              Search
+            </Button>
+            <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+              Reset
+            </Button>
+          </div>
+        ),
+        filterIcon: filtered => (
+          <Icon type="search" style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        onFilter: (value, record) =>
+          record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+          if (visible) {
+            setTimeout(() => this.searchInput.select());
+          }
+        },
+    })
+
+    handleSearch = (selectedKeys, confirm) => {
+        confirm();
+        this.setState({ searchText: selectedKeys[0] });
+    }
+    
+    handleReset = clearFilters => {
+        clearFilters();
+        this.setState({ searchText: '' });
+    }
+
+    async getListAssignment() {
+        await this.state.listSub.forEach((row) => {
+            let ass = {text: row.assignment.id, value: row.assignment.id};
+            let index = this.state.listAss.findIndex(row => row.text === ass.text);
+            if (index < 0) this.state.listAss.push(ass);
+        })
+    }
+
+    async showDetailModal(username) {
+        await this.setState({ detailModalVisible: true, detailUsername: username });
+        this.refs.profileDetail.fetchData();
+    }
+
+    closeDetailModal() {
+        this.setState({ detailModalVisible: false })
+    }
+
+    showNotFound() {
+        notification.error({
+            message: 'Error',
+            description: "Not found user " + this.state.detailUsername,
+            top: 70,
+            placement: 'topRight',
+        })
+    }
+
+    async openJudgeModal(submissionId) {
+        await this.setState({judgeModalVisible: true, currentSubmisionId: submissionId});
+    }
+
+    closeJudgeModal() {
+        this.setState({judgeModalVisible: false})
+    }
+
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
@@ -65,19 +161,51 @@ class ListSubmissionComponent extends React.Component {
                             </Button>
                         </div>
                     ) 
-                }
+                },
+                sorter: (a,b) => a.id - b.id,
+                width: 150,
+                fixed: 'left'
+            },
+            {
+                title: 'Worker',
+                key: 'worker',
+                render: record => {
+                    return (
+                        <Button 
+                            style={{padding: '0'}}
+                            type="link" 
+                            onClick={() => this.showDetailModal(record.worker.username)}
+                        >{record.worker.fullname} - @{record.worker.username}</Button>
+                    )
+                },
+                width: 200,
+                fixed: 'left'
             },
             {
                 title: 'Assignment',
                 key: 'assignment',
                 render: record => {
                     return record.assignment.id;
-                }
+                },
+                width: 150,
+                filters: this.state.listAss,
+                onFilter: (value, record) => record.assignment.id === value,
             },
             {
                 title: 'Submit Quantity',
                 key: 'submitQuantity',
-                dataIndex: 'submitQuantity'
+                dataIndex: 'submitQuantity',
+                sorter: (a,b) => a.submitQuantity - b.submitQuantity,
+                width: 50
+            },
+            {
+                title: 'Submit time',
+                key: 'submitTime',
+                dataIndex: 'submitTime',
+                sorter: (a,b) => {
+                    if (a.submitTime > b.submitTime) return 1;
+                    return -1;
+                }
             },
             {
                 title: 'Status',
@@ -91,12 +219,30 @@ class ListSubmissionComponent extends React.Component {
                         case -3: return <Tag color="red">Rejected</Tag>
                         default: return ''
                     }
-                }
+                },
+                filters: [
+                    { text: 'Waiting', value: 0 },
+                    { text: 'Success', value: 1 },
+                    { text: 'Wrong', value: -1 },
+                    { text: 'Run Error', value: -2 },
+                    { text: 'Rejected', value: -3 },
+                ],
+                onFilter: (value, record) => record.status === value,
+                width: 50,
+                fixed: 'right'
             },
             {
-                title: 'Submit time',
-                key: 'submitTime',
-                dataIndex: 'submitTime'
+                title: 'Judge',
+                key: 'judge',
+                render: () => {
+                    return (
+                        <Button>
+                            <Icon type="flag" />
+                        </Button>
+                    )
+                },
+                width: 100,
+                fixed: 'right'
             }
         ]
         return (
@@ -107,8 +253,31 @@ class ListSubmissionComponent extends React.Component {
                         columns={column}
                         dataSource={this.state.listSub}
                         style={{minWidth: '700px'}}
-                        pagination={{pageSize: 10}}/>
+                        pagination={{pageSize: 10}}
+                        scroll={{x: 1150}}/>
                 </Card>
+
+                <Modal 
+                    title={"Member Detail"}
+                    visible={this.state.detailModalVisible}
+                    onCancel={this.closeDetailModal}
+                    footer={null}
+                >
+                    <ProfileDetailComponent 
+                        ref="profileDetail"
+                        username={this.state.detailUsername} 
+                        isAuth={true}
+                        notFound={this.showNotFound}/>
+                </Modal>
+
+                <Modal
+                    title={"Judge " + this.state.currentSubmisionId}
+                    visible={this.state.judgeModalVisible}
+                    onCancel={this.closeJudgeModal}
+                    footer={null}
+                    >
+                        
+                </Modal>
             </Spin>
         )
     }
