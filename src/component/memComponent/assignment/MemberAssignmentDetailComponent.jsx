@@ -151,7 +151,8 @@ class MemberAssignmentDetailComponent extends React.Component {
             isError: false,
             assignment: null,
             submitModal: false,
-            submitQuantity: 0
+            submitQuantity: 0,
+            isReject: false
         }
 
         this.openSubmitModal = this.openSubmitModal.bind(this);
@@ -192,6 +193,15 @@ class MemberAssignmentDetailComponent extends React.Component {
             if (data != null) {
                 console.log(data);
                 this.setState({assignment: data})
+            }
+        })
+
+        WorkService.checkRejectStatus(this.props.match.params.id)
+        .then(response => {
+            if (response.status === 200) {
+                this.setState({isReject: false});
+            } else if (response.status === 400) {
+                this.setState({isReject: true});
             }
         })
 
@@ -245,7 +255,8 @@ class MemberAssignmentDetailComponent extends React.Component {
 
                 </Typography>
 
-                {this.state.assignment.submitQuantity - this.state.submitQuantity > 0 && <Button onClick={this.openSubmitModal}>Submit</Button>}
+                {this.state.assignment.submitQuantity - this.state.submitQuantity > 0 &&
+                    !this.state.isReject && <Button onClick={this.openSubmitModal}>Submit</Button>}
 
                 <Modal
                     title="Submit Work"

@@ -1,5 +1,4 @@
 import React from 'react'
-import {Link} from 'react-router-dom';
 import { Spin, Descriptions, Card, Button, Icon, Tag, Modal } from 'antd';
 import WorkService from '../../../service/WorkService';
 import JudgeComponent from './JudgeComponent';
@@ -44,7 +43,6 @@ class SubmissionDetailComponent extends React.Component {
                     this.setState({ isError: true, error: response });
                 }
             }).then(data => {
-                console.log('data', data)
                 if (data != null) {
                     this.setState({work: data});
                 }

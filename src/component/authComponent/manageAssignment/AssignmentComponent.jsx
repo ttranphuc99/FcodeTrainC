@@ -137,6 +137,10 @@ class AssignmentComponent extends React.Component {
         this.asyncForEach = this.asyncForEach.bind(this);
         this.openNewAssModal = this.openNewAssModal.bind(this);
         this.closeNewAddModal = this.closeNewAssModal.bind(this);
+        this.closeConfirm = this.closeConfirm.bind(this);
+        this.deleteConfirm = this.deleteConfirm.bind(this);
+        this.updateStatus = this.updateStatus.bind(this);
+        this.updateRecordDelete = this.updateRecordDelete.bind(this);
     }
 
     componentWillMount() {
@@ -168,18 +172,19 @@ class AssignmentComponent extends React.Component {
                 if (data != null) {
                     const start = async(data) => {
                         await this.asyncForEach(data, async(row) => {		
-                            let response = await WorkService.countWorkSuccessByAss(row.id);	
+                            let response = await WorkService.countWorkSuccessByAss(row.id);
+                            let complete;	
 
                             if (response.status === 200) {	
-                                let text = await response.text();	
-                                row["completed"] = text	
+                                complete = await response.text();	
+                                row["completed"] = complete;	
                             }
 
                             response = await WorkService.countWorkUnsuccessByAss(row.id);
 
                             if (response.status === 200) {	
                                 let text = await response.text();	
-                                row["submitted"] = text	
+                                row["submitted"] = parseInt(text) + parseInt(complete);	
                             }
                         })	
                         return data;
@@ -201,6 +206,120 @@ class AssignmentComponent extends React.Component {
         }	
     }
 
+    updateStatus(assignmentId, status) {
+        let updatedList = this.state.listAss;
+        let index = updatedList.findIndex((row) => row.id === assignmentId);
+        
+        updatedList[index].status = status;
+
+        this.setState({listAss: updatedList});
+    }
+
+    updateRecordDelete(assignmentId) {
+        let updatedList = this.state.listAss;
+        let index = updatedList.findIndex((row) => row.id === assignmentId);
+        
+        updatedList.splice(index, 1);
+
+        this.setState({listAss: updatedList});
+    }
+
+    closeAssignment(assignmentId) {
+        AssignmentService.closeAssignment(assignmentId)
+        .then(response => {
+            if (response.status === 200) {
+                notification.success({
+                    message: 'Notification',
+                    description: 'Close successfully!',
+                    top: 70,
+                    placement: 'topRight',
+                });
+                this.updateStatus(assignmentId, 0);
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: response.message,
+                    top: 70,
+                    placement: 'topRight',
+                })
+            }
+        })
+    }
+
+    activeAssignment(assignmentId) {
+        AssignmentService.activeAssignment(assignmentId)
+        .then(response => {
+            if (response.status === 200) {
+                notification.success({
+                    message: 'Notification',
+                    description: 'Active successfully!',
+                    top: 70,
+                    placement: 'topRight',
+                });
+                this.updateStatus(assignmentId, 1);
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: response.message,
+                    top: 70,
+                    placement: 'topRight',
+                })
+            }
+        })
+    }
+
+    deleteAssignment(assignmentId) {
+        AssignmentService.deleteAssignment(assignmentId)
+        .then(response => {
+            if (response.status === 200) {
+                notification.success({
+                    message: 'Notification',
+                    description: 'Delete successfully!',
+                    top: 70,
+                    placement: 'topRight',
+                });
+                this.updateRecordDelete(assignmentId);
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: response.message,
+                    top: 70,
+                    placement: 'topRight',
+                })
+            }
+        })
+    }
+
+    closeConfirm(record) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to close assignment ID: ' + record.id,
+            okText: 'Confirm',
+            cancelText: 'Cancel',
+            onOk: () => this.closeAssignment(record.id)
+        })
+    }
+
+    activeConfirm(record) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to active assignment ID: ' + record.id,
+            okText: 'Confirm',
+            cancelText: 'Cancel',
+            onOk: () => this.activeAssignment(record.id)
+        })
+    }
+
+    deleteConfirm(record) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to delete assignment ID: ' + record.id,
+            okText: 'Confirm',
+            cancelText: 'Cancel',
+            onOk: () => this.deleteAssignment(record.id)
+        })
+    }
+
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
@@ -211,17 +330,23 @@ class AssignmentComponent extends React.Component {
                 key: 'id',
                 render: record => {
                     return <Link to={'/manageAssignment/assignment/' + record.id}>{record.id}</Link> 
-                }
+                },
+                width: 150,
+                fixed: 'left'
             },
             {
                 title: 'Title',
                 key: 'title',
-                dataIndex: 'title'
+                dataIndex: 'title',
+                width: 300,
+                fixed: 'left'
             },
             {
                 title: 'Mark',
                 key: 'mark',
-                dataIndex: 'mark'
+                dataIndex: 'mark',
+                width: 50,
+                align: 'center'
             },
             {
                 title: 'Status',
@@ -232,36 +357,64 @@ class AssignmentComponent extends React.Component {
                     } else {
                         return <Tag color="blue">Open</Tag>
                     }
-                }
+                },
+                width: 50,
+                align: 'center'
             },
             {
                 title: 'Creator',
                 key: 'creator',
                 render: record => {
                     return record.creatorName + " - @" + record.creatorUsername
-                }
+                },
+                width: 150
             },
             {
                 title: 'Submitted',
                 key: 'submitted',
-                dataIndex: 'submitted'
+                dataIndex: 'submitted',
+                width: 50,
+                align: 'center'
             },
             {
                 title: 'Completed',
                 key: 'completed',
-                dataIndex: 'completed'
+                dataIndex: 'completed',
+                width: 50,
+                align: 'center'
+            },
+            {
+                title: 'Close',
+                key: 'close',
+                render: (record) => {
+                    if (record.status === 1) {
+                        return (
+                            <Button type="primary" onClick={() => this.closeConfirm(record)}>Close</Button>
+                        )
+                    }
+                    return (
+                        <Button onClick={() => this.activeConfirm(record)}>Active</Button>
+                    )
+                    
+                },
+                width: 75,
+                align: 'center',
+                fixed: 'right'
             },
             {
                 title: 'Delete',
                 key: 'delete',
                 render: (record) => {
-                    if (record.submitted === '0') {
+                    if (record.submitted === 0) {
                         return (
-                            <Button>Delete</Button>
+                            <Button type="danger" onClick={() => this.deleteConfirm(record)}>Delete</Button>
                         )
                     }
                     return ''
-                }
+                },
+                width: 75,
+                align: 'center',
+                fixed: 'right'
             }
         ]
         return (
@@ -285,8 +438,9 @@ class AssignmentComponent extends React.Component {
                         rowKey={record => record.id}
                         columns={column}
                         dataSource={this.state.listAss}
-                        style={{minWidth: '700px'}}
-                        pagination={{pageSize: 10}}/>
+                        style={{minWidth: '850px'}}
+                        pagination={{pageSize: 10}}
+                        scroll={{x:1150}}/>
                 </Card>
             </Spin>
         )

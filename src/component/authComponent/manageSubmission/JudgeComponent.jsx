@@ -35,7 +35,7 @@ class JudgeComponent extends React.Component {
                         placement: 'topRight',
                       })
                       this.props.closeModal();
-                      this.props.update(this.props.submissionId, this.state.currentStatus);
+                      this.props.update(this.props.submissionId, this.state.currentStatus, values.comment);
                   }
               })
             }

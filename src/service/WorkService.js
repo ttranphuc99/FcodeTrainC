@@ -106,6 +106,16 @@ class WorkService {
             body: form
         })
     }
+
+    checkRejectStatus(assignmentId) {
+        let url = API_BASE + '/member/assignment/' +assignmentId+ '/work';
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include',
+        })
+    }
 }
 
 export default new WorkService();

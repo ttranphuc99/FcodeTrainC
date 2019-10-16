@@ -155,13 +155,12 @@ class ListSubmissionComponent extends React.Component {
         this.setState({judgeModalVisible: false})
     }
 
-    updateRecord(submissionId, status) {
-        console.log('submit ' , submissionId, ' status', status)
-
+    updateRecord(submissionId, status, comment) {
         let updatedList = this.state.listSub;
         let index = updatedList.findIndex((row) => row.id === submissionId);
         
         updatedList[index].status = status;
+        updatedList[index].comment = comment;
 
         this.setState({listSub: updatedList});
     }
@@ -274,7 +273,7 @@ class ListSubmissionComponent extends React.Component {
                         rowKey={record => record.id}
                         columns={column}
                         dataSource={this.state.listSub}
-                        style={{minWidth: '700px'}}
+                        style={{minWidth: '850px'}}
                         pagination={{pageSize: 10}}
                         scroll={{x: 1150}}/>
                 </Card>

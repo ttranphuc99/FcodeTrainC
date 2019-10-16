@@ -48,6 +48,36 @@ class AssignmentService {
             }
         })
     }
+
+    closeAssignment(assignmentId) {
+        let url = API_BASE + "/auth/assignment/" +assignmentId+ "/close";
+
+        return fetch(url, {
+            method: 'DELETE',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
+
+    activeAssignment(assignmentId) {
+        let url = API_BASE + "/auth/assignment/" +assignmentId+ "/active";
+
+        return fetch(url, {
+            method: 'PUT',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
+
+    deleteAssignment(assignmentId) {
+        let url = API_BASE + "/auth/assignment/" +assignmentId+ "/delete";
+
+        return fetch(url, {
+            method: 'DELETE',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
 }
 
 export default new AssignmentService();
