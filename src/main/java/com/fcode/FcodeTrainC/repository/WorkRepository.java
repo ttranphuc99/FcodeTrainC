@@ -19,4 +19,6 @@ public interface WorkRepository extends CrudRepository<Work,String> {
     List<Work> getListWorkByCourseAndUsername(Integer courseId, String username);
 
     List<Work> findByAssignmentCourseIdOrderBySubmitTimeDesc(Integer courseId);
+
+    List<Work> findByAssignmentIdAndWorkerUsernameOrderBySubmitTimeDesc(String assignmentId, String username);
 }

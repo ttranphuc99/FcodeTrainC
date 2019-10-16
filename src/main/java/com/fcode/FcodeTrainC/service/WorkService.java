@@ -48,6 +48,21 @@ public class WorkService {
         return 0;
     }
 
+    public boolean isRejectStatus(String assignmentId, String username) {
+        boolean check = false;
+        List<Work> list = repository.findByAssignmentIdAndWorkerUsernameOrderBySubmitTimeDesc(assignmentId, username);
+
+        if (list != null) {
+            for (Work work : list) {
+                if (work.getStatus() == -3) {
+                    check = true;
+                    break;
+                }
+            }
+        }
+        return check;
+    }
+
     public List<Work> getListWorkByCourseAndUsername(Integer courseId, String username) {
         return repository.getListWorkByCourseAndUsername(courseId, username);
     }

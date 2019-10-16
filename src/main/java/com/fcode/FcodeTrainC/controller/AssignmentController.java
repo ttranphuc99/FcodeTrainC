@@ -74,4 +74,34 @@ public class AssignmentController {
 
         return new ResponseEntity<>(assignment, HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "/auth/assignment/{id}/close")
+    public ResponseEntity deleteByStatus(@PathVariable String id, Authentication authentication) {
+        boolean check = service.deleteByStatus(id, accountService.findByUsername(authentication.getName()));
+        if (check) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping(value = "/auth/assignment/{id}/delete")
+    public ResponseEntity deletePermently(@PathVariable String id) {
+        boolean check = service.deletePermently(id);
+        if (check) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping(value = "/auth/assignment/{id}/active")
+    public ResponseEntity active(@PathVariable String id, Authentication authentication) {
+        boolean check = service.active(id, accountService.findByUsername(authentication.getName()));
+        if (check) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.fcode.FcodeTrainC.service;
 
+import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.entity.Assignment;
 import com.fcode.FcodeTrainC.repository.AssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,22 @@ public class AssignmentService {
 
     public Assignment save(Assignment assignment) {
         return repository.save(assignment);
+    }
+
+    public boolean deleteByStatus(String assignmentId, Account modifier) {
+        return repository.closeAssignment(modifier, assignmentId) > 0;
+    }
+
+    public boolean deletePermently(String assignmentId) {
+        try {
+            repository.deleteById(assignmentId);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean active(String assignmentId, Account modifier) {
+        return repository.activeAssignment(modifier, assignmentId) > 0;
     }
 }

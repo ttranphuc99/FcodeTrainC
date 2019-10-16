@@ -51,43 +51,59 @@ public class WorkController {
                                      @RequestParam("file") MultipartFile file,
                                      Authentication authentication) {
         ResponseEntity respone = null;
-        Assignment assignment = assignmentService.findById(assignmentId);
+        respone = this.checkAvailableSubmission(assignmentId, authentication);
 
-        if (assignment != null) {
-            Account account = accountService.findByUsername(authentication.getName());
-            Course course = assignment.getCourse();
+        if (respone.getStatusCodeValue() == 200) {
+            Assignment assignment = assignmentService.findById(assignmentId);
 
-            List<AccountCourse> list = accountCourseService.findByIdCourseIdAndAccountIdAndStatus(course.getId(), account.getId(), 1);
-            if (list.isEmpty()) {
-                return ResponseEntity.status(403).build();
-            }
+            if (assignment != null) {
+                Account account = accountService.findByUsername(authentication.getName());
+                Course course = assignment.getCourse();
 
-            Work work = new Work();
+                List<AccountCourse> list = accountCourseService.findByIdCourseIdAndAccountIdAndStatus(course.getId(), account.getId(), 1);
+                if (list.isEmpty()) {
+                    return ResponseEntity.status(403).build();
+                }
 
-            String id = authentication.getName() + "_" + assignmentId;
-            Integer submitQuantity = service.getLastSubmitQuanity(assignmentId, authentication.getName());
-            if (submitQuantity < assignment.getSubmitQuantity()) {
-                submitQuantity++;
-                id += "_" + submitQuantity;
+                Work work = new Work();
 
-                work.setAssignment(assignment);
-                work.setId(id);
-                work.setSubmitQuantity(submitQuantity);
-                work.setWorker(account);
-                String filename = service.storeFile(file, id);
-                work.setName(filename);
+                String id = authentication.getName() + "_" + assignmentId;
+                Integer submitQuantity = service.getLastSubmitQuanity(assignmentId, authentication.getName());
+                if (submitQuantity < assignment.getSubmitQuantity()) {
+                    submitQuantity++;
+                    id += "_" + submitQuantity;
 
-                service.insert(work);
+                    work.setAssignment(assignment);
+                    work.setId(id);
+                    work.setSubmitQuantity(submitQuantity);
+                    work.setWorker(account);
+                    String filename = service.storeFile(file, id);
+                    work.setName(filename);
 
-                respone = ResponseEntity.ok().build();
+                    service.insert(work);
+
+                    respone = ResponseEntity.ok().build();
+                } else {
+                    respone = ResponseEntity.badRequest().body("Maximum submission quantity");
+                }
             } else {
-                respone = ResponseEntity.badRequest().body("Maximum submission quantity");
+                respone = ResponseEntity.badRequest().body("Not found Assignment");
             }
-        } else {
-            respone = ResponseEntity.badRequest().body("Not found Assignment");
         }
 
         return respone;
+    }
+
+    @GetMapping(value = "/member/assignment/{assignmentId}/work")
+    public ResponseEntity checkAvailableSubmission(@PathVariable(name = "assignmentId") String assignmentId, Authentication authentication) {
+        ResponseEntity response = null;
+        boolean check = service.isRejectStatus(assignmentId, authentication.getName());
+        if (check) {
+            response = ResponseEntity.badRequest().body("Has been reject");
+        } else {
+            response = ResponseEntity.ok().build();
+        }
+        return response;
     }
 
     @GetMapping(value = "/member/work/{workId}/file")
