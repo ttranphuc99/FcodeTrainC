@@ -218,6 +218,10 @@ public class WorkController {
 
             service.save(work);
 
+            if ((work.getSubmitQuantity() == 1 && work.getStatus() == 1) || (work.getSubmitQuantity() > 1)) {
+                accountCourseService.calTotalMark(work.getWorker(), work.getAssignment().getCourse().getId());
+            }
+
             response = ResponseEntity.ok().build();
         }
         return response;

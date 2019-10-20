@@ -60,4 +60,20 @@ public class AccountCourseController {
 
         return new ResponseEntity(result, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/member/chart/{courseId}")
+    public ResponseEntity getChart(Authentication authentication, @PathVariable(name = "courseId") Integer courseId) {
+        ResponseEntity response = null;
+
+        Account account = accountService.findByUsername(authentication.getName());
+        if (!service.findByIdCourseIdAndAccountIdAndStatus(courseId,
+                account.getId(), 1).isEmpty() || account.getRole().getId() != 2) {
+            List<AccountCourse> list = service.getChart(courseId);
+            response = new ResponseEntity(list, HttpStatus.OK);
+        } else {
+            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        return response;
+    }
 }

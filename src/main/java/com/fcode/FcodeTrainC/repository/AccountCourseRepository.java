@@ -28,4 +28,6 @@ public interface AccountCourseRepository extends CrudRepository<AccountCourse, A
     List<Account> availableAccountToCourse(String username, Integer courseId);
 
     List<AccountCourse> findByIdCourseIdAndIdAccountIdAndStatus(Integer courseId, Integer accountId, Integer status);
+
+    List<AccountCourse> findByIdCourseIdOrderByTotalMarkDesc(Integer courseId);
 }

@@ -3,14 +3,16 @@ package com.fcode.FcodeTrainC.service;
 import com.fcode.FcodeTrainC.embeddable.AccountCourseIdentity;
 import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.entity.AccountCourse;
+import com.fcode.FcodeTrainC.entity.Assignment;
+import com.fcode.FcodeTrainC.entity.Work;
 import com.fcode.FcodeTrainC.repository.AccountCourseRepository;
 import com.fcode.FcodeTrainC.repository.AccountRepository;
 import com.fcode.FcodeTrainC.repository.CourseRepository;
+import com.fcode.FcodeTrainC.repository.WorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AccountCourseService {
@@ -20,6 +22,8 @@ public class AccountCourseService {
     private AccountRepository accountRepository;
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private WorkRepository workRepository;
 
     public AccountCourse save(AccountCourse accountCourse) {
         return repository.save(accountCourse);
@@ -49,5 +53,37 @@ public class AccountCourseService {
 
     public List<AccountCourse> findByIdCourseIdAndAccountIdAndStatus(Integer courseId, Integer accountId, Integer status) {
         return repository.findByIdCourseIdAndIdAccountIdAndStatus(courseId, accountId, status);
+    }
+
+    public void calTotalMark(Account worker, Integer courseId) {
+        List<Work> listWork = workRepository.getListWorkByCourseAndUsernameTimeAscAndNotWaiting(courseId, worker.getUsername());
+
+        if (listWork != null) {
+            //key is assignment Id
+            Map<String, Work> map = new HashMap<>();
+            for (Work work : listWork) {
+                map.put(work.getAssignment().getId(), work);
+            }
+
+            int total = 0;
+
+            Iterator<String> it = map.keySet().iterator();
+            Work currentWork = null;
+            while (it.hasNext()) {
+                currentWork = map.get(it.next());
+                if (currentWork.getStatus() == 1) {
+                    total += currentWork.getAssignment().getMark();
+                }
+            }
+
+            AccountCourse accountCourse = repository.findByIdCourseIdAndIdAccountIdAndStatus(courseId, worker.getId(), 1).get(0);
+            accountCourse.setTotalMark(total);
+
+            repository.save(accountCourse);
+        }
+    }
+
+    public List<AccountCourse> getChart(Integer courseId) {
+        return repository.findByIdCourseIdOrderByTotalMarkDesc(courseId);
     }
 }
