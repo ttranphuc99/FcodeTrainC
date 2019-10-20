@@ -23,6 +23,7 @@ import SubmissionComponent from '../component/memComponent/submission/Submission
 import SubmissionDetailComponent from '../component/memComponent/submission/SubmissionDetailComponent';
 import AuthSubmissionComponent from '../component/authComponent/manageSubmission/AuthSubmissionComponent';
 import AuthSubmissionDetailComponent from '../component/authComponent/manageSubmission/AuthSubmissionDetailComponent';
+import ChartComponent from '../component/authComponent/chart/ChartComponent';
 
 
 class RouterComponent extends React.Component {
@@ -51,6 +52,7 @@ class RouterComponent extends React.Component {
 
                                 <AuthenticationRoute path="/manageSubmission" exact component={AuthSubmissionComponent}/>
                                 <AuthenticationRoute path="/manageSubmission/:id" exact component={AuthSubmissionDetailComponent}/>
+                                <AuthenticationRoute path="/chart" exact component={ChartComponent} />
 
                                 <AuthenticationRoute path="/member/course" exact component={CourseComponent}/>
                                 <AuthenticationRoute path="/member/assignment" exact component={AssignmentComponent}/>
@@ -59,6 +61,7 @@ class RouterComponent extends React.Component {
                                 <AuthenticationRoute path="/member/submission" exact component={SubmissionComponent}/>
                                 <AuthenticationRoute path="/member/submission/course/:courseId" exact component={SubmissionComponent}/>
                                 <AuthenticationRoute path="/member/submission/:id" exact component={SubmissionDetailComponent}/>
+                                <AuthenticationRoute path="/member/chart" exact component={ChartComponent} />
                             </Layout>
                         </Switch>
                     </>

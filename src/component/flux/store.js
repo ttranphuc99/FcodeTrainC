@@ -31,6 +31,11 @@ let adminMenu = {
       title: "Manage Submission",
       to: "/manageSubmission",
       htmlBefore: '<i class="layout-icon fa fa-cloud-upload" aria-hidden="true"></i>'
+    },
+    {
+      title: "Chart",
+      to: "/chart",
+      htmlBefore: '<i class="layout-icon fa fa-bar-chart" aria-hidden="true"></i>'
     }
   ]
 };
@@ -57,6 +62,11 @@ let memMenu = {
       title: "Submission",
       to: "/member/submission",
       htmlBefore: '<i class="layout-icon fa fa-file" aria-hidden="true"></i>'
+    },
+    {
+      title: "Chart",
+      to: "/member/chart",
+      htmlBefore: '<i class="layout-icon fa fa-bar-chart" aria-hidden="true"></i>'
     }
   ]
 };
