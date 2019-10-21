@@ -125,4 +125,26 @@ public class AccountController {
         }
         return response;
     }
+
+    @PutMapping(value = "/auth/account/{username}/{status}")
+    public ResponseEntity changeStatus(@PathVariable(name = "username") String username, @PathVariable(name = "status") Integer status, Authentication authentication) {
+        ResponseEntity response = null;
+        if (username.equals(authentication.getName())) {
+            response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } else {
+            boolean flag = false;
+            if (status == 0) {
+                flag = accountService.banAccount(username);
+            } else {
+                flag = accountService.activeAccount(username);
+            }
+
+            if (flag) {
+                response = ResponseEntity.ok().build();
+            } else {
+                response = ResponseEntity.badRequest().build();
+            }
+        }
+        return response;
+    }
 }

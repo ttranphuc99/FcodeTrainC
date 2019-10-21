@@ -28,6 +28,11 @@ public interface AccountRepository extends CrudRepository<Account, Integer> {
     @Query("UPDATE Account a SET a.status = 0 WHERE (a.username = ?1)")
     int banAccount(String username);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Account a SET a.status = 1 WHERE (a.username = ?1)")
+    int activeAccount(String username);
+
     @Query("SELECT a FROM Account a WHERE a.universityCourse.id = ?1")
     List<Account> countAccByUniCourse(Integer id);
 }

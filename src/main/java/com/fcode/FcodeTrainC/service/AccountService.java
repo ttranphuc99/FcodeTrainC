@@ -68,4 +68,8 @@ public class AccountService {
     public boolean banAccount(String username) {
         return accountRepository.banAccount(username) > 0;
     }
+
+    public boolean activeAccount(String username) {
+        return accountRepository.activeAccount(username) > 0;
+    }
 }
