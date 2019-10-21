@@ -40,6 +40,16 @@ class AccountService {
             }
         })
     }
+
+    changeStatus(username, status) {
+        let url = API_BASE + "/auth/account/" +username+ "/" +status;
+
+        return fetch(url, {
+            method: 'PUT',
+            withCredentials: true,
+            credentials: 'include'
+        })
+    }
 }
 
 export default new AccountService()

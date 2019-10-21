@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Spin, Button, Icon, Modal, Card, Table, Input, notification, Select } from 'antd';
+import { Form, Spin, Button, Icon, Modal, Card, Table, Input, notification, Select, Tag } from 'antd';
 import { Redirect } from 'react-router-dom';
 import AccountService from '../../../service/AccountService';
 import LoginService from '../../../service/LoginService';
@@ -198,6 +198,9 @@ class AccountComponent extends React.Component {
         this.closeDetailModal = this.closeDetailModal.bind(this);
         this.closeNewModal = this.closeNewModal.bind(this);
         this.showNotFound = this.showNotFound.bind(this);
+        this.banAccount = this.banAccount.bind(this);
+        this.activeAccount = this.activeAccount.bind(this);
+        this.refresh = this.refresh.bind(this);
     }
 
     componentWillMount() {
@@ -365,6 +368,76 @@ class AccountComponent extends React.Component {
         this.setState({ searchText: '' });
     };
 
+    refresh(username, status) {
+        let list = this.state.data;
+        let index = list.findIndex((row) => row.username === username);
+
+        list[index].status = status;
+        this.setState({data: list});
+    }
+
+    banAccount(username, name) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to ban account: @' +username+ ' with Name: ' + name,
+            okText: 'Ban',
+            cancelText: 'Cancel',
+            onOk: () => {
+                AccountService.changeStatus(username, 0)
+                .then(response => {
+                    if (response.status === 200) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Ban successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        })
+
+                        this.refresh(username, 0);
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: "Update failed",
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
+            }
+        })
+    }
+
+    activeAccount(username, name) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to active account: @' +username+ ' with Name: ' + name,
+            okText: 'Active',
+            cancelText: 'Cancel',
+            onOk: () => {
+                AccountService.changeStatus(username, 1)
+                .then(response => {
+                    if (response.status === 200) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Active successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        })
+
+                        this.refresh(username, 1);
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: "Update failed",
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
+            }
+        })
+    }
+
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
@@ -410,13 +483,32 @@ class AccountComponent extends React.Component {
                 },
             },
             {
+                title: 'Status',
+                key: 'status',
+                render: record => {
+                    switch (record.status) {
+                        case 1: return (<Tag color="blue">Active</Tag>)
+                        case 0: return (<Tag color="grey">Blocked</Tag>)
+                        default: return ''
+                    }
+                },
+                align: 'center'
+            },
+            {
                 title: 'Action',
                 key: 'action',
                 render: record => {
                     if (record.username === LoginService.getUsername()) return ''
+                    if (record.status === 1) {
+                        return (
+                            <div>
+                                <Button type="danger" onClick={() => this.banAccount(record.username, record.fullname)}>Block</Button>
+                            </div>
+                        )
+                    }
                     return (
                         <div>
-                            <Button type="danger" onClick={() => this.showConfirm(record.id, record.name)}>Ban</Button>
+                            <Button type="primary" onClick={() => this.activeAccount(record.username, record.fullname)}>Active</Button>
                         </div>
                     )
                 }
