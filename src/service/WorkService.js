@@ -116,6 +116,16 @@ class WorkService {
             credentials: 'include',
         })
     }
+
+    countWork(username, courseId) {
+        let url = API_BASE + '/auth/' +username+ '/' +courseId+ '/work/count';
+
+        return fetch(url, {
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'include',
+        })
+    }
 }
 
 export default new WorkService();

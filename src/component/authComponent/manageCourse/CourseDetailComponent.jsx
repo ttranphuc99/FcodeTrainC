@@ -3,6 +3,7 @@ import { Redirect, Link } from 'react-router-dom';
 import { Form, Row, Col, Input, Select, Button, notification, Spin, Icon, Card, Table, Tag, Modal, AutoComplete, Descriptions, Divider } from 'antd';
 import CourseService from '../../../service/CourseService';
 import AccountCourseService from '../../../service/AccountCourseService';
+import WorkService from '../../../service/WorkService';
 
 class CourseInfoComponent extends React.Component {
     constructor(props) {
@@ -251,6 +252,10 @@ class AccountInCourseComponent extends React.Component {
         this.getSuggestion = this.getSuggestion.bind(this);
         this.checkUsername = this.checkUsername.bind(this);
         this.selectSuggest = this.selectSuggest.bind(this);
+        this.asyncForEach = this.asyncForEach.bind(this);
+        this.banAccount = this.banAccount.bind(this);
+        this.activeAccount = this.activeAccount.bind(this);
+        this.deleteAccount = this.deleteAccount.bind(this);
     }
 
     componentWillMount() {
@@ -271,6 +276,24 @@ class AccountInCourseComponent extends React.Component {
                     this.setState({ isError: true, error: response });
                 }
             }
+        }).then(json => {
+            if (json != null) {
+                const start = async(data) => {
+                    await this.asyncForEach(data, async(row) => {			
+                        let count = await WorkService.countWork(row.id.account.username, this.props.id)
+                                    .then(response => {
+                                        if (response.status === 200) {
+                                            return response.text();
+                                        } else {
+                                            return '-1';
+                                        }
+                                    })
+                        row['countWork'] = parseInt(count);
+                    })	
+                    return data;
+                }
+                return start(json);
+            }
         }).then(data => {
             if (data != null) {
                 this.setState({listAcc: data});
@@ -279,6 +302,12 @@ class AccountInCourseComponent extends React.Component {
         }).catch(err => {
             this.setState({ isError: true, error: err, isLoading: false });
         })
+    }
+
+    async asyncForEach(array, callback) {	
+        for (let index = 0; index < array.length; index++) {	
+          await callback(array[index], index, array);	
+        }	
     }
 
     openAddModal() {
@@ -362,6 +391,121 @@ class AccountInCourseComponent extends React.Component {
         })
     }
 
+    async refresh(username, status) {
+        let list = this.state.listAcc;
+        let index = list.findIndex((row) => row.id.account.username === username);
+
+        if (status > 0) {
+            list[index].status = status;
+
+            let countWork = await WorkService.countWork(list[index].id.account.username, this.props.id)
+                            .then(response => {
+                                if (response.status === 200) {
+                                    return response.text();
+                                } else {
+                                    return '-1';
+                                }
+                            })
+            list['countWork'] = parseInt(countWork);
+        } else {
+            list.splice(index, 1);
+        }
+        this.setState({listAcc: list});
+    }
+
+    banAccount(username, name) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to ban account: @' +username+ ' with Name: ' + name,
+            okText: 'Ban',
+            cancelText: 'Cancel',
+            onOk: () => {
+                AccountCourseService.changeStatus(username, this.props.id, 0)
+                .then(response => {
+                    if (response.status === 200) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Ban successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        })
+
+                        this.refresh(username, 0);
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: "Update failed",
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
+            }
+        })
+    }
+
+    activeAccount(username, name) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to active account: @' +username+ ' with Name: ' + name,
+            okText: 'Active',
+            cancelText: 'Cancel',
+            onOk: () => {
+                AccountCourseService.changeStatus(username, this.props.id, 1)
+                .then(response => {
+                    if (response.status === 200) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Active successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        })
+
+                        this.refresh(username, 1);
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: "Update failed",
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
+            }
+        })
+    }
+
+    deleteAccount(username, name) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to delete account: @' +username+ ' with Name: ' + name,
+            okText: 'Delete',
+            cancelText: 'Cancel',
+            onOk: () => {
+                AccountCourseService.delete(username, this.props.id)
+                .then(response => {
+                    if (response.status === 200) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Active successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        })
+
+                        this.refresh(username, -1);
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: "Delete failed",
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
+            }
+        })
+    }
+
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
@@ -372,21 +516,24 @@ class AccountInCourseComponent extends React.Component {
                 key: 'username',
                 render: record => {
                     return record.id.account.username;
-                }
+                },
+                width: '20%'
             },
             {
                 title: 'Fullname',
                 key: 'fullname',
                 render: record => {
                     return record.id.account.fullname;
-                }
+                },
+                width: '30%'
             }, 
             {
                 title: 'Course',
                 key: 'course',
                 render: record => {
                     return record.id.account.universityCourse.name;
-                }
+                },
+                width: "15%"
             },
             {
                 title: 'Status',
@@ -395,12 +542,30 @@ class AccountInCourseComponent extends React.Component {
                     if (record.status === 1) {
                         return <Tag color="blue">Active</Tag>
                     }
-                    return <Tag color="red">Blocked</Tag>
-                }
+                    return <Tag color="red">Ban</Tag>
+                },
+                width: '15%',
+                align: 'center'
             },
             {
                 title: 'Ban',
-                key: 'ban'
+                key: 'ban',
+                render: (record) => {
+                    if (record.status === 1) {
+                        if (record.countWork < 0) {
+                            return ''
+                        } else if (record.countWork === 0) {
+                            return <Button type="danger" onClick={() => this.deleteAccount(record.id.account.username, record.id.account.fullname)}>Delete</Button>
+                        } else {
+                            return <Button type="danger" onClick={() => this.banAccount(record.id.account.username, record.id.account.fullname)} ghost>Ban</Button>
+                        }
+                    } else if (record.id.account.status === 1) {
+                        return <Button type="primary" onClick={() => this.activeAccount(record.id.account.username, record.id.account.fullname)}>Active</Button>
+                    } else {
+                        return ''
+                    }
+                },
+                align: 'center'
             }
         ]
         const {getFieldDecorator} = this.props.form;
