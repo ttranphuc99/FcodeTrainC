@@ -86,4 +86,23 @@ public class AccountCourseService {
     public List<AccountCourse> getChart(Integer courseId) {
         return repository.findByIdCourseIdOrderByTotalMarkDesc(courseId);
     }
+
+    public boolean activeAccountCourse(Integer accountId, Integer courseId, Integer modiferId) {
+        return repository.activeAccountCourse(accountId, courseId, modiferId) > 0;
+    }
+
+    public boolean banAccountCourse(Integer accountId, Integer courseId, Integer modiferId) {
+        return repository.banAccountCourse(accountId, courseId, modiferId) > 0;
+    }
+
+    public boolean delete(String username, Integer courseId) {
+        AccountCourse accountCourse = repository.findFirstByIdCourseIdAndIdAccountUsername(courseId, username);
+
+        if (accountCourse != null) {
+            repository.delete(accountCourse);
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -160,6 +160,13 @@ public class WorkController {
         return response;
     }
 
+    @GetMapping(value = "/auth/{username}/{courseId}/work/count")
+    public Integer countWorkByUsernameAndCourse(@PathVariable(name = "username") String username, @PathVariable(name = "courseId") Integer courseID) {
+        Integer result = 0;
+        result = service.getListWorkByCourseAndUsername(courseID, username).size();
+        return result;
+    }
+
     @GetMapping(value = "/auth/{courseId}/work")
     public ResponseEntity adminGetListWork(@PathVariable(name = "courseId") Integer courseId) {
         ResponseEntity response = null;

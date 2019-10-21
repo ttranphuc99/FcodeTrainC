@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -74,6 +72,54 @@ public class AccountCourseController {
             response = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+        return response;
+    }
+
+    @PutMapping(value = "/auth/account_course/change_status")
+    public ResponseEntity changeStatus(HttpServletRequest request, Authentication authentication) {
+        ResponseEntity response = null;
+        String username = request.getParameter("username");
+        Integer accountId = accountService.findByUsername(username) != null ? accountService.findByUsername(username).getId() : 0;
+        Integer modifierId = accountService.findByUsername(authentication.getName()).getId();
+        Integer courseId = Integer.parseInt(request.getParameter("courseId"));
+        Integer status = Integer.parseInt(request.getParameter("status"));
+
+        List<AccountCourse> list = service.findByIdCourseIdAndAccountIdAndStatus(courseId, accountId, status == 1 ? 0 : 1);
+
+        if (list.isEmpty()) {
+            response = ResponseEntity.badRequest().build();
+        } else {
+            AccountCourse accountCourse = list.get(0);
+
+            if (status == 1) {
+                if (accountCourse.getId().getAccount().getStatus() == 1) {
+                    if (service.activeAccountCourse(accountId, courseId, modifierId)) {
+                        response = ResponseEntity.ok().build();
+                    } else {
+                        response = ResponseEntity.badRequest().build();
+                    }
+                } else {
+                    response = ResponseEntity.badRequest().build();
+                }
+            } else {
+                if (service.banAccountCourse(accountId, courseId, modifierId)) {
+                    response = ResponseEntity.ok().build();
+                } else {
+                    response = ResponseEntity.badRequest().build();
+                }
+            }
+        }
+        return response;
+    }
+
+    @DeleteMapping(value = "/auth/account_course/{username}/{courseId}")
+    public ResponseEntity delete(@PathVariable(name = "username") String username, @PathVariable(name = "courseId") Integer courseId) {
+        ResponseEntity response = null;
+        if (service.delete(username, courseId)) {
+            response = ResponseEntity.ok().build();
+        } else {
+            response = ResponseEntity.badRequest().build();
+        }
         return response;
     }
 }

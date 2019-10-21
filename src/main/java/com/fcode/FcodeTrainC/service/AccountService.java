@@ -2,6 +2,7 @@ package com.fcode.FcodeTrainC.service;
 
 import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.entity.UniversityCourse;
+import com.fcode.FcodeTrainC.repository.AccountCourseRepository;
 import com.fcode.FcodeTrainC.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,8 @@ public class AccountService {
     private AccountRepository accountRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AccountCourseRepository accountCourseRepository;
 
     public Iterable<Account> findAll() {
         return accountRepository.findAll();
@@ -66,7 +69,10 @@ public class AccountService {
     }
 
     public boolean banAccount(String username) {
-        return accountRepository.banAccount(username) > 0;
+        if (accountRepository.banAccount(username) > 0) {
+            return accountCourseRepository.banAccount(accountRepository.findFirstByUsername(username).getId()) > 0;
+        }
+        return false;
     }
 
     public boolean activeAccount(String username) {
