@@ -24,6 +24,7 @@ import SubmissionDetailComponent from '../component/memComponent/submission/Subm
 import AuthSubmissionComponent from '../component/authComponent/manageSubmission/AuthSubmissionComponent';
 import AuthSubmissionDetailComponent from '../component/authComponent/manageSubmission/AuthSubmissionDetailComponent';
 import ChartComponent from '../component/authComponent/chart/ChartComponent';
+import MentorManageAccountComponent from '../component/mentorComponent/manageAccount/MentorManageAccountComponent';
 
 
 class RouterComponent extends React.Component {
@@ -41,8 +42,8 @@ class RouterComponent extends React.Component {
                                 <AuthenticationRoute path="/logout" exact component={LogoutComponent}/>
                                 <AuthenticationRoute path="/changePassword" exact component={ChangePasswordComponent} />
                                 <AuthenticationRoute path="/editProfile" exact component={ProfileComponent}/>
-                                <AuthenticationRoute path="/manageAccount" exact component={ManageAccountComponent}/> 
 
+                                <AuthenticationRoute path="/manageAccount" exact component={ManageAccountComponent}/> 
                                 <AuthenticationRoute path="/manageCourse/course/:id" exact component={CourseDetailComponent}/>
                                 <AuthenticationRoute path="/manageCourse" exact component={ManageCourseComponent}/>  
 
@@ -62,6 +63,8 @@ class RouterComponent extends React.Component {
                                 <AuthenticationRoute path="/member/submission/course/:courseId" exact component={SubmissionComponent}/>
                                 <AuthenticationRoute path="/member/submission/:id" exact component={SubmissionDetailComponent}/>
                                 <AuthenticationRoute path="/member/chart" exact component={ChartComponent} />
+
+                                <AuthenticationRoute path="/mentor/manageAccount" exact component={MentorManageAccountComponent}/>
                             </Layout>
                         </Switch>
                     </>

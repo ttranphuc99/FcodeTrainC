@@ -42,7 +42,11 @@ class AuthenticationRoute extends React.Component {
                 '/member/chart'
             ];
             let mentorPage = [
-
+                '/mentor/manageAccount',
+                '/manageCourse',
+                '/manageAssignment',
+                '/manageSubmission',
+                '/chart'
             ];
             if (role === 'admin' || role === 'member' || role === 'mentor') {
                 if (this.include(authPage, this.props.path)) {
@@ -52,6 +56,9 @@ class AuthenticationRoute extends React.Component {
                     isAllow = true;
                     return <Route {...this.props}/>
                 } else if (role === 'member' && this.include(memberPage, this.props.path)) {
+                    isAllow = true;
+                    return <Route {...this.props}/>
+                } else if (role === 'mentor' && this.include(mentorPage, this.props.path)) {
                     isAllow = true;
                     return <Route {...this.props}/>
                 }

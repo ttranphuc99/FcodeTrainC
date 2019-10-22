@@ -34,6 +34,7 @@ class CourseInfoComponent extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 this.setState({isLoading: true});
+                
                 CourseService.updateCourse(values, this.props.id)
                 .then(response => {
                     if (response.status === 200) {
@@ -62,7 +63,6 @@ class CourseInfoComponent extends React.Component {
     async isNameExisted(rule, value, callback) {
         if (value && value !== "") {
             let result = await CourseService.isCourseNameExisted(value, this.props.id);
-            console.log('value ', value, 'id ', this.props.id, 'result ', result);
             if (!result) {
                 callback();
             } else {
@@ -548,8 +548,8 @@ class AccountInCourseComponent extends React.Component {
                 align: 'center'
             },
             {
-                title: 'Ban',
-                key: 'ban',
+                title: 'Action',
+                key: 'action',
                 render: (record) => {
                     if (record.status === 1) {
                         if (record.countWork < 0) {

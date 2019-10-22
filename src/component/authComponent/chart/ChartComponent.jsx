@@ -67,8 +67,13 @@ class ChartComponent extends React.Component {
                 }
             }).then(data => {
                 if (data != null) {
-                    this.setState({listCourse: data, currentCourse: data[0].id});
-                    this.loadChart(data[0].id)
+                    this.setState({listCourse: data});
+
+                    if (data.length > 0) {
+                        this.setState({currentCourse: data[0].id});
+                        this.loadChart(data[0].id)
+                    }
+                    
                 }
                 this.setState({isLoadingCourse: false});
             }).catch((err) => {
@@ -169,7 +174,7 @@ class ChartComponent extends React.Component {
                     if (LoginService.getUsername() === record.id.account.username) {
                         return (<span style={{fontWeight: 'bold'}}>{value}</span>)
                     }
-                    return value + 'ahihi';
+                    return value;
                 }
             },
             {

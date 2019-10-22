@@ -76,8 +76,33 @@ let mentorMenu = {
   navItems: [
     {
       title: "Home",
-      to: "/",
-      htmlBefore: '<i class="fa fa-home" aria-hidden="true"></i>'
+      to: "/home",
+      htmlBefore: '<i class="layout-icon fa fa-home" aria-hidden="true"></i>'
+    },
+    {
+      title: "Manage Account",
+      to: "/mentor/manageAccount",
+      htmlBefore: '<i class="layout-icon fa fa-user-circle-o" aria-hidden="true"></i>',
+    },
+    {
+      title: "Manage Course",
+      to: "/manageCourse",
+      htmlBefore: '<i class="layout-icon fa fa-graduation-cap" aria-hidden="true"></i>'
+    },
+    {
+      title: "Manage Assignment",
+      to: "/manageAssignment",
+      htmlBefore: '<i class="layout-icon fa fa-file-code-o" aria-hidden="true"></i>'
+    },
+    {
+      title: "Manage Submission",
+      to: "/manageSubmission",
+      htmlBefore: '<i class="layout-icon fa fa-cloud-upload" aria-hidden="true"></i>'
+    },
+    {
+      title: "Chart",
+      to: "/chart",
+      htmlBefore: '<i class="layout-icon fa fa-bar-chart" aria-hidden="true"></i>'
     }
   ]
 };

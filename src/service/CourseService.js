@@ -8,7 +8,6 @@ class CourseService {
             withCredentials: true,
             credentials: 'include'
         });
-        console.log('iddd ', id);
         if (id === -1) {
             if (response.status === 404) {
                 return false;
@@ -18,8 +17,7 @@ class CourseService {
             if (response.status === 200) {
                 let result = await response.json()
                 .then(data => {
-                    console.log('dataaa ' , data);
-                    if (data.id === id) {
+                    if (data.id === parseInt(id)) {
                         return false;
                     }
                     return true;
@@ -34,7 +32,6 @@ class CourseService {
 
     updateCourse(data, id) {
         let url = API_BASE + '/auth/course/' + id;
-
         return fetch(url, {
             method: 'PUT',
             withCredentials: true,
