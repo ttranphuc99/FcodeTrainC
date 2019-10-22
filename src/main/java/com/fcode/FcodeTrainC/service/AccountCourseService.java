@@ -48,6 +48,7 @@ public class AccountCourseService {
                 new AccountCourseIdentity(accountRepository.findFirstByUsername(username),
                         courseRepository.findById(courseId).get()));
         accountCourse.setCreator(creator);
+        accountCourse.setTotalMark(0);
         return this.save(accountCourse);
     }
 

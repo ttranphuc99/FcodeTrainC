@@ -95,6 +95,7 @@ public class CourseController {
 
                 if (isValid) {
                     oldCourse.setName(course.getName());
+                    oldCourse.setDescription(course.getDescription());
                     oldCourse.setStatus(course.getStatus());
                     oldCourse.setModifier(accountService.findByUsername(authentication.getName()));
                     service.save(oldCourse);
