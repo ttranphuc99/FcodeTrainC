@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tabs, Card } from 'antd';
 import UniversityCourseComponent from '../../authComponent/manageAccount/UniversityCourseComponent';
-import AccountComponent from '../../authComponent/manageAccount/AccountComponent';
 import MentorAccountComponent from './MentorAccountComponent';
 
 class MentorManageAccountComponent extends React.Component {
@@ -44,7 +43,7 @@ class MentorManageAccountComponent extends React.Component {
             <Card>
                 <Tabs defaultActiveKey="1" onChange={this.changeTab}>
                     <TabPane tab="Member" key={1}>
-                        <AccountComponent accRole={2} ref="member" forceRender="true"/>
+                        <MentorAccountComponent accRole={2} ref="member" forceRender="true"/>
                     </TabPane>
                     <TabPane tab="University Course" key={2}>
                         <UniversityCourseComponent ref="universityCourse" forceRender="true"/>

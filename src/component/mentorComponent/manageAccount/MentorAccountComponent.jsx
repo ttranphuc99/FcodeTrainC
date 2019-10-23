@@ -72,6 +72,7 @@ class MentorAccountComponent extends React.Component {
                 this.setState({ isError: true, error: response });
             }
         }).then(json => {
+            console.log('list  ', json);
             if (Array.isArray(json)) {
                 const start = async(data) => {
                     let listCourse = [];

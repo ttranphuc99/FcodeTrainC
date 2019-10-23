@@ -50,6 +50,20 @@ class AccountService {
             credentials: 'include'
         })
     }
+
+    resetPass(username) {
+        let url = API_BASE + '/admin/resetPassword';
+
+        var form = new FormData();
+        form.append('username', username);
+
+        return fetch(url, {
+            method: 'POST',
+            withCredentials: true,
+            credentials: 'include',
+            body: form
+        })
+    }
 }
 
 export default new AccountService()

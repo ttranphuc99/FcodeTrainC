@@ -438,6 +438,35 @@ class AccountComponent extends React.Component {
         })
     }
 
+    resetPassword(username, name) {
+        Modal.confirm({
+            title: 'Confirm',
+            content: 'Do you want to reset password of account: @' +username+ ' with Name: ' + name,
+            okText: 'Reset',
+            cancelText: 'Cancel',
+            onOk: () => {
+                AccountService.resetPass(username)
+                .then(response => {
+                    if (response.status === 200) {
+                        notification.success({
+                            message: 'Notification',
+                            description: 'Reset successfully!',
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    } else {
+                        notification.error({
+                            message: 'Error',
+                            description: "Reset failed",
+                            top: 70,
+                            placement: 'topRight',
+                        })
+                    }
+                })
+            }
+        })
+    }
+
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
@@ -454,18 +483,21 @@ class AccountComponent extends React.Component {
                     >{record.id}</Button>
                 },
                 sorter: (a,b) => a.id - b.id,
+                width: '10%'
             },
             {
                 title: 'Username',
                 dataIndex: 'username',
                 key: 'username',
-                ...this.getColumnSearchProps('username')
+                ...this.getColumnSearchProps('username'),
+                width: '15%'
             },
             {
                 title: 'Fullname',
                 key: 'fullname',
                 dataIndex: 'fullname',
                 ...this.getColumnSearchProps('fullname'),
+                width: '25%'
             },
             {
                 title: 'Course',
@@ -481,6 +513,7 @@ class AccountComponent extends React.Component {
                     }
                     return '';
                 },
+                width: '12%'
             },
             {
                 title: 'Status',
@@ -492,7 +525,8 @@ class AccountComponent extends React.Component {
                         default: return ''
                     }
                 },
-                align: 'center'
+                align: 'left',
+                width: '10%'
             },
             {
                 title: 'Action',
@@ -511,7 +545,22 @@ class AccountComponent extends React.Component {
                             <Button type="primary" onClick={() => this.activeAccount(record.username, record.fullname)}>Active</Button>
                         </div>
                     )
-                }
+                },
+                width: '10%',
+                align: 'center'
+            },
+            {
+                title: 'Reset Password',
+                key: 'resetPass',
+                render: record => {
+                    if (record.status === 1) {
+                        return (
+                            <Button type="dashed" onClick={() => this.resetPassword(record.username, record.fullname)}>Reset</Button>
+                        )
+                    }
+                    return ''
+                },
+                align: 'center'
             }
         ];
 
