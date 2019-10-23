@@ -60,6 +60,11 @@ public class AnnouncementController {
         return response;
     }
 
+    @GetMapping(value = "/member/announcement/{id}")
+    public ResponseEntity getAnnouncement(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity(service.findById(id), HttpStatus.OK);
+    }
+
     @DeleteMapping(value = "/admin/announcement/{id}")
     public ResponseEntity delete(@PathVariable(name = "id") Long id) {
         service.delete(id);
