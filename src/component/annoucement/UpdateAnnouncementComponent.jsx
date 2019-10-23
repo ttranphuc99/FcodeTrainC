@@ -13,12 +13,14 @@ class NewAnnouncementComponent extends React.Component {
             isLoading: false,
             listCourse: [],
             currentCourseId: -1,
-            content: ''
+            content: '',
+            announcement: null
         }
 
         this.getListCourse = this.getListCourse.bind(this);
         this.changeCourse = this.changeCourse.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.fetchData = this.fetchData.bind(this);
         this.editorEdit = this.editorEdit.bind(this);
     }
 
@@ -48,6 +50,34 @@ class NewAnnouncementComponent extends React.Component {
         })
     }
 
+    fetchData() {
+        this.getListCourse();
+
+        AnnouncementService.getAnnouncement(this.props.id)
+        .then(response => {
+            if (response.status === 200) {
+                return response.json()
+            } else {
+                notification.error({
+                    message: 'Error',
+                    description: 'Error',
+                    top: 70,
+                    placement: 'topRight',
+                })
+                this.props.closeModal();
+            }
+        }).then(data => {
+            if (data != null) {
+                this.setState({
+                    announcement: data, 
+                    currentCourseId: data.course.id, 
+                    content: data.content,
+                    isLoading: false
+                }); 
+            }
+        })
+    }
+
     changeCourse(courseId) {
         this.setState({currentCourseId: courseId});
     }
@@ -60,12 +90,12 @@ class NewAnnouncementComponent extends React.Component {
               values.content = this.state.content;
               values.courseId = this.state.currentCourseId;
 
-            AnnouncementService.create(values)
+            AnnouncementService.update(values, this.props.id)
             .then(response => {
                 if (response.status === 200) {
                     notification.success({
                         message: 'Notification',
-                        description: 'Create successfully!',
+                        description: 'Update successfully!',
                         top: 70,
                         placement: 'topRight',
                     });
@@ -100,6 +130,7 @@ class NewAnnouncementComponent extends React.Component {
                         placeholder="Select course..."
                         style={{width: '25%', minWidth: '200px'}}
                         onChange={this.changeCourse}
+                        value={this.state.currentCourseId}
                     >
                         {this.state.listCourse.map(course => (
                             <Option key={course.id} value={course.id}>{course.name}</Option>   
@@ -118,14 +149,16 @@ class NewAnnouncementComponent extends React.Component {
                                 max: 255,
                                 message: 'Maximum 255 characters'
                             }
-                        ]
+                        ],
+                        initialValue: this.state.announcement.title
                     })}
                 </Form.Item>
 
                 <Form.Item title="Content">
                     <CKEditor
                         editor={ClassicEditor}
-                        onChange={this.editorEdit}/>
+                        onChange={this.editorEdit}
+                        data={this.state.content}/>
                 </Form.Item>
 
                 <Form.Item style={{display: 'flex', justifyContent: 'center', textAlign: 'center'}}>
