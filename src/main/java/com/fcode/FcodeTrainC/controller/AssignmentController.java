@@ -7,7 +7,6 @@ import com.fcode.FcodeTrainC.entity.Course;
 import com.fcode.FcodeTrainC.service.AccountCourseService;
 import com.fcode.FcodeTrainC.service.AccountService;
 import com.fcode.FcodeTrainC.service.AssignmentService;
-import com.fcode.FcodeTrainC.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

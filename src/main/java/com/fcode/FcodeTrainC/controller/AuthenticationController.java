@@ -58,4 +58,22 @@ public class AuthenticationController {
         }
         return ResponseEntity.badRequest().build();
     }
+
+    @PostMapping(value = "/admin/resetPassword")
+    public ResponseEntity resetPassword(HttpServletRequest request) {
+        ResponseEntity response = null;
+        String username = request.getParameter("username");
+        Account account = accountService.findByUsername(username);
+
+        if (account != null) {
+            String hashPass = BCrypt.hashpw(username, BCrypt.gensalt());
+            account.setPassword(hashPass);
+            accountService.save(account);
+
+            response = ResponseEntity.ok().build();
+        } else {
+            response = ResponseEntity.badRequest().build();
+        }
+        return response;
+    }
 }
