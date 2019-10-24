@@ -18,7 +18,7 @@ public class AnnouncementService {
     }
 
     public List<Announcement> findByCourseId(Integer courseId) {
-        return repository.findByCourseIdOrderByCreatedTime(courseId);
+        return repository.findByCourseIdOrderByCreatedTimeDesc(courseId);
     }
 
     public void delete(Long id) {
@@ -28,5 +28,13 @@ public class AnnouncementService {
     public Announcement findById(Long id) {
         Optional<Announcement> opt = repository.findById(id);
         return opt.isPresent() ? opt.get() : null;
+    }
+
+    public List<Announcement> findAll() {
+        return repository.findAllByOrderByCreatedTimeDesc();
+    }
+
+    public List<Announcement> findByUsername(String username) {
+        return repository.findByUsername(username);
     }
 }

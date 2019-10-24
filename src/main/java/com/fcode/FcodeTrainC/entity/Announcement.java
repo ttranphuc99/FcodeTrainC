@@ -31,7 +31,7 @@ public class Announcement {
 
     @ManyToOne
     @JoinColumn(name = "ac_last_modifier_id")
-    private Account modifer;
+    private Account modifier;
 
     @ManyToOne
     @JoinColumn(name = "ac_creator_id")
@@ -40,13 +40,14 @@ public class Announcement {
     public Announcement() {
     }
 
-    public Announcement(String title, String content, Timestamp createdTime, Timestamp lastModified, Course course, Account modifer, Account creator) {
+    public Announcement(Long id, String title, String content, Timestamp createdTime, Timestamp lastModified, Course course, Account modifier, Account creator) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.createdTime = createdTime;
         this.lastModified = lastModified;
         this.course = course;
-        this.modifer = modifer;
+        this.modifier = modifier;
         this.creator = creator;
     }
 
@@ -98,12 +99,12 @@ public class Announcement {
         this.course = course;
     }
 
-    public Account getModifer() {
-        return modifer;
+    public Account getModifier() {
+        return modifier;
     }
 
-    public void setModifer(Account modifer) {
-        this.modifer = modifer;
+    public void setModifier(Account modifier) {
+        this.modifier = modifier;
     }
 
     public Account getCreator() {

@@ -18,7 +18,7 @@ public class AnnouncementController {
     @Autowired
     private AccountService accountService;
 
-    @PutMapping(value = "/auth/announcement")
+    @PostMapping(value = "/auth/announcement")
     public ResponseEntity addNew(@RequestBody Announcement announcement, Authentication authentication) {
         ResponseEntity response = ResponseEntity.badRequest().build();
 
@@ -31,7 +31,7 @@ public class AnnouncementController {
         return response;
     }
 
-    @PostMapping(value = "/auth/announcement/{id}")
+    @PutMapping(value = "/auth/announcement/{id}")
     public ResponseEntity update(@PathVariable(name = "id") Long id, @RequestBody Announcement announcement, Authentication authentication) {
         ResponseEntity response = ResponseEntity.badRequest().build();
 
@@ -41,7 +41,7 @@ public class AnnouncementController {
                 currentAnn.setTitle(announcement.getTitle());
                 currentAnn.setContent(announcement.getContent());
                 currentAnn.setCourse(currentAnn.getCourse());
-                currentAnn.setModifer(accountService.findByUsername(authentication.getName()));
+                currentAnn.setModifier(accountService.findByUsername(authentication.getName()));
 
                 service.save(currentAnn);
 
@@ -52,10 +52,10 @@ public class AnnouncementController {
         return response;
     }
 
-    @GetMapping(value = "/member/announcement/{courseId}")
-    public ResponseEntity getListAnnouncement(@PathVariable(name = "courseId") Integer courseId) {
+    @GetMapping(value = "/member/announcement")
+    public ResponseEntity getListAnnouncement(Authentication authentication) {
         ResponseEntity response = null;
-        List<Announcement> list = service.findByCourseId(courseId);
+        List<Announcement> list = service.findByUsername(authentication.getName());
         response = new ResponseEntity(list, HttpStatus.OK);
         return response;
     }
@@ -69,5 +69,11 @@ public class AnnouncementController {
     public ResponseEntity delete(@PathVariable(name = "id") Long id) {
         service.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/auth/announcement")
+    public ResponseEntity getAll() {
+        List<Announcement> list = service.findAll();
+        return new ResponseEntity(list, HttpStatus.OK);
     }
 }
