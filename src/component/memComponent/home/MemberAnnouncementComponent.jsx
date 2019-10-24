@@ -1,9 +1,7 @@
 import React from 'react';
 import AnnouncementService from '../../../service/AnnouncementService';
 import { Redirect } from 'react-router-dom';
-import { Button, Spin, Table, Card, Modal, notification } from 'antd';
-import NewAnnouncementComponent from '../../annoucement/NewAnnouncementComponent';
-import UpdateAnnouncementComponent from '../../annoucement/UpdateAnnouncementComponent';
+import { Button, Spin, Table, Card, Modal } from 'antd';
 import AnnouncementDetailComponent from '../../annoucement/AnnouncementDetailComponent';
 
 class AdminAnnouncementComponent extends React.Component {
@@ -24,13 +22,8 @@ class AdminAnnouncementComponent extends React.Component {
         }
 
         this.fetchData = this.fetchData.bind(this);
-        this.showNewModal = this.showNewModal.bind(this);
-        this.closeNewModal = this.closeNewModal.bind(this);
         this.showDetailModal = this.showDetailModal.bind(this);
         this.closeDetailModal = this.closeDetailModal.bind(this);
-        this.showUpdateModal = this.showUpdateModal.bind(this);
-        this.closeUpdateModal = this.closeUpdateModal.bind(this);
-        this.delete = this.delete.bind(this);
     }
 
     componentWillMount() {
@@ -39,7 +32,7 @@ class AdminAnnouncementComponent extends React.Component {
 
     fetchData() {
         this.setState({isLoading: true});
-        AnnouncementService.getAll()
+        AnnouncementService.getByAcc()
         .then(response => {
             if (response.status === 200) {
                 return response.json();
@@ -56,14 +49,6 @@ class AdminAnnouncementComponent extends React.Component {
         })
     }
 
-    showNewModal() {
-        this.setState({newModalVisibility: true});
-    }
-
-    closeNewModal() {
-        this.setState({newModalVisibility: false});
-    }
-
     async showDetailModal(id) {
         await this.setState({detailModalVisibility: true, currentAnnIdDetail: id});
         if (this.refs.detailComponent !== undefined) this.refs.detailComponent.fetchData();
@@ -71,45 +56,6 @@ class AdminAnnouncementComponent extends React.Component {
 
     closeDetailModal() {
         this.setState({detailModalVisibility: false});
-    }
-
-    async showUpdateModal(id) {
-        await this.setState({updateModalVisibility: true, currentAnnId: id});
-        if (this.form !== undefined) this.form.fetchData();
-    }
-
-    closeUpdateModal() {
-        this.setState({updateModalVisibility: false});
-    }
-
-    delete(id) {
-        Modal.confirm({
-            title: 'Confirm',
-            content: 'Do you want to delete announcement: #' +id,
-            okText: 'Delete',
-            cancelText: 'Cancel',
-            onOk: () => {
-                AnnouncementService.delete(id)
-                .then(response => {
-                    if (response.status === 200) {
-                        notification.success({
-                            message: 'Notification',
-                            description: 'Delete successfully!',
-                            top: 70,
-                            placement: 'topRight',
-                        })
-                        this.fetchData();
-                    } else {
-                        notification.error({
-                            message: 'Error',
-                            description: "Update failed",
-                            top: 70,
-                            placement: 'topRight',
-                        })
-                    }
-                })
-            }
-        })
     }
 
     render() {
@@ -145,19 +91,6 @@ class AdminAnnouncementComponent extends React.Component {
                 title: 'Created Time',
                 key: 'createdTime',
                 dataIndex: 'createdTime'
-            },
-            {
-                title: 'Action',
-                key: 'action',
-                render: record => {
-                    return (
-                        <span>
-                            <Button onClick={() => this.showUpdateModal(record.id)}>Edit</Button>
-                            <Button onClick={() => this.delete(record.id)}>Delete</Button>
-                        </span>
-                    )
-                },
-                align: 'center'
             }
         ]
 
@@ -175,18 +108,6 @@ class AdminAnnouncementComponent extends React.Component {
                         Announcement
                     </div>
 
-                    <Button type="primary" onClick={this.showNewModal}>Add new announcement</Button>
-
-                    <Modal
-                        title="Add New Announcement"
-                        style={{minWidth: '430px'}}
-                        width="50%"
-                        visible={this.state.newModalVisibility}
-                        onCancel={this.closeNewModal}
-                        footer={null}>
-                            <NewAnnouncementComponent update={this.fetchData} closeModal={this.closeNewModal}/>
-                    </Modal>
-
                     {!this.state.isLoading &&
                             <Table
                                 columns={column}
@@ -196,21 +117,6 @@ class AdminAnnouncementComponent extends React.Component {
                                 pagination={{pageSize: 10}}
                             />
                     }
-
-                    <Modal
-                        title="Edit Announcement"
-                        style={{minWidth: '430px'}}
-                        width="50%"
-                        visible={this.state.updateModalVisibility}
-                        onCancel={this.closeUpdateModal}
-                        footer={null}>
-                            <UpdateAnnouncementComponent 
-                                id={this.state.currentAnnId} 
-                                update={this.fetchData} 
-                                closeModal={this.closeUpdateModal}
-                                wrappedComponentRef={(form) => this.form = form}
-                            />
-                    </Modal>
 
                     <Modal
                         title="Announcement Detail"

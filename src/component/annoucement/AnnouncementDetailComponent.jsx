@@ -1,11 +1,11 @@
 import React from 'react'
 import AnnouncementService from '../../service/AnnouncementService';
-import { notification, Descriptions, Typography, Divider, Spin } from 'antd';
+import { notification, Typography, Divider, Spin } from 'antd';
 import Title from 'antd/lib/skeleton/Title';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import Text from 'antd/lib/typography/Text';
 
-class AnnouncementDetail extends React.Component {
+class AnnouncementDetailComponent extends React.Component {
     constructor(props) {
         super(props);
 
@@ -15,6 +15,10 @@ class AnnouncementDetail extends React.Component {
         }
 
         this.fetchData = this.fetchData.bind(this);
+    }
+
+    componentWillMount() {
+        this.fetchData();
     }
 
     fetchData() {
@@ -45,7 +49,7 @@ class AnnouncementDetail extends React.Component {
 
         return (
             <Typography>
-                <Title style={{textAlign: 'center'}}>#{this.state.announcement.id} - {this.state.announcement.title}</Title>
+                <div style={{textAlign: 'center', fontSize: '20px', fontWeight: 'bold'}}>#{this.state.announcement.id} - {this.state.announcement.title}</div>
                     
                 <Divider/>
 
@@ -71,3 +75,5 @@ class AnnouncementDetail extends React.Component {
         )
     }
 }
+
+export default AnnouncementDetailComponent;

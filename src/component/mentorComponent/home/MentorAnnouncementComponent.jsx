@@ -30,7 +30,6 @@ class AdminAnnouncementComponent extends React.Component {
         this.closeDetailModal = this.closeDetailModal.bind(this);
         this.showUpdateModal = this.showUpdateModal.bind(this);
         this.closeUpdateModal = this.closeUpdateModal.bind(this);
-        this.delete = this.delete.bind(this);
     }
 
     componentWillMount() {
@@ -82,36 +81,6 @@ class AdminAnnouncementComponent extends React.Component {
         this.setState({updateModalVisibility: false});
     }
 
-    delete(id) {
-        Modal.confirm({
-            title: 'Confirm',
-            content: 'Do you want to delete announcement: #' +id,
-            okText: 'Delete',
-            cancelText: 'Cancel',
-            onOk: () => {
-                AnnouncementService.delete(id)
-                .then(response => {
-                    if (response.status === 200) {
-                        notification.success({
-                            message: 'Notification',
-                            description: 'Delete successfully!',
-                            top: 70,
-                            placement: 'topRight',
-                        })
-                        this.fetchData();
-                    } else {
-                        notification.error({
-                            message: 'Error',
-                            description: "Update failed",
-                            top: 70,
-                            placement: 'topRight',
-                        })
-                    }
-                })
-            }
-        })
-    }
-
     render() {
         if (this.state.redirecting) return <Redirect to="/login"/>
         if (this.state.isError) return <Redirect to="/error" error={this.state.error}/>
@@ -153,7 +122,6 @@ class AdminAnnouncementComponent extends React.Component {
                     return (
                         <span>
                             <Button onClick={() => this.showUpdateModal(record.id)}>Edit</Button>
-                            <Button onClick={() => this.delete(record.id)}>Delete</Button>
                         </span>
                     )
                 },

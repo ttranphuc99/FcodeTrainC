@@ -1,6 +1,6 @@
 import React from 'react'
 import CourseService from '../../service/CourseService';
-import { Form, Select, Button, notification } from 'antd';
+import { Form, Select, Button, notification, Input } from 'antd';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import AnnouncementService from '../../service/AnnouncementService';
@@ -22,6 +22,10 @@ class NewAnnouncementComponent extends React.Component {
         this.editorEdit = this.editorEdit.bind(this);
     }
 
+    componentWillMount() {
+        this.getListCourse();
+    }
+
     getListCourse() {
         this.setState({isLoading: true});
         CourseService.getListCourse()
@@ -41,7 +45,7 @@ class NewAnnouncementComponent extends React.Component {
                     this.setState({currentCourseId: data[0].id});
                 }
             }
-            this.setState({isLoadingCourse: false});
+            this.setState({isLoading: false});
         }).catch((err) => {
             this.setState({ isError: true, error: err });
             this.setState({isLoadingCourse: false});
@@ -70,6 +74,7 @@ class NewAnnouncementComponent extends React.Component {
                         placement: 'topRight',
                     });
                     this.props.closeModal();
+                    this.props.update();
                     this.props.form.resetFields();
                 } else {
                     notification.error({
@@ -84,8 +89,8 @@ class NewAnnouncementComponent extends React.Component {
         });
     }
 
-    editorEdit(value) {
-        this.setState({content: value});
+    editorEdit(event, editor) {
+        this.setState({content: editor.getData()});
     }
 
     render() {
@@ -94,7 +99,7 @@ class NewAnnouncementComponent extends React.Component {
 
         return (
             <Form onSubmit={this.handleSubmit}>
-                <Form.Item title="Course">
+                <Form.Item label="Course">
                     <Select
                         loading={this.state.isLoading}
                         placeholder="Select course..."
@@ -107,7 +112,7 @@ class NewAnnouncementComponent extends React.Component {
                     </Select>
                 </Form.Item>
 
-                <Form.Item title="Title">
+                <Form.Item label="Title">
                     {getFieldDecorator('title', {
                         rules: [
                             {
@@ -119,10 +124,10 @@ class NewAnnouncementComponent extends React.Component {
                                 message: 'Maximum 255 characters'
                             }
                         ]
-                    })}
+                    })(<Input />)}
                 </Form.Item>
 
-                <Form.Item title="Content">
+                <Form.Item label="Content">
                     <CKEditor
                         editor={ClassicEditor}
                         onChange={this.editorEdit}/>

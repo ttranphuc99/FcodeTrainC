@@ -1,6 +1,6 @@
 import React from 'react'
 import CourseService from '../../service/CourseService';
-import { Form, Select, Button, notification } from 'antd';
+import { Form, Select, Button, notification, Spin, Input } from 'antd';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import AnnouncementService from '../../service/AnnouncementService';
@@ -11,6 +11,7 @@ class NewAnnouncementComponent extends React.Component {
 
         this.state = {
             isLoading: false,
+            isLoadingCourse: false,
             listCourse: [],
             currentCourseId: -1,
             content: '',
@@ -24,8 +25,12 @@ class NewAnnouncementComponent extends React.Component {
         this.editorEdit = this.editorEdit.bind(this);
     }
 
+    componentWillMount() {
+        this.fetchData();
+    }
+
     getListCourse() {
-        this.setState({isLoading: true});
+        this.setState({isLoadingCourse: true});
         CourseService.getListCourse()
         .then(response => {
             if (response.status === 200) {
@@ -52,7 +57,7 @@ class NewAnnouncementComponent extends React.Component {
 
     fetchData() {
         this.getListCourse();
-
+        this.setState({isLoading: true})
         AnnouncementService.getAnnouncement(this.props.id)
         .then(response => {
             if (response.status === 200) {
@@ -90,7 +95,7 @@ class NewAnnouncementComponent extends React.Component {
               values.content = this.state.content;
               values.courseId = this.state.currentCourseId;
 
-            AnnouncementService.update(values, this.props.id)
+            AnnouncementService.update(this.props.id, values)
             .then(response => {
                 if (response.status === 200) {
                     notification.success({
@@ -100,6 +105,7 @@ class NewAnnouncementComponent extends React.Component {
                         placement: 'topRight',
                     });
                     this.props.closeModal();
+                    this.props.update();
                     this.props.form.resetFields();
                 } else {
                     notification.error({
@@ -114,8 +120,8 @@ class NewAnnouncementComponent extends React.Component {
         });
     }
 
-    editorEdit(value) {
-        this.setState({content: value});
+    editorEdit(event, editor) {
+        this.setState({content: editor.getData()});
     }
 
     render() {
@@ -123,48 +129,52 @@ class NewAnnouncementComponent extends React.Component {
         const { Option } = Select;
 
         return (
-            <Form onSubmit={this.handleSubmit}>
-                <Form.Item title="Course">
-                    <Select
-                        loading={this.state.isLoading}
-                        placeholder="Select course..."
-                        style={{width: '25%', minWidth: '200px'}}
-                        onChange={this.changeCourse}
-                        value={this.state.currentCourseId}
-                    >
-                        {this.state.listCourse.map(course => (
-                            <Option key={course.id} value={course.id}>{course.name}</Option>   
-                        ))}
-                    </Select>
-                </Form.Item>
+            <Spin spinning={this.state.isLoading}>
+                {!this.state.isLoading && 
+                <Form onSubmit={this.handleSubmit}>
+                    <Form.Item label="Course">
+                        <Select
+                            loading={this.state.isLoadingCourse}
+                            placeholder="Select course..."
+                            style={{width: '25%', minWidth: '200px'}}
+                            onChange={this.changeCourse}
+                            value={this.state.currentCourseId}
+                        >
+                            {this.state.listCourse.map(course => (
+                                <Option key={course.id} value={course.id}>{course.name}</Option>   
+                            ))}
+                        </Select>
+                    </Form.Item>
 
-                <Form.Item title="Title">
-                    {getFieldDecorator('title', {
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Title is required!'
-                            },
-                            {
-                                max: 255,
-                                message: 'Maximum 255 characters'
-                            }
-                        ],
-                        initialValue: this.state.announcement.title
-                    })}
-                </Form.Item>
+                    <Form.Item label="Title">
+                        {getFieldDecorator('title', {
+                            rules: [
+                                {
+                                    required: true,
+                                    message: 'Title is required!'
+                                },
+                                {
+                                    max: 255,
+                                    message: 'Maximum 255 characters'
+                                }
+                            ],
+                            initialValue: this.state.announcement.title
+                        })(<Input />)}
+                    </Form.Item>
 
-                <Form.Item title="Content">
-                    <CKEditor
-                        editor={ClassicEditor}
-                        onChange={this.editorEdit}
-                        data={this.state.content}/>
-                </Form.Item>
+                    <Form.Item label="Content">
+                        <CKEditor
+                            editor={ClassicEditor}
+                            onChange={this.editorEdit}
+                            data={this.state.content}/>
+                    </Form.Item>
 
-                <Form.Item style={{display: 'flex', justifyContent: 'center', textAlign: 'center'}}>
-                    <Button type="primary" htmlType="submit">Create</Button>
-                </Form.Item>
-            </Form>
+                    <Form.Item style={{display: 'flex', justifyContent: 'center', textAlign: 'center'}}>
+                        <Button type="primary" htmlType="submit">Update</Button>
+                    </Form.Item>
+                </Form>
+                }
+            </Spin>
         )
     }
 }
