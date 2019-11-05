@@ -7,3 +7,7 @@
 #components-form-demo-normal-login, .login-form-button {
   width: 100%;
 }
+.login-input-wrap .ant-input {
+  border: 0 !important;
+  font-size: 18px;
+}

@@ -105,7 +105,7 @@ class CourseComponent extends React.Component {
                 title: 'ID',
                 key: 'id',
                 render: record => {
-                    return <Link to={'/manageCourse/course/' + record.id}>{record.id}</Link>
+                    return record.id
                 },
                 sorter: (a,b) => a.id - b.id,
                 width: '10%'
