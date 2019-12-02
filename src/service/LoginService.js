@@ -58,7 +58,7 @@ class LoginService {
     }
 
     isLoggedIn() {
-        return localStorage.getItem('loggedIn') === 'true' || false;
+        return this.getUsername() !== '';
     }
 
     getUsername() {

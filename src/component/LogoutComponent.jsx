@@ -13,7 +13,7 @@ class LogoutComponent extends React.Component {
     process = async () => {
         let status = await LoginService.logout();
         if (status === 204) {
-            localStorage.setItem('loggedIn', false);
+            document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             this.setState({redirecting: true})
         }
     }
