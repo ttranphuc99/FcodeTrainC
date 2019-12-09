@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080';
+import API_BASE from './ApiBase';
 
 class CourseService {
     async isCourseNameExisted(name, id = -1) {

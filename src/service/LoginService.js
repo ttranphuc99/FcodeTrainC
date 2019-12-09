@@ -1,6 +1,4 @@
-import { Form } from "antd";
-
-const API_BASE = "http://localhost:8080";
+import API_BASE from './ApiBase';
 
 class LoginService {
     login(data) {

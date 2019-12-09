@@ -1,6 +1,6 @@
 import LoginService from './LoginService';
 
-const API_BASE = "http://localhost:8080";
+import API_BASE from './ApiBase';
 
 class ProfileService {
     loadProfile() {

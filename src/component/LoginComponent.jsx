@@ -39,7 +39,10 @@ class LoginComponent extends React.Component {
     };
       
     render() {
-		if (this.state.redirect) return <Redirect to='/home'/>
+		if (this.state.redirect) {
+			alert('go');
+			return <Redirect to='/home'/>
+		} 
         let storedUsername = localStorage.getItem('username') || '';
         const { getFieldDecorator } = this.props.form;
         return (
