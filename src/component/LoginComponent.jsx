@@ -7,6 +7,7 @@ import '../stylesheet/util.css';
 import '../stylesheet/main.css';
 import background from '../image/bg-01.jpg';
 import "antd/dist/antd.css";
+import ProfileService from '../service/ProfileService';
 
 class LoginComponent extends React.Component {
 	constructor(props) {
@@ -26,9 +27,21 @@ class LoginComponent extends React.Component {
             LoginService.login(values)
                 .then((response) => {
 					if (response.status === 200) {
-						localStorage.setItem('loggedIn', true);
-						this.setState({redirect: true});
-						console.log(response.body);
+						LoginService.setCookie('username', values.fullname, 1);
+
+						ProfileService.loadProfile()
+						.then(response => {
+							if (response.status === 200) {
+								return response.json();
+							}
+						}).then(data => {
+							if (data !== null) {
+								LoginService.setCookie('fullname', data.fullname, 1);
+								LoginService.setCookie('role', data.role.name, 1);
+								
+								this.setState({redirect: true});
+							}
+						})
 					} else if (response.status === 401) {
 						message.error("Invalid username or password")
 					}

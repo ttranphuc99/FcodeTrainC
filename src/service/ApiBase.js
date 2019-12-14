@@ -1,2 +1,2 @@
-// export default "https://fcode-trainc.southeastasia.cloudapp.azure.com";
-export default "http://localhost:8080";
+export default "https://fcode-trainc.southeastasia.cloudapp.azure.com";
+// export default "http://localhost:8080";
