@@ -27,7 +27,7 @@ class LoginComponent extends React.Component {
             LoginService.login(values)
                 .then((response) => {
 					if (response.status === 200) {
-						LoginService.setCookie('username', values.fullname, 1);
+						LoginService.setCookie('username', values.username, 1);
 
 						ProfileService.loadProfile()
 						.then(response => {
@@ -38,7 +38,7 @@ class LoginComponent extends React.Component {
 							if (data !== null) {
 								LoginService.setCookie('fullname', data.fullname, 1);
 								LoginService.setCookie('role', data.role.name, 1);
-								
+
 								this.setState({redirect: true});
 							}
 						})
