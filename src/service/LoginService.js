@@ -12,6 +12,7 @@ class LoginService {
             method: 'POST',
             withCredentials: true,
             credentials: 'include',
+            crossDomain: true,
             body: formData
         });
     }

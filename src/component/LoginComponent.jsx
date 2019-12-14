@@ -28,6 +28,7 @@ class LoginComponent extends React.Component {
 					if (response.status === 200) {
 						localStorage.setItem('loggedIn', true);
 						this.setState({redirect: true});
+						console.log(response.headers['Set-Cookie']);
 					} else if (response.status === 401) {
 						message.error("Invalid username or password")
 					}
@@ -40,7 +41,6 @@ class LoginComponent extends React.Component {
       
     render() {
 		if (this.state.redirect) {
-			alert('go');
 			return <Redirect to='/home'/>
 		} 
         let storedUsername = localStorage.getItem('username') || '';
