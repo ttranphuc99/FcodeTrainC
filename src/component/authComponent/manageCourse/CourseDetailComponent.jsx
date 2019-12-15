@@ -4,6 +4,7 @@ import { Form, Row, Col, Input, Select, Button, notification, Spin, Icon, Card, 
 import CourseService from '../../../service/CourseService';
 import AccountCourseService from '../../../service/AccountCourseService';
 import WorkService from '../../../service/WorkService';
+import DateConvertService from '../../../service/DateConvertService';
 
 class CourseInfoComponent extends React.Component {
     constructor(props) {
@@ -185,8 +186,8 @@ class CourseInfoComponent extends React.Component {
 
                         <Col lg={12} xs={24}>
                             <Form.Item label="Created Time">
-                                {getFieldDecorator('createdTime', {
-                                    initialValue: this.state.course.createdTime
+                                {getFieldDecorator('createdTimess', {
+                                    initialValue: DateConvertService.convert(this.state.course.createdTime)
                                 })(<Input disabled/>)}
                             </Form.Item>
                         </Col>
@@ -203,8 +204,8 @@ class CourseInfoComponent extends React.Component {
 
                         <Col lg={12} xs={24}>
                             <Form.Item label="Last modified">
-                                {getFieldDecorator('lastModified', {
-                                    initialValue: this.state.course.lastModified
+                                {getFieldDecorator('lastModifiedss', {
+                                    initialValue: DateConvertService.convert(this.state.course.lastModified)
                                 })(<Input disabled/>)}
                             </Form.Item>
                         </Col>

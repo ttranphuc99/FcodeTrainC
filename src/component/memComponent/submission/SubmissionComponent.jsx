@@ -1,6 +1,7 @@
 import React from 'react'
 import AccountCourseService from '../../../service/AccountCourseService';
 import WorkService from '../../../service/WorkService';
+import DateConvertService from '../../../service/DateConvertService';
 import { Redirect, Link } from 'react-router-dom';
 import { Select, Card, Tag, Spin, Table, Icon, Button, Input } from 'antd';
 
@@ -176,7 +177,9 @@ class ListSubmissionComponent extends React.Component {
             {
                 title: 'Submit time',
                 key: 'submitTime',
-                dataIndex: 'submitTime',
+                render: record => {
+                    return <span>{DateConvertService.convert(record.submitTime)}</span>
+                },
                 sorter: (a,b) => {
                     if (a.submitTime > b.submitTime) return 1;
                     return -1;

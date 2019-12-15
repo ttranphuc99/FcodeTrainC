@@ -4,6 +4,7 @@ import AssignmentService from '../../../service/AssignmentService';
 import { Form, Spin, Row, Col, Input, InputNumber, Select, Card, Button, notification } from 'antd';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import DateConvertService from '../../../service/DateConvertService';
 
 class AssignmentDetailComponent extends React.Component {
     constructor(props) {
@@ -202,7 +203,7 @@ class AssignmentDetailComponent extends React.Component {
 
                                 <Col lg={12} xs={24}>
                                     <Form.Item label="Created Time">
-                                        {getFieldDecorator('createdTime', {initialValue: this.state.assignment.createdTime})(<Input disabled/>)}
+                                        {getFieldDecorator('createdTimess', {initialValue: DateConvertService.convert(this.state.assignment.createdTime)})(<Input disabled/>)}
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -216,7 +217,7 @@ class AssignmentDetailComponent extends React.Component {
 
                                 <Col lg={12} xs={24}>
                                     <Form.Item label="Last Modified">
-                                        {getFieldDecorator('lastModified', {initialValue: this.state.assignment.lastModified})(<Input disabled/>)}
+                                        {getFieldDecorator('lastModifiedss', {initialValue: DateConvertService.convert(this.state.assignment.lastModified)})(<Input disabled/>)}
                                     </Form.Item>
                                 </Col>
                             </Row>

@@ -2,6 +2,7 @@ import React from 'react'
 import {Redirect} from 'react-router-dom'
 import ProfileService from '../../../service/ProfileService';
 import { notification, Spin, Descriptions, Tag } from 'antd';
+import DateConvertService from '../../../service/DateConvertService';
 
 class ProfileDetailComponent extends React.Component {
     constructor(props) {
@@ -83,10 +84,10 @@ class ProfileDetailComponent extends React.Component {
                         : ''}
 
                     {this.props.isAuth ? 
-                        <Descriptions.Item label="Created Date">{this.state.profile.dateCreated || ''}</Descriptions.Item> 
+                        <Descriptions.Item label="Created Date">{DateConvertService.convert(this.state.profile.dateCreated || '')}</Descriptions.Item> 
                         : ''}
                     {this.props.isAuth ? 
-                        <Descriptions.Item label="Last Modified">{this.state.profile.lastModified || ''}</Descriptions.Item> 
+                        <Descriptions.Item label="Last Modified">{DateConvertService.convert(this.state.profile.lastModified || '')}</Descriptions.Item> 
                         : ''}
 
                 </Descriptions>

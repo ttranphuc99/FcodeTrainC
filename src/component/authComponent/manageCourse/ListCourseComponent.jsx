@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { Spin, Button, Icon, Card, Table, Input, Tag, Form, Modal, notification } from 'antd';
 import CourseService from '../../../service/CourseService';
+import DateConvertService from '../../../service/DateConvertService';
 
 class NewCourseComponent extends React.Component {
     constructor(props) {
@@ -274,7 +275,9 @@ class ListCourseComponent extends React.Component {
             {
                 title: 'Created Time',
                 key: 'createdTime',
-                dataIndex: 'createdTime'
+                render: record => {
+                return <span>{DateConvertService.convert(record.createdTime)}</span>
+                }
             }
         ];
 

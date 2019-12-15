@@ -1,9 +1,9 @@
 import React from 'react'
 import AnnouncementService from '../../service/AnnouncementService';
 import { notification, Typography, Divider, Spin } from 'antd';
-import Title from 'antd/lib/skeleton/Title';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import Text from 'antd/lib/typography/Text';
+import DateConvertService from '../../service/DateConvertService';
 
 class AnnouncementDetailComponent extends React.Component {
     constructor(props) {
@@ -61,12 +61,12 @@ class AnnouncementDetailComponent extends React.Component {
 
                 <Text>
                     Creator: {this.state.announcement.creator.fullname} - @{this.state.announcement.creator.username}<br/>
-                    Created Time: {this.state.announcement.createdTime}<br/>
+                    Created Time: {DateConvertService.convert(this.state.announcement.createdTime)}<br/>
                     
                     {this.state.announcement.modifier !== null && (
                         <span>
                             Modifier: {this.state.announcement.modifier.fullname} - @{this.state.announcement.modifier.username}<br/>
-                            Last Modified: {this.state.announcement.lastModified}<br/>
+                            Last Modified: {DateConvertService.convert(this.state.announcement.lastModified)}<br/>
                         </span>
                     )}
                 </Text>

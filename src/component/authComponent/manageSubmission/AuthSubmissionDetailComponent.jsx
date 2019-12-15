@@ -1,6 +1,7 @@
 import React from 'react'
 import { Spin, Descriptions, Card, Button, Icon, Tag, Modal } from 'antd';
 import WorkService from '../../../service/WorkService';
+import DateConvertService from '../../../service/DateConvertService';
 import JudgeComponent from './JudgeComponent';
 
 class SubmissionDetailComponent extends React.Component {
@@ -92,7 +93,7 @@ class SubmissionDetailComponent extends React.Component {
         }
 
         const judgeTime = () => {
-            if (this.state.work.judger) return this.state.work.judgeTime
+            if (this.state.work.judger) return DateConvertService.convert(this.state.work.judgeTime);
             return '';
         }
 
@@ -123,7 +124,7 @@ class SubmissionDetailComponent extends React.Component {
                             <Descriptions.Item label="Status">
                                 {status()}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Submit Time">{this.state.work.submitTime}</Descriptions.Item>
+                            <Descriptions.Item label="Submit Time">{DateConvertService.convert(this.state.work.submitTime)}</Descriptions.Item>
 
                             <Descriptions.Item label="Judger">{judgeName()}</Descriptions.Item>
                             <Descriptions.Item label="Judge Time">{judgeTime()}</Descriptions.Item>

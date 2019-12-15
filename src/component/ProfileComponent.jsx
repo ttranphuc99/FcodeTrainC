@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import {Card, CardBody, Row, Col} from 'shards-react';
 import {Form, Input, Button, notification, Spin} from 'antd';
 import ProfileService from '../service/ProfileService';
+import DateConvertService from '../service/DateConvertService';
 
 class UpdateProfile extends React.Component {
     constructor(props) {
@@ -176,7 +177,7 @@ class UpdateProfile extends React.Component {
                                     {getFieldDecorator('lastModified', {
                                         rules: [
                                         ],
-                                        initialValue: this.state.account.lastModified
+                                        initialValue: DateConvertService.convert(this.state.account.lastModified)
                                     })(<Input disabled />)}
                                     </Form.Item>
                                 </Col>
@@ -186,7 +187,7 @@ class UpdateProfile extends React.Component {
                                         {getFieldDecorator('createdDate', {
                                             rules: [
                                             ],
-                                            initialValue: this.state.account.dateCreated
+                                            initialValue: DateConvertService.convert(this.state.account.dateCreated)
                                         })(<Input disabled />)}
                                     </Form.Item>
                                 </Col>
