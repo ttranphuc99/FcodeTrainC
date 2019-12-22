@@ -8,7 +8,7 @@ class FooterComponent extends React.Component {
         <div>
           <Row>
             <Col>
-              <div className="copyright">Develop by Tran Thien Phuc - FPT University</div>
+              <div className="copyright">Developed by Tran Thien Phuc - FPT University</div>
             </Col>
           </Row>
           <Row>
