@@ -5,6 +5,7 @@ import { Button, Spin, Table, Card, Modal, notification } from 'antd';
 import NewAnnouncementComponent from '../../annoucement/NewAnnouncementComponent';
 import UpdateAnnouncementComponent from '../../annoucement/UpdateAnnouncementComponent';
 import AnnouncementDetailComponent from '../../annoucement/AnnouncementDetailComponent';
+import DateConvertService from '../../../service/DateConvertService';
 
 class AdminAnnouncementComponent extends React.Component {
     constructor(props) {
@@ -113,7 +114,9 @@ class AdminAnnouncementComponent extends React.Component {
             {
                 title: 'Created Time',
                 key: 'createdTime',
-                dataIndex: 'createdTime'
+                render: record => {
+                    return <span>{DateConvertService.convert(record.createdTime)}</span>
+                }
             },
             {
                 title: 'Action',
