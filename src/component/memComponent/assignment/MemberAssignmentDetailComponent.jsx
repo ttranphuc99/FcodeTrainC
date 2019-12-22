@@ -65,11 +65,15 @@ class UploadComponent extends React.Component {
 
     beforeUpload(file) {
         message.config({top: 100});
-        console.log('typeeeeeeeee ' , file.type);
-        const isJpgOrPng = file.type === 'text/x-csrc' || file.type === 'application/zip' || file.type === 'application/vnd.rar';
+        let fileName = file.name;
+        let type = fileName.substring(fileName.lastIndexOf('.')+1);
+
+        console.log(type);
+
+        const isJpgOrPng = type === 'c' || file.type === 'cpp';
 
         if (!isJpgOrPng) {
-            message.error('You can only upload text or compressed file!');
+            message.error('You can only upload c or cpp file!');
         }
         const isLt2M = file.size / 1024 / 1024 < 10;
         if (!isLt2M) {
