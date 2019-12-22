@@ -65,7 +65,7 @@ class UploadComponent extends React.Component {
 
     beforeUpload(file) {
         message.config({top: 100});
-
+        console.log('typeeeeeeeee ' , file.type);
         const isJpgOrPng = file.type === 'text/x-csrc' || file.type === 'application/zip' || file.type === 'application/vnd.rar';
 
         if (!isJpgOrPng) {
