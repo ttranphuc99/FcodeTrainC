@@ -260,7 +260,7 @@ class MemberAssignmentDetailComponent extends React.Component {
                 </Typography>
 
                 {this.state.assignment.submitQuantity - this.state.submitQuantity > 0 &&
-                    !this.state.isReject && <Button onClick={this.openSubmitModal}>Submit</Button>}
+                    !this.state.isReject && this.state.assignment.status !== 0 && <Button onClick={this.openSubmitModal}>Submit</Button>}
 
                 <Modal
                     title="Submit Work"
