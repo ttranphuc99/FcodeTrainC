@@ -144,7 +144,7 @@ class UpdateProfile extends React.Component {
                                     },
                                     {
                                         required: true,
-                                        message: 'Please input your Fullname!',
+                                        message: 'Please input your Description!',
                                     },
                                     {
                                         max: 255,
