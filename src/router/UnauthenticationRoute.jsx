@@ -7,8 +7,10 @@ import LoginService from '../service/LoginService';
 
 class UnauthenticationRoute extends React.Component {
     render() {
+        
         if (LoginService.isLoggedIn()) {
-            return <Redirect to='/home' />;
+            // return <Redirect to='/home' />;
+            return <Redirect to='/closePage'/>
         }
 
         return <Route {...this.props} />;

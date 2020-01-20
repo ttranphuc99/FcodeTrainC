@@ -26,6 +26,7 @@ import AuthSubmissionDetailComponent from '../component/authComponent/manageSubm
 import ChartComponent from '../component/authComponent/chart/ChartComponent';
 import MentorManageAccountComponent from '../component/mentorComponent/manageAccount/MentorManageAccountComponent';
 import HomeComponent from '../component/HomeComponent';
+import ClosePageComponent from '../component/ClosePageComponent';
 
 
 class RouterComponent extends React.Component {
@@ -35,8 +36,11 @@ class RouterComponent extends React.Component {
                 <Router>
                     <>
                         <Switch>
-                            <UnauthenticationRoute path="/login" exact component={LoginComponent} />
-                            <UnauthenticationRoute path="/" exact component={LoginComponent} />
+                            <UnauthenticationRoute path="/closePage" exact component={ClosePageComponent}/>
+                            <UnauthenticationRoute path="/login" exact component={ClosePageComponent} />
+                            <UnauthenticationRoute path="/" exact component={ClosePageComponent} />
+                            {/* <UnauthenticationRoute path="/login" exact component={LoginComponent} /> */}
+                            {/* <UnauthenticationRoute path="/" exact component={LoginComponent} /> */}
                             <Layout>
                                 <AuthenticationRoute path="/error" exact component={ErrorComponent}/>
                                 <AuthenticationRoute path="/home" exact component={HomeComponent} />
