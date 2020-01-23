@@ -57,8 +57,8 @@ class LoginService {
     }
 
     isLoggedIn() {
-        return false;
-        // return this.getUsername() !== '';
+        // return false;
+        return this.getUsername() !== '';
     }
 
     getUsername() {
