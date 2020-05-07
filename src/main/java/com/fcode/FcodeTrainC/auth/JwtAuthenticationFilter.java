@@ -55,22 +55,39 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .claim("rol", roles)
                 .compact();
 
-        Cookie c = new Cookie(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
-        c.setMaxAge(864000);
-        c.setHttpOnly(true);
-        response.addCookie(c);
 
-        Cookie role = new Cookie("role", user.getRole());
-        role.setMaxAge(864000);
-        response.addCookie(role);
 
-        Cookie username = new Cookie("username", user.getUsername());
-        username.setMaxAge(864000);
-        response.addCookie(username);
+        String cookieTok = SecurityConstants.TOKEN_HEADER + "=" + SecurityConstants.TOKEN_PREFIX + token;
+//        String cookieRole = "role" + "=" + user.getRole();
+//        String cookieUsername = "username" + "=" + user.getUsername();
+//        String cookieFullname = "fullname" + "=" + URLEncoder.encode(user.getFullname(), "UTF-8");;
 
-        Cookie fullname = new Cookie("fullname", URLEncoder.encode(user.getFullname(), "UTF-8"));
-        fullname.setMaxAge(864000);
-        response.addCookie(fullname);
+        response.addHeader("Set-Cookie",
+                cookieTok + "; HttpOnly; SameSite=None; Max-Age=864000");
+//        response.addHeader("Set-Cookie",
+//                cookieFullname + "; SameSite=None; Max-Age=864000");
+//        response.addHeader("Set-Cookie",
+//                cookieRole + "; SameSite=None; Max-Age=864000");
+//        response.addHeader("Set-Cookie",
+//                cookieUsername + "; SameSite=None; Max-Age=864000");
+
+//        Cookie c = new Cookie(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
+//        c.setMaxAge(864000);
+//        c.setHttpOnly(true);
+//
+//        response.addCookie(c);
+
+//        Cookie role = new Cookie("role", user.getRole());
+//        role.setMaxAge(864000);
+//        response.addCookie(role);
+
+//        Cookie username = new Cookie("username", user.getUsername());
+//        username.setMaxAge(864000);
+//        response.addCookie(username);
+
+//        Cookie fullname = new Cookie("fullname", URLEncoder.encode(user.getFullname(), "UTF-8"));
+//        fullname.setMaxAge(864000);
+//        response.addCookie(fullname);
     }
 
     @Override

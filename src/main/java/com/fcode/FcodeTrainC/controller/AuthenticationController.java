@@ -3,9 +3,11 @@ package com.fcode.FcodeTrainC.controller;
 import com.fcode.FcodeTrainC.entity.Account;
 import com.fcode.FcodeTrainC.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +19,16 @@ public class AuthenticationController {
     private AccountService accountService;
 
     @PostMapping(path = "/login")
-    public String authenticate() {
-        return "Successful Authentication";
+    public String authenticate(HttpServletRequest request) {
+        return "Login success";
+    }
+
+    @GetMapping(path = "/login_success")
+    public ResponseEntity loginSuccess(HttpServletRequest request) {
+        String username = request.getParameter("username");
+        Account acc = accountService.findByUsername(username);
+        ResponseEntity en = new ResponseEntity(acc, HttpStatus.OK);
+        return new ResponseEntity(acc, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/logout")

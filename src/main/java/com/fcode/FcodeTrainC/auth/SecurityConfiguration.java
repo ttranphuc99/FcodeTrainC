@@ -46,6 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         List<String> origin = new ArrayList<>();
         origin.add("http://localhost:3000");
+        origin.add("https://fcode-ea6412.netlify.com");
 
         configuration.setAllowedOrigins(origin);
 
